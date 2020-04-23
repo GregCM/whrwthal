@@ -502,7 +502,7 @@ try:
                 verses_out = list()                                                  # in the table of contents.
 
                 ## If only book name is input, output whole book ##
-                if chpRef is '0':
+                if chpRef == '0':
                     cKeyList = range(len(verses_outFind.keys()))
                     for cKey in cKeyList:                                            # Hone in on a chapter for the verse loop sake:
                         cKey = str(cKey+1)
@@ -528,7 +528,7 @@ try:
                         cMax = len(verses_outFind.keys())
 
                         ## Plural or not? ##
-                        if cMax is 1:
+                        if cMax == 1:
                             noCRef = 'ortunetly, %s only has %i chapter' %(bkMark, cMax)
                         else:
                             noCRef = 'ortunetly, %s only has %i chapters' %(bkMark, cMax)
@@ -541,7 +541,7 @@ try:
                         verses_out_list = [noCRef]
 
                     ## If only chapter is input, output whole chapter ##
-                    if vrsRef is '0':
+                    if vrsRef == '0':
                         vKeyList = range(len(cFind.keys()))
                         verses_out_collect = ''
                         for vKey in vKeyList:                                        # LOOP through these verses, and
@@ -827,7 +827,7 @@ try:
                         vLen = len(verses)
                         vrsDict = collections.OrderedDict()
                         for v in range(vLen):                                        # Loops to populate the verse structure.
-                            if v is 0:
+                            if v == 0:
                                 vv = (verses[v])[1:]                           # Removes the extra colon left in each verse 1.
                             else:
                                 vv = verses[v]                                 # Other verses don't have the extra colon.
