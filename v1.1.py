@@ -47,7 +47,7 @@ import json
 import os
 import random as rnd
 import re
-from string import ascii_letters
+import string
 import sys
 import tkinter as tk
 from tkinter import filedialog
@@ -391,7 +391,6 @@ class Bible:
         ToC_count = len(ToC_entries)
         concord_entries = [e in unique_words for e in self.frame.entry]
         con_count = len(concord_entries)
-        non_ToC_entries = [e not in ToC for e in self.frame.entry]
         numeric_entries = [e.isnumeric() for e in self.frame.entry]
 
         a = any(ToC_entries)
@@ -444,7 +443,7 @@ class Bible:
     def listUpdate(self, l, mode='w'):
         if mode == 'w':
             self.cls(self.frame)
-        elif mode =='a':
+        elif mode == 'a':
             pass
 
         for i in range(len(l)):
@@ -914,16 +913,14 @@ class Bible:
         with open(fileBible, 'r+') as Bfile:
             bib = Bfile.read()
 
-        alpha = ascii_letters
-        # Alphabet
-        asdf = alpha
-        # Alphabet + Spaces
-        asdf_S = alpha + ' '
-        # AlphaNumeric + \'
-        asdf_Ns = alpha + string.digits + '\''
+        prints = string.printable
+        digits = string.digits
+        # Printables - Digits
+        asdf = ''.join([s for s in prints if s not in digits])
 
         n = len(self.bkNames)
-        books = list()
+        books = []
+        trim_books = []
         # Populate "books" to be placed
         for b in range(n):
             populated = re.split(self.bkNames[b], bib)[0]
@@ -939,12 +936,12 @@ class Bible:
                 books.append(populated)
 
             bkToWipe = populated
-            # Speeds up For loop and keeps books
-            # from being populated with prior books.
+            # Keeps books from being populated with prior books.
             bkWiper = ''
             bib = bib.replace(bkToWipe, bkWiper)
 
-            trim_text = ''.join([l for l in text if l in asdf_S])
+            text = ''.join(books)
+            trim_text = ''.join([l for l in text if l in asdf])
             trim_books.append(trim_text)
 
         del bib
@@ -953,7 +950,7 @@ class Bible:
         bib_letters = ''.join([l for l in trim_bible])
         bib_words = re.split(' ', bib_letters)
         bib_words = [w for w in bib_words if w != '']
-        unique_words = [s for s in set(bib_words) if s not in bkNames]
+        unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
         BibDict = collections.OrderedDict()
         # Loops to populate the book structure.
