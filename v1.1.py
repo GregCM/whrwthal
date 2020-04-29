@@ -40,12 +40,14 @@
 
 import bs4
 import collections
+from configparser import ConfigParser
 import datetime as dt
 from functools import partial
 import json
 import os
 import random as rnd
 import re
+from string import ascii_letters
 import sys
 import tkinter as tk
 from tkinter import filedialog
@@ -57,11 +59,11 @@ class Bible:
     def __init__(self):
 
         '''
-        # ################
-        #              ##
-        # Initializing ##
-        #              ##
-        # ################
+        ##################
+        ##              ##
+        ## Initializing ##
+        ##              ##
+        ##################
         '''
 
         # Create & Configure root
@@ -214,43 +216,81 @@ class Bible:
                                       state='disabled')
 
         ispc = sys.platform.startswith('win')
-        # Platform name for Mac OS X.
         ismac = sys.platform.startswith('darwin')
         islinux = sys.platform.startswith('linux')
 
         if ispc:
+            self.homeDirectory = '%userprofile%'
             self.pathPart = '\\'
         elif (ismac or islinux):
+            self.homeDirectory = '/home'
             self.pathPart = '/'
 
+        self.config_obj = ConfigParser()
         try:
-            with open('.fileLocation.json', 'r+') as fileLoc:
-                self.fileLocation = json.load(fileLoc)
-            os.chdir(self.fileLocation)
-        except:
+            self.config_obj.read('config.ini')
+            self.fileLocation = self.config_obj['PATH']['main']
+        except KeyError:
             # Manual input required if searchpath isn't
             # already defined. This will then be saved for
             # next time and used as the working directory.
-            self.fileLocation = filedialog.askdirectory(
-                                initialdir=self.pathPart,
-                                title="Select directory")
+            fd = filedialog.askdirectory(initialdir=self.homeDirectory,
+                                         title="Select directory")
             # This directory contains BIBLE.txt & the directory's name itself.
-            os.chdir(self.fileLocation)
-            with open('.fileLocation.json', 'w+') as fileLoc:
-                json.dump(self.fileLocation, fileLoc, ensure_ascii=True)
+            os.chdir(fd)
+
+            self.config_obj['PATH'] = {'dir': fd}
+            self.fileLocation = self.config_obj['PATH']['dir']
+
+            with open('config.ini', 'w') as cfg:
+                self.config_obj.write(cfg)
 
         try:
-            with open('.bibPreferences.json', 'r+') as Pref:
-                [self.language, self.font, self.font_size] = json.load(Pref)
-        except:
+            self.language = self.config_obj['LANGUAGE']['current']
+            self.font = self.config_obj['FONT']['font']
+            self.font_size = self.config_obj['FONT']['size']
+            os.chdir(self.fileLocation)
+        except KeyError:
+            self.config_obj['LANGUAGE'] = {'current': 'eng',
+                                           'options':
+                                           'eng,spa,fre,ger,heb,gre'}
+            self.config_obj['FONT'] = {'font': 'roman',
+                                       'size': '12',
+                                       'font options':
+                                       'roman,calibri,courier',
+                                       'size options':
+                                       '9,10,11,12,13,14,15'}
             # Defaults:
-            self.language = 'en'
-            self.font = 'roman'
-            self.font_size = '12'
+            self.language = self.config_obj['LANGUAGE']['current']
+            self.font = self.config_obj['FONT']['font']
+            self.font_size = self.config_obj['FONT']['size']
 
-            with open('.bibPreferences.json', 'w+') as Pref:
-                json.dump([self.language, self.font, self.font_size],
-                          Pref, ensure_ascii=True)
+            # Change to Defaults available in Settings menubar
+            with open('config.ini', 'w') as cfg:
+                self.config_obj.write(cfg)
+
+        try:
+            fileName = ''.join(['.ToC_', self.language, '.json'])
+            # Path for the full bible text.
+            with open(fileName, 'r') as TableCont:
+                [self.bkNames, self.bkAbbrv] = json.load(TableCont)
+        except FileNotFoundError:
+            tk.messagebox.showerror('Error', 'Bible text file not found.')
+
+        try:
+            # Attempt to import bible dictionary
+            # as "BibDict".
+            fileName = ''.join(['.BibDict_', self.language, '.json'])
+            with open(fileName, 'r') as b:
+                d = collections.OrderedDict
+                self.BibDict = json.load(b,
+                                         object_pairs_hook=d)
+        except FileNotFoundError:
+            # Make "BibDict" if it doesn't already exist,
+            # or isn't found in the specified searchpath
+            self.BibDict = self.makeBibDict(self)
+            with open(fileName, 'w') as b:
+                json.dump(self.BibDict, b, ensure_ascii=True)
 
             # FIXME
             '''
@@ -274,29 +314,6 @@ class Bible:
             #   json.dump([self.language, self.font, self.font_size],
                           Pref, ensure_ascii=True)
             '''
-        try:
-            fileName = ''.join(['.ToC_', self.language, '.json'])
-            # Path for the full bible text.
-            with open(fileName, 'r+') as TableCont:
-                [self.bkNames, self.bkAbbrv] = json.load(TableCont)
-        except:
-            # Fall-back import Table of Contents
-            # as "bkAbbrv" & "bkNames".
-            # (Instance variables based on "language")
-            with open(fileName, 'r+') as TableCont:
-                [self.bkNames, self.bkAbbrv] = json.load(TableCont)
-        try:
-            # Attempt to import bible dictionary
-            # as "BibDict".
-            fileName = ''.join(['.BibDict_', self.language, '.json'])
-            with open(fileName, 'r+') as Bib:
-                d = collections.OrderedDict
-                self.BibDict = json.load(Bib,
-                                         object_pairs_hook=d)
-        except:
-            # Make "BibDict" if it doesn't already exist,
-            # or isn't found in the specified searchpath
-            self.BibDict = self.makeBibDict(self)
 
     def focus(self, event=None):
         self.frame.SearchBar.focus_set()
@@ -360,11 +377,49 @@ class Bible:
     def close_window(self, event=None):
         self.root.destroy()
 
+    # GOTO
     def getInput(self, event=None):
         self.frame.var.set(1)
         self.frame.entry = self.frame.SearchBar.get()
         self.statusUpdate(self.frame, self.frame.entry)
-        self.VerseRef(self)
+
+        # Table of contents entry check, any full or abbreviated reference
+        ToC = self.bkAbbrv.append(self.bkNames)
+        unique_words = self.BibDict['CONCORDANCE']
+
+        ToC_entries = [e in ToC for e in self.frame.entry]
+        ToC_count = len(ToC_entries)
+        concord_entries = [e in unique_words for e in self.frame.entry]
+        con_count = len(concord_entries)
+        non_ToC_entries = [e not in ToC for e in self.frame.entry]
+        numeric_entries = [e.isnumeric() for e in self.frame.entry]
+
+        a = any(ToC_entries)
+        b = any(concord_entries)
+        c = any(numeric_entries)
+
+        # if all entry contents reference a book, but none of the text
+        # EX: "Genesis" --> GENESIS(book)
+        if (a and not b):
+            verses_out = self.VerseRef(self)
+        # else if some entry contents reference a book, and some text
+        # EX: "if we being romans" --> "... if we being romans ..."
+        elif (a and b) and (con_count > ToC_count):
+            verses_out = self.PhraseSearch(self)
+        # else if certain entry contents reference a book and a word in text
+        # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
+        elif (a and b) and (con_count > ToC_count):
+            verses_out = self.VerseRef(self)
+            verses_out.append(self.PhraseSearch(self))
+        # else if entry contents reference a book, and chapter or verse
+        # EX: "Rom 12:1"
+        elif (a and c):
+            verses_out = self.VerseRef(self)
+        elif (not(a) and not(b)):
+            tk.messagebox.showerror('Error', 'Bible text file not found.')
+
+        self.listUpdate(self, verses_out,)
+        self.frame.go_b.wait_variable(self.frame.var)
 
     def getQueryInput(setting_list, self, event=None):
         self.qvar.set(1)
@@ -386,7 +441,12 @@ class Bible:
         self.frame.textWidget.configure(state='disabled')
 
     # TODO (L.115)
-    def listUpdate(self, l):
+    def listUpdate(self, l, mode='w'):
+        if mode == 'w':
+            self.cls(self.frame)
+        elif mode =='a':
+            pass
+
         for i in range(len(l)):
             self.b_press.append(partial(self.textUpdate, self, l[i]))
             b = self.b_press[i]
@@ -418,7 +478,7 @@ class Bible:
             hrefs[r] = hrefs[r].split('=')[1].replace(';', '')
             hrefs[r] = netloc + hrefs[r].replace("'", '')
 
-        # ODO HREFS TO PDFS
+        # TODO HREFS TO PDFS
         self.calendar = ''
 
     def save(self):
@@ -427,13 +487,14 @@ class Bible:
         try:
             wd = os.getcwd()
             os.chdir(self.fileLocation)
-            with open('.save_directory.json', 'r+') as save_dir:
-                self.save_directory = json.load(save_dir)
+            self.save_directory = self.config_obj['PATH']['save']
+            with open('config.ini', 'w') as cfg:
+                self.config_obj.write(cfg)
             os.chdir(self.save_directory)
-            with open('%s.txt' % (log_time), 'w+') as saved:
+            with open('%s.txt' % (log_time), 'w') as saved:
                 # Save file found and amended
                 saved.write(text)
-        except:
+        except FileNotFoundError:
             # Save file not found, saveas:
             self.saveas(self)
         finally:
@@ -442,29 +503,30 @@ class Bible:
     def saveas(self):
         text = self.frame.textWidget.get('1.0', 'end')
         fileName = filedialog.asksaveasfilename(
-                    initialdir=self.pathPart, title="Save as",
+                    initialdir=self.homeDirectory, title="Save as",
                     filetypes=(("text file", "*.txt"),
                                ("all files", "*.*")))
-        with open(fileName, 'w+') as saved_as:
+        with open(fileName, 'w') as saved_as:
             saved_as.write(text)
-        self.save_directory = re.split('.', fileName)[0]
         os.chdir(self.fileLocation)
-        with open('.save_directory.json', 'w+') as save_dir:
-            json.drump(self.save_directory, save_dir, ensure_ascii=True)
+        self.config_obj = ConfigParser()
+        self.config_obj['PATH']['save'] = re.split('.', fileName)[0]
+        self.save_directory = self.config_obj['PATH']['save']
+        with open('config.ini', 'w') as cfg:
+            self.config_obj.write(cfg)
 
     '''
-    # ##################################
-    #                                ##
-    # For Searching Verse References ##
-    #                                ##
-    # ##################################
+    ####################################
+    ##                                ##
+    ## For Searching Verse References ##
+    ##                                ##
+    ####################################
     '''
 
     def VerseRef(self, toShow='None'):
         # Initialize 'verses_out' for concatenation.
         verses_out = list()
         status = ''
-        self.cls(self.frame)
         if toShow == 'Short':
             self.textUpdate(self, self.miniPreamble())
             self.frame.go_b.wait_variable(self.frame.var)
@@ -620,7 +682,7 @@ class Bible:
             status += ' %s' % (cKey)
             try:
                 cFind = verses_outFind[cKey]
-            except:
+            except KeyError:
                 cMax = len(verses_outFind.keys())
 
                 # Plural or not?
@@ -656,7 +718,7 @@ class Bible:
                     try:
                         # Verses acquired!
                         verses_out.append('\n' + cFind[vKey])
-                    except:
+                    except KeyError:
                         e_raised = True
                     finally:
                         if e_raised:
@@ -673,7 +735,7 @@ class Bible:
                 try:
                     # Verse acquired!
                     verses_out.append('\n' + cFind[vKey])
-                except:
+                except KeyError:
                     vMax = len(cFind.keys())
                     noVRef = ('ortunetly, %s %s only has %i verses'
                               % (bkMark, chpRef, vMax))
@@ -685,25 +747,18 @@ class Bible:
                         verses_out = [noVRef]
 
         self.statusUpdate(self.frame, status)
-        self.cls(self.frame)
-        self.listUpdate(self, verses_out)
-        self.frame.go_b.wait_variable(self.frame.var)
+        return verses_out
 
     '''
-    # #########################
-    #                       ##
-    # For Searching Phrases ##
-    #                       ##
-    # #########################
+    ###########################
+    ##                       ##
+    ## For Searching Phrases ##
+    ##                       ##
+    ###########################
     '''
 
     def PhraseSearch(self, toShow='None'):
         verses_out = list()
-        if not toShow == 'None':
-            self.textUpdate(self, self.miniPreamble())
-            self.frame.go_b.wait_variable(self.frame.var)
-        else:
-            self.cls(self.frame)
 
         Srch = self.frame.entry
         addOns = ''
@@ -770,30 +825,29 @@ class Bible:
             self.statusUpdate(self.frame, ('%i VERSES CONTAINING %s'
                                            % (count, Srch.upper())))
 
-        self.listUpdate(self, verses_out)
-        self.frame.go_b.wait_variable(self.frame.var)
+        return verses_out
 
     def preamble():
         cross = '''\n\n
-                   |        \\              /        |
-                   |         \\     _      /         |
-                   |              | |               |
-                   |              | |               |
-                   |         _____| |_____          |
-                   |        |_____   _____|         |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              |_|               |
-                   |      _______/   \\_______       |\n\n
+                         \\              /
+                          \\     _      /
+                               | |
+                               | |
+                          _____| |_____
+                         |_____   _____|
+                               | |
+                               | |
+                               | |
+                               | |
+                               | |
+                               | |
+                               |_|
+                       _______/   \\_______        \n\n
                 '''
 
-        version = '''______________________
+        version = '''   ______________________
 
-                       THE KING JAMES BIBLE
+                      THE KING JAMES BIBLE
                       ______________________
 
                       Please rightly divide and handle with prayer. \n\n
@@ -828,26 +882,26 @@ class Bible:
 
     def miniPreamble():
         cross = '''\n\n
-                   |        \\              /        |
-                   |         \\     _      /         |
-                   |              | |               |
-                   |              | |               |
-                   |         _____| |_____          |
-                   |        |_____   _____|         |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              | |               |
-                   |              |_|               |
-                   |      _______/   \\_______       |\n\n
+                         \\              /
+                          \\     _      /
+                               | |
+                               | |
+                          _____| |_____
+                         |_____   _____|
+                               | |
+                               | |
+                               | |
+                               | |
+                               | |
+                               | |
+                               |_|
+                       _______/   \\_______        \n\n
                 '''
 
-        version = '''______________________\n
+        version = '''      ______________________
 
                        THE KING JAMES BIBLE
-                      ______________________\n
+                      ______________________
 
                       Please rightly divide and handle with prayer. \n\n
                   '''
@@ -855,17 +909,18 @@ class Bible:
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        with open('.fileLocation.json', 'r+') as fileLoc:
-            self.fileLocation = json.load(fileLoc)
-
-        fileName = ''.join(['.ToC_', self.language, '.json'])
-        with open(fileName, 'r+') as ToC:
-            [self.bkNames, self.bkAbbrv] = json.load(ToC)
-
         fileBible = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
         # Imports full bible text and books as "bib".
         with open(fileBible, 'r+') as Bfile:
             bib = Bfile.read()
+
+        alpha = ascii_letters
+        # Alphabet
+        asdf = alpha
+        # Alphabet + Spaces
+        asdf_S = alpha + ' '
+        # AlphaNumeric + \'
+        asdf_Ns = alpha + string.digits + '\''
 
         n = len(self.bkNames)
         books = list()
@@ -889,8 +944,18 @@ class Bible:
             bkWiper = ''
             bib = bib.replace(bkToWipe, bkWiper)
 
+            trim_text = ''.join([l for l in text if l in asdf_S])
+            trim_books.append(trim_text)
+
         del bib
-        self.BibDict = collections.OrderedDict()
+        trim_bible = ''.join(trim_books)
+        # Whole Bible excluding punctuation and book titles.
+        bib_letters = ''.join([l for l in trim_bible])
+        bib_words = re.split(' ', bib_letters)
+        bib_words = [w for w in bib_words if w != '']
+        unique_words = [s for s in set(bib_words) if s not in bkNames]
+
+        BibDict = collections.OrderedDict()
         # Loops to populate the book structure.
         for b in range(n):
             # Chapters marked uniquely (":1 " = verse 1).
@@ -960,11 +1025,10 @@ class Bible:
                 chpKey = str(c+1)
                 chpDict[chpKey] = vrsDict
             bkKey = (self.bkAbbrv[b]).replace(' ', '')
-            self.BibDict[bkKey] = chpDict
+            BibDict[bkKey] = chpDict
 
-        fileName = ''.join(['.BibDict_', self.language, '.json'])
-        with open(fileName, 'w+') as bDict:
-            json.dump(self.BibDict, bDict, ensure_ascii=True)
+        BibDict['CONDORDANCE'] = unique_words
+        return BibDict
 
     def ismember(a, b):
         bind = {}
