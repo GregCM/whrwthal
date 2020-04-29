@@ -1,42 +1,44 @@
 #!/usr/bin/python3
 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+'''
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# _______________________________________________
-#
-# This app was written by Greg Caceres.
-# It is free to use, access, or edit. It is open
-# source, free as in beer and as in speech.
-# Comprehensive license pending.
-#
-# The Biblical translations used herein are all
-# in the public domain, and free to use, quote,
-# or share without limit, provided no changes
-# are made to the content therein.
-#
-# If you are running on MicroSoft Windows,
-# see the install support for Python at
-#
-# https://docs.python.org/3/using/windows.html
-#
-# For other support, or if you have any
-# questions about the app's functionality,
-# the content of the word of God, or
-# anything else related, contact at
-#
-# gregcaceres@gmail.com
-# _______________________________________________
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+_______________________________________________
+
+This app was written by Greg Caceres.
+It is free to use, access, or edit. It is open
+source, free as in beer and as in speech.
+Comprehensive license pending.
+
+The Biblical translations used herein are all
+in the public domain, and free to use, quote,
+or share without limit, provided no changes
+are made to the content therein.
+
+If you are running on MicroSoft Windows,
+see the install support for Python at
+
+https://docs.python.org/3/using/windows.html
+
+For other support, or if you have any
+questions about the app's functionality,
+the content of the word of God, or
+anything else related, contact at
+
+gregcaceres@gmail.com
+_______________________________________________
+'''
 
 import bs4
 import collections
