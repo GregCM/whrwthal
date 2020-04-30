@@ -285,12 +285,6 @@ class Bible:
         except FileNotFoundError:
             # Make "BibDict" if it doesn't already exist,
             # or isn't found in the specified searchpath
-            gsize = Bible.frame.grid_size()
-            for row in range(gsize[0]):
-                tk.Grid.rowconfigure(Bible.frame, row, weight=1)
-                for col in range(gsize[1]):
-                    tk.Grid.columnconfigure(Bible.frame, col, weight=1)
-
             self.BibDict = self.makeBibDict(self)
             with open(fileName, 'w') as b:
                 json.dump(self.BibDict, b, ensure_ascii=True)
