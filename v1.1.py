@@ -70,6 +70,76 @@ class Bible:
         ##################
         '''
 
+        ispc = sys.platform.startswith('win')
+        ismac = sys.platform.startswith('darwin')
+        islinux = sys.platform.startswith('linux')
+
+        if ispc:
+            self.homeDirectory = '%userprofile%'
+            self.pathPart = '\\'
+        elif (ismac or islinux):
+            self.homeDirectory = '/home'
+            self.pathPart = '/'
+
+        self.config_obj = ConfigParser()
+        try:
+            self.config_obj.read('config.ini')
+            self.fileLocation = self.config_obj['PATH']['main']
+            self.language = self.config_obj['LANGUAGE']['current']
+            self.font = self.config_obj['FONT']['font']
+            self.font_size = self.config_obj['FONT']['size']
+            os.chdir(self.fileLocation)
+        except KeyError:
+            # Manual input required if searchpath isn't
+            # already defined. This will then be saved for
+            # next time and used as the working directory.
+            fd = filedialog.askdirectory(initialdir=self.homeDirectory,
+                                         title="Select directory")
+            # This directory contains BIBLE.txt & the directory's name itself.
+            os.chdir(fd)
+
+            self.config_obj['PATH'] = {'dir': fd}
+            self.fileLocation = self.config_obj['PATH']['dir']
+
+            self.config_obj['LANGUAGE'] = {'current': 'eng',
+                                           'options':
+                                           'eng,spa,fre,ger,heb,gre'}
+            self.config_obj['FONT'] = {'font': 'roman',
+                                       'size': '12',
+                                       'font options':
+                                       'roman,calibri,courier',
+                                       'size options':
+                                       '9,10,11,12,13,14,15'}
+            # Defaults:
+            self.language = self.config_obj['LANGUAGE']['current']
+            self.font = self.config_obj['FONT']['font']
+            self.font_size = self.config_obj['FONT']['size']
+
+            # Change to Defaults available in Settings menubar
+            with open('config.ini', 'w') as cfg:
+                self.config_obj.write(cfg)
+
+        try:
+            fileName = ''.join(['.ToC_', self.language, '.json'])
+            # Path for the full bible text.
+            with open(fileName, 'r') as TableCont:
+                [self.bkNames, self.bkAbbrv] = json.load(TableCont)
+        except FileNotFoundError:
+            messagebox.showerror('Error', 'Table of Contents not found.')
+
+        try:
+            # Attempt to import bible dictionary as "BibDict".
+            fileName = ''.join(['.BibDict_', self.language, '.json'])
+            with open(fileName, 'r') as b:
+                d = collections.OrderedDict
+                self.BibDict = json.load(b, object_pairs_hook=d)
+        except FileNotFoundError:
+            # Make "BibDict" if it doesn't already exist,
+            # or isn't found in the specified searchpath
+            self.BibDict = self.makeBibDict(self)
+            with open(fileName, 'w') as b:
+                json.dump(self.BibDict, b, ensure_ascii=True)
+
         # Create & Configure root
         self.root = tk.Tk()
         tk.Grid.rowconfigure(self.root, 0, weight=1)
@@ -218,76 +288,6 @@ class Bible:
         self.frame.Rpadding.configure(background='gray18',
                                       foreground='ghost white',
                                       state='disabled')
-
-        ispc = sys.platform.startswith('win')
-        ismac = sys.platform.startswith('darwin')
-        islinux = sys.platform.startswith('linux')
-
-        if ispc:
-            self.homeDirectory = '%userprofile%'
-            self.pathPart = '\\'
-        elif (ismac or islinux):
-            self.homeDirectory = '/home'
-            self.pathPart = '/'
-
-        self.config_obj = ConfigParser()
-        try:
-            self.config_obj.read('config.ini')
-            self.fileLocation = self.config_obj['PATH']['main']
-            self.language = self.config_obj['LANGUAGE']['current']
-            self.font = self.config_obj['FONT']['font']
-            self.font_size = self.config_obj['FONT']['size']
-            os.chdir(self.fileLocation)
-        except KeyError:
-            # Manual input required if searchpath isn't
-            # already defined. This will then be saved for
-            # next time and used as the working directory.
-            fd = filedialog.askdirectory(initialdir=self.homeDirectory,
-                                         title="Select directory")
-            # This directory contains BIBLE.txt & the directory's name itself.
-            os.chdir(fd)
-
-            self.config_obj['PATH'] = {'dir': fd}
-            self.fileLocation = self.config_obj['PATH']['dir']
-
-            self.config_obj['LANGUAGE'] = {'current': 'eng',
-                                           'options':
-                                           'eng,spa,fre,ger,heb,gre'}
-            self.config_obj['FONT'] = {'font': 'roman',
-                                       'size': '12',
-                                       'font options':
-                                       'roman,calibri,courier',
-                                       'size options':
-                                       '9,10,11,12,13,14,15'}
-            # Defaults:
-            self.language = self.config_obj['LANGUAGE']['current']
-            self.font = self.config_obj['FONT']['font']
-            self.font_size = self.config_obj['FONT']['size']
-
-            # Change to Defaults available in Settings menubar
-            with open('config.ini', 'w') as cfg:
-                self.config_obj.write(cfg)
-
-        try:
-            fileName = ''.join(['.ToC_', self.language, '.json'])
-            # Path for the full bible text.
-            with open(fileName, 'r') as TableCont:
-                [self.bkNames, self.bkAbbrv] = json.load(TableCont)
-        except FileNotFoundError:
-            messagebox.showerror('Error', 'Table of Contents not found.')
-
-        try:
-            # Attempt to import bible dictionary as "BibDict".
-            fileName = ''.join(['.BibDict_', self.language, '.json'])
-            with open(fileName, 'r') as b:
-                d = collections.OrderedDict
-                self.BibDict = json.load(b, object_pairs_hook=d)
-        except FileNotFoundError:
-            # Make "BibDict" if it doesn't already exist,
-            # or isn't found in the specified searchpath
-            self.BibDict = self.makeBibDict(self)
-            with open(fileName, 'w') as b:
-                json.dump(self.BibDict, b, ensure_ascii=True)
 
     def focus(self, event=None):
         self.frame.SearchBar.focus_set()
