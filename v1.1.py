@@ -53,6 +53,8 @@ import string
 import sys
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
+from tkinter import ttk
 import urllib
 
 
@@ -232,6 +234,10 @@ class Bible:
         try:
             self.config_obj.read('config.ini')
             self.fileLocation = self.config_obj['PATH']['main']
+            self.language = self.config_obj['LANGUAGE']['current']
+            self.font = self.config_obj['FONT']['font']
+            self.font_size = self.config_obj['FONT']['size']
+            os.chdir(self.fileLocation)
         except KeyError:
             # Manual input required if searchpath isn't
             # already defined. This will then be saved for
@@ -244,15 +250,6 @@ class Bible:
             self.config_obj['PATH'] = {'dir': fd}
             self.fileLocation = self.config_obj['PATH']['dir']
 
-            with open('config.ini', 'w') as cfg:
-                self.config_obj.write(cfg)
-
-        try:
-            self.language = self.config_obj['LANGUAGE']['current']
-            self.font = self.config_obj['FONT']['font']
-            self.font_size = self.config_obj['FONT']['size']
-            os.chdir(self.fileLocation)
-        except KeyError:
             self.config_obj['LANGUAGE'] = {'current': 'eng',
                                            'options':
                                            'eng,spa,fre,ger,heb,gre'}
@@ -277,45 +274,26 @@ class Bible:
             with open(fileName, 'r') as TableCont:
                 [self.bkNames, self.bkAbbrv] = json.load(TableCont)
         except FileNotFoundError:
-            tk.messagebox.showerror('Error', 'Bible text file not found.')
+            messagebox.showerror('Error', 'Table of Contents not found.')
 
         try:
-            # Attempt to import bible dictionary
-            # as "BibDict".
+            # Attempt to import bible dictionary as "BibDict".
             fileName = ''.join(['.BibDict_', self.language, '.json'])
             with open(fileName, 'r') as b:
                 d = collections.OrderedDict
-                self.BibDict = json.load(b,
-                                         object_pairs_hook=d)
+                self.BibDict = json.load(b, object_pairs_hook=d)
         except FileNotFoundError:
             # Make "BibDict" if it doesn't already exist,
             # or isn't found in the specified searchpath
+            gsize = Bible.frame.grid_size()
+            for row in range(gsize[0]):
+                tk.Grid.rowconfigure(Bible.frame, row, weight=1)
+                for col in range(gsize[1]):
+                    tk.Grid.columnconfigure(Bible.frame, col, weight=1)
+
             self.BibDict = self.makeBibDict(self)
             with open(fileName, 'w') as b:
                 json.dump(self.BibDict, b, ensure_ascii=True)
-
-            # FIXME
-            '''
-            # ett_root = tk.Tk()
-            # uery_list = ['Language? [el/he/en/es]','Font?','Font Size?']
-            # elf.pref_to_dump = []
-            # ettings_list = []
-            # or q in query_list:
-            #   query = tk.Label(sett_root,text=q)
-            #   setting = tk.Entry(sett_root)
-            #   query.pack(), setting.pack()
-            #   settings_list.append(setting)
-
-
-            # qi = partial(self.getQueryInput, settings_list, self)
-            # nput_button = tk.Button(sett_root, text='ENTER ↵', command=gqi)
-            # nput_button.pack()
-
-            # ett_root.destroy()
-            # ith open('.bibPreferences.json', '+w') as Pref:
-            #   json.dump([self.language, self.font, self.font_size],
-                          Pref, ensure_ascii=True)
-            '''
 
     def focus(self, event=None):
         self.frame.SearchBar.focus_set()
@@ -389,11 +367,12 @@ class Bible:
         ToC = self.bkAbbrv.append(self.bkNames)
         unique_words = self.BibDict['CONCORDANCE']
 
-        ToC_entries = [e in ToC for e in self.frame.entry]
-        ToC_count = len(ToC_entries)
-        concord_entries = [e in unique_words for e in self.frame.entry]
-        con_count = len(concord_entries)
-        numeric_entries = [e.isnumeric() for e in self.frame.entry]
+        while self.frame.entry != None:
+            ToC_entries = [e for e in self.frame.entry if e in ToC]
+            ToC_count = len(ToC_entries)
+            concord_entries = [e for e in self.frame.entry if e in unique_words]
+            con_count = len(concord_entries)
+            numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
 
         a = any(ToC_entries)
         b = any(concord_entries)
@@ -417,7 +396,7 @@ class Bible:
         elif (a and c):
             verses_out = self.VerseRef(self)
         elif (not(a) and not(b)):
-            tk.messagebox.showerror('Error', 'Bible text file not found.')
+            messagebox.showerror('Error', 'Bible text file not found.')
 
         self.listUpdate(self, verses_out,)
         self.frame.go_b.wait_variable(self.frame.var)
@@ -915,6 +894,19 @@ class Bible:
         with open(fileBible, 'r+') as Bfile:
             bib = Bfile.read()
 
+        # FIXME: Add verbal details to progress bar status updates
+        child = tk.Tk()
+        title = child.title('Importing')
+        msg = 'Please wait while the text is compiled...'
+        info = tk.Label(child, text=msg, relief='flat')
+        progress = tk.ttk.Progressbar(child, orient='horizontal',
+                                      length=100, mode='determinate')
+        info.pack(padx=5, pady=5)
+        progress.pack(padx=5, pady=5)
+
+        progress['value'] = 1
+        prog_max = len(bib)
+
         prints = string.printable
         digits = string.digits
         # Printables - Digits
@@ -925,6 +917,7 @@ class Bible:
         trim_books = []
         # Populate "books" to be placed
         for b in range(n):
+            child.update_idletasks()
             populated = re.split(self.bkNames[b], bib)[0]
             if b == 0:
                 # Removes special case GENESIS title from text
@@ -945,6 +938,8 @@ class Bible:
             text = ''.join(books)
             trim_text = ''.join([l for l in text if l in asdf])
             trim_books.append(trim_text)
+            scale = 1.0468556176346286
+            progress['value'] = (len(text) / prog_max) * (100 / scale)
 
         del bib
         trim_bible = ''.join(trim_books)
@@ -954,6 +949,7 @@ class Bible:
         bib_words = [w for w in bib_words if w != '']
         unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
+        progress['value'] = 1
         BibDict = collections.OrderedDict()
         # Loops to populate the book structure.
         for b in range(n):
@@ -961,6 +957,9 @@ class Bible:
             chapters = re.split(':1 ', books[b])[1:]
             cLen = len(chapters)
             chpDict = collections.OrderedDict()
+
+            progress['value'] = (b / n) * (100 / scale)
+            child.update_idletasks()
             # Loops to populate the chapter structure.
             for c in range(cLen):
                 # Add the verse 1 marker again for verse indexing:
@@ -1026,7 +1025,8 @@ class Bible:
             bkKey = (self.bkAbbrv[b]).replace(' ', '')
             BibDict[bkKey] = chpDict
 
-        BibDict['CONDORDANCE'] = unique_words
+        BibDict['CONCORDANCE'] = unique_words
+        child.destroy()
         return BibDict
 
     def ismember(a, b):
