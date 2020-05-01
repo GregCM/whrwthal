@@ -3,3 +3,4 @@ config.ini
 .fileLocation.json
 __pycache__
 .pytest_cache
+.*.swp
