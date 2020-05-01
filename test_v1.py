@@ -2,7 +2,9 @@
 
 import v1
 
+
 class Test:
+
     def test_makeBibDict(*kwargs):
         v1.Bible.__init__(v1.Bible)
         d = v1.Bible.makeBibDict(v1.Bible)
