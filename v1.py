@@ -885,10 +885,10 @@ class Bible:
     def makeBibDict(self):
         fileBible = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
         # Imports full bible text and books as "bib".
-        with open(fileBible, 'r+') as Bfile:
+        with open(fileBible, 'r') as Bfile:
             bib = Bfile.read()
 
-        # FIXME: Add verbal details to progress bar status updates
+        # TODO: Add verbal details to progress bar status updates
         child = tk.Tk()
         title = child.title('Importing')
         msg = 'Please wait while the text is compiled...'
@@ -901,10 +901,15 @@ class Bible:
         progress['value'] = 1
         prog_max = len(bib)
 
+        # prints / digits originally for concordance, save for prospectv use
+        '''
         prints = string.printable
         digits = string.digits
         # Printables - Digits
         asdf = ''.join([s for s in prints if s not in digits])
+        '''
+        # Letters and space for Concordance compilation
+        alpha_space = string.ascii_letters + ' '
 
         n = len(self.bkNames)
         books = []
@@ -912,35 +917,33 @@ class Bible:
         # Populate "books" to be placed
         for b in range(n):
             child.update_idletasks()
-            populated = re.split(self.bkNames[b], bib)[0]
+            text = re.split(self.bkNames[b], bib)[0]
             if b == 0:
-                # Removes special case GENESIS title from text
-                GEN = re.split(self.bkNames[b+1], bib)[0]
-                books.append(GEN.replace(self.bkNames[b], '')[1:-1])
+                bib = bib.replace(self.bkNames[b],'')[1:-1]
+                text = re.split(self.bkNames[b+1], bib)[0]
 
             elif b == 65:
-                books.append(re.split(self.bkNames[b], bib)[1])
+                text = bib
 
-            elif populated:
-                books.append(populated)
-
-            bkToWipe = populated
-            # Keeps books from being populated with prior books.
+            # Exclude titles from text.
+            bib = bib.replace(self.bkNames[b],'')
+            # Clear books already coverd.
             bkWiper = ''
+            bkToWipe = text
             bib = bib.replace(bkToWipe, bkWiper)
 
-            text = ''.join(books)
-            trim_text = ''.join([l for l in text if l in asdf])
+            books.append(text)
+            trim_text = ''.join([l for l in text if l in alpha_space])
             trim_books.append(trim_text)
             scale = 1.0468556176346286
             progress['value'] = (len(text) / prog_max) * (100 / scale)
 
-        del bib
         trim_bible = ''.join(trim_books)
         # Whole Bible excluding punctuation and book titles.
         bib_letters = ''.join([l for l in trim_bible])
         bib_words = re.split(' ', bib_letters)
         bib_words = [w for w in bib_words if w != '']
+        # Concordance equivalent
         unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
         progress['value'] = 1
@@ -1029,7 +1032,6 @@ class Bible:
             if elt not in bind:
                 bind[elt] = i
                 return [bind.get(itm, None) for itm in a]
-
 
 if __name__ == '__main__':
     Bible.__init__(Bible)
