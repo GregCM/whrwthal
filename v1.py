@@ -54,7 +54,6 @@ import sys
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
-from tkinter import ttk
 import urllib
 
 
@@ -361,15 +360,15 @@ class Bible:
         ToC = self.bkAbbrv.append(self.bkNames)
         unique_words = self.BibDict['CONCORDANCE']
 
-        while self.frame.entry != None:
+        while self.frame.entry is not None:
             ToC_entries = [e for e in self.frame.entry if e in ToC]
             ToC_count = len(ToC_entries)
-            concord_entries = [e for e in self.frame.entry if e in unique_words]
-            con_count = len(concord_entries)
+            conc_entries = [e for e in self.frame.entry if e in unique_words]
+            con_count = len(conc_entries)
             numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
 
         a = any(ToC_entries)
-        b = any(concord_entries)
+        b = any(conc_entries)
         c = any(numeric_entries)
 
         # if all entry contents reference a book, but none of the text
@@ -890,7 +889,7 @@ class Bible:
 
         # TODO: Add verbal details to progress bar status updates
         child = tk.Tk()
-        title = child.title('Importing')
+        child.title('Importing')
         msg = 'Please wait while the text is compiled...'
         info = tk.Label(child, text=msg, relief='flat')
         progress = tk.ttk.Progressbar(child, orient='horizontal',
@@ -919,14 +918,14 @@ class Bible:
             child.update_idletasks()
             text = re.split(self.bkNames[b], bib)[0]
             if b == 0:
-                bib = bib.replace(self.bkNames[b],'')[1:-1]
+                bib = bib.replace(self.bkNames[b], '')[1:-1]
                 text = re.split(self.bkNames[b+1], bib)[0]
 
             elif b == 65:
                 text = bib
 
             # Exclude titles from text.
-            bib = bib.replace(self.bkNames[b],'')
+            bib = bib.replace(self.bkNames[b], '')
             # Clear books already coverd.
             bkWiper = ''
             bkToWipe = text
@@ -1032,6 +1031,7 @@ class Bible:
             if elt not in bind:
                 bind[elt] = i
                 return [bind.get(itm, None) for itm in a]
+
 
 if __name__ == '__main__':
     Bible.__init__(Bible)
