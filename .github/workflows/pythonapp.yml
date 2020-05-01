@@ -12,14 +12,14 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest, macos-latest, windows-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+    - name: Set up Python 3.X
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: 3.8, 3.7, 3.6, 3.5
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -34,4 +34,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        #pytest test_v1.py
+        pytest
