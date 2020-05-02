@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 '''
-This program is free software: you can redistribute it and/or modify
+This program is free software: you can redistribute it and/or modify'
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -13,7 +13,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 _______________________________________________
 
 This app was written by Greg Caceres.
@@ -38,6 +37,7 @@ anything else related, contact at
 
 gregcaceres@gmail.com
 _______________________________________________
+
 '''
 
 import bs4
@@ -54,6 +54,7 @@ import sys
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import ttk
 import urllib
 
 
@@ -69,14 +70,14 @@ class Bible:
         ##################
         '''
 
-        ispc = sys.platform.startswith('win')
-        ismac = sys.platform.startswith('darwin')
-        islinux = sys.platform.startswith('linux')
+        self.ispc = sys.platform.startswith('win')
+        self.ismac = sys.platform.startswith('darwin')
+        self.islinux = sys.platform.startswith('linux')
 
-        if ispc:
+        if self.ispc:
             self.homeDirectory = '%userprofile%'
             self.pathPart = '\\'
-        elif (ismac or islinux):
+        elif (self.ismac or self.islinux):
             self.homeDirectory = '/home'
             self.pathPart = '/'
 
@@ -148,7 +149,7 @@ class Bible:
         self.frame = tk.Frame(self.root)
         self.frame.tk_focusFollowsMouse()
         self.frame.master.title('The Bible')
-        self.frame.grid(row=0, column=0, sticky='NSEW')
+        self.frame.grid(row=0, column=0, sticky='nsew')
 
         menubar = tk.Menu(self.frame)
         fileMenu = tk.Menu(menubar, tearoff=0)
@@ -179,8 +180,8 @@ class Bible:
         self.frame.var = tk.IntVar()
         self.frame.SearchBar = tk.Entry(self.frame)
         self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
-        self.fc = partial(self.focus, self)
-        self.frame.master.bind('<Control-l>', self.fc)
+        slSB = partial(self.select, self)
+        self.frame.master.bind('<Control-l>', slSB)
 
         self.getIN = partial(self.getInput, self)
         self.frame.go_b = tk.Button(self.frame,
@@ -189,33 +190,16 @@ class Bible:
                                     relief='flat')
         self.frame.go_b.grid(row=3, column=1, sticky='new')
 
-        self.frame.listFrame = tk.Frame(self.frame)
-        self.frame.listFrame.grid(row=4, column=1, rowspan=6, sticky='new')
-        # FIXME
-        '''
-        # elf.frame.listFrame.config(scrollregion=self.frame.bbox('all'))
-        # elf.lbox_h = (self.frame.listFrame.config()['height'][-1])
-        # elf.lbox_w = (self.frame.listFrame.config()['width'][-1])
+        self.frame.canvas = tk.Canvas(self.frame)
+        self.frame.canvas.config(scrollregion=self.frame.canvas.bbox('all'))
+        yview = self.frame.canvas.yview
+        self.frame.canvas.sbar = ttk.Scrollbar(self.frame.canvas,
+                                               orient='vertical',
+                                               command=yview)
 
-        # elf.frame.scrollbar = tk.Scrollbar(self.frame, orient='vertical')
-        # elf.frame.scrollbar.bind_all('<MouseWheel>', self._on_mousewheel)
-        # elf.frame.scrollbar.config(command=self.frame.listFrame.yview_scroll)
+        self.frame.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
 
-        # elf.frame.listFrame = tk.Frame(self.frame.listFrame)
-        # elf.frame.listFrame.config(width=self.lbox_w, height=self.canvas_h)
-        # elf.frame_h= self.frame.listFrame.config()['height'][-1]
-        # elf.frame_w = self.frame.listFrame.config()['width'][-1]
-        # elf.frame.listFrame.create_window((4,4),
-                                            window=self.frame.listFrame,
-                                            anchor="nw",
-                                            tags='self.frame.listFrame')
-        '''
-
-        # Populated in listUpdate
-        # List of event handlers for button presses
-        self.b_press = list()
-        # List of buttons to be pressed
-        self.frame.listed_button = list()
+        self.list_button = []
 
         self.frame.statusBar = tk.Label(self.frame,
                                         text='Welcome!',
@@ -235,9 +219,13 @@ class Bible:
         # Welcome message!
         self.textUpdate(self, self.miniPreamble())
 
-        # elf.frame.master.bind('<Enter>', self.enter)
-        # elf.frame.master.bind('<Leave>', self.leave)
-        # elf.frame.master.bind('<ButtonPress>', self.leave)
+        '''
+        self.frame.bind('<Enter>', self.enter)
+        self.frame.bind('<Leave>', self.leave)
+        self.frame.bind('<ButtonPress>', self.leave)
+        # 3 second pause before tooltip appears
+        self.waittime = 3000
+        '''
 
         self.qt_Button = partial(self.close_window, self)
         self.frame.master.bind('<Control-q>', self.qt_Button)
@@ -267,7 +255,6 @@ class Bible:
         menubar.config(background='gray20',
                        foreground='ghost white',
                        relief='flat')
-        self.frame.listFrame.configure(background='gray18', relief='sunken')
         self.frame.quitButton.configure(background='gray26',
                                         foreground='ghost white')
         self.frame.statusBar.configure(background='gray18',
@@ -288,41 +275,50 @@ class Bible:
                                       foreground='ghost white',
                                       state='disabled')
 
+    def _on_mousewheel(self, event):
+        if (self.ispc or self.islinux):
+            event.delta /= 120
+        elif self.ismac:
+            event.delta /= 1
+        self.frame.canvas.yview_scroll(-1*(event.delta), 'units')
+
     def focus(self, event=None):
-        self.frame.SearchBar.focus_set()
-        self.select(self)
+        self.focus_set()
 
     def select(self, event=None):
+        self.focus(self.frame.SearchBar)
         self.frame.SearchBar.select_range(0, 'end')
         self.frame.SearchBar.icursor('end')
 
-    def on_mousewheel(self, event=None):
-        self.frame.listFrame.yview_scroll(-1*(event.delta/120), 'units')
+    '''
+    def enter(self, event=None):
+        self.schedule()
 
-        '''
-        # ef enter(self, event=None):
-        #       self.schedule()
+    def leave(self, event=None):
+        self.unschedule()
+        self.hidetip()
 
-        # ef leave(self, event=None):
-        #       self.unschedule()
-        #       self.hidetip()
+    def schedule(self, child):
+        self.unschedule()
+        st = partial(self.showtip, self, child)
+        self.id = self.widget.after(self.waittime, st)
 
-        # ef schedule(self):
-        #   self.unschedule()
-        #   self.id = self.widget.after(self.waittime, self.showtip)
+    def unschedule(self):
+        ids = self.id
+        self.id = None
+        if ids:
+            self.widget.after_cancel(ids)
 
-        # ef unschedule(self):
-        #   ids = self.id
-        #   self.id = None
-        #   if ids:
-        #       self.widget.after_cancel(ids)
-        '''
+    def showtip(self, child, event=None):
+        try:
+            widget = child
+            txt = child.about
+            x, y, cx, cy = widget.bbox("insert")
+            x += widget.winfo_rootx() + 25
+            y += widget.winfo_rooty() + 20
+        except NameError:
+            return None
 
-    def showtip(self, widget, txt='', event=None):
-        x = y = 0
-        x, y, cx, cy = widget.bbox("insert")
-        x += widget.winfo_rootx() + 25
-        y += widget.winfo_rooty() + 20
         # creates a toplevel window
         self.tw = tk.Toplevel(widget)
         # Leaves only the label and removes the app window
@@ -339,33 +335,39 @@ class Bible:
         if tw:
             tw.destroy()
 
+    def createToolTip(self, widget, text):
+        self.showtip(self, widget, text)
+    '''
+
+    def close_window(self, event=None):
+        self.root.destroy()
+
     def getColor():
         return
         # color = tk.tkColorChooser.askcolor()
         # rint(color)
 
-    def createToolTip(self, widget, text):
-        self.showtip(self, widget, text)
-
-    def close_window(self, event=None):
-        self.root.destroy()
-
-    # GOTO
     def getInput(self, event=None):
         self.frame.var.set(1)
         self.frame.entry = self.frame.SearchBar.get()
         self.statusUpdate(self.frame, self.frame.entry)
 
         # Table of contents entry check, any full or abbreviated reference
-        ToC = self.bkAbbrv.append(self.bkNames)
+        ToC = self.bkAbbrv + self.bkNames
         unique_words = self.BibDict['CONCORDANCE']
 
-        while self.frame.entry is not None:
-            ToC_entries = [e for e in self.frame.entry if e in ToC]
+        if self.frame.entry is not None:
+            ToC_entries = [e for e in ToC if e in self.frame.entry]
             ToC_count = len(ToC_entries)
-            conc_entries = [e for e in self.frame.entry if e in unique_words]
+            conc_entries = [e for e in unique_words if e in self.frame.entry]
             con_count = len(conc_entries)
             numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
+        else:
+            ToC_entries = []
+            ToC_count = len(ToC_entries)
+            conc_entries = []
+            con_count = len(conc_entries)
+            numeric_entries = []
 
         a = any(ToC_entries)
         b = any(conc_entries)
@@ -373,25 +375,31 @@ class Bible:
 
         # if all entry contents reference a book, but none of the text
         # EX: "Genesis" --> GENESIS(book)
-        if (a and not b):
+        # or if entry contents reference a book, and chapter or verse
+        # EX: "Rom 12:1"
+        if (a and not b) or (a and c):
             verses_out = self.VerseRef(self)
-        # else if some entry contents reference a book, and some text
-        # EX: "if we being romans" --> "... if we being romans ..."
-        elif (a and b) and (con_count > ToC_count):
-            verses_out = self.PhraseSearch(self)
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
-        elif (a and b) and (con_count > ToC_count):
+        elif (a and b):
             verses_out = self.VerseRef(self)
             verses_out.append(self.PhraseSearch(self))
-        # else if entry contents reference a book, and chapter or verse
-        # EX: "Rom 12:1"
-        elif (a and c):
-            verses_out = self.VerseRef(self)
-        elif (not(a) and not(b)):
-            messagebox.showerror('Error', 'Bible text file not found.')
+        # else if some entry contents reference a book, and some text
+        # EX: "if we being romans" --> "... if we being romans ..."
+        elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
+            verses_out = self.PhraseSearch(self)
+        # else if entry contents only reference a number
+        # EX: "23"
+        elif (c and not(any([a, b]))):
+            # TODO: allow search of a chapter number
+            # ie "23" --> GEN 23, EXO 23 ... ACT 23
+            pass
+        elif not(any([a, b, c])):
+            messagebox.showerror('Error',
+                                 '"%s" not found.' % (self.frame.entry))
+            verses_out = []
 
-        self.listUpdate(self, verses_out,)
+        self.listUpdate(self, verses_out)
         self.frame.go_b.wait_variable(self.frame.var)
 
     def getQueryInput(setting_list, self, event=None):
@@ -413,31 +421,44 @@ class Bible:
         self.frame.textWidget.insert('end', text)
         self.frame.textWidget.configure(state='disabled')
 
-    # TODO (L.115)
     def listUpdate(self, l, mode='w'):
+        for lb in self.list_button:
+            lb.destroy()
+
         if mode == 'w':
             self.cls(self.frame)
         elif mode == 'a':
             pass
 
+        self.frame.canvas.grid(row=4, column=1, rowspan=6,
+                               columnspan=2, sticky='new')
+
+        self.root.update()
+        w = self.frame.SearchBar.winfo_width()
+        h = self.frame.canvas.winfo_height()
+        self.frame.canvas.config(width=w, height=h)
+        self.frame.canvas.update()
+        c = self.frame.canvas
+        butt_height = 0
+        b_press = []
+        button_windows = []
         for i in range(len(l)):
-            self.b_press.append(partial(self.textUpdate, self, l[i]))
-            b = self.b_press[i]
-            self.frame.listed_button.append(tk.Button(self.frame.listFrame,
-                                                      text=l[i][0:50],
-                                                      command=b))
-            self.frame.listed_button[i].grid(row=i, column=0, sticky='ew')
-        self.frame.scrollbar.grid(column=1, sticky='ns')
-        lgsize = self.frame.listFrame.grid_size()
-        for row in range(lgsize[0]):
-            tk.Grid.rowconfigure(self.frame.listFrame, row, weight=1)
-            for col in range(lgsize[1]):
-                tk.Grid.columnconfigure(self.frame.listFrame,
-                                        col,
-                                        weight=1)
-        self.frame.listFrame.config(width=self.lbox_w,
-                                    height=self.canvas_h)
-        self.b_press, self.frame.listed_button = [], []
+            b_press.append(partial(self.textUpdate, self, l[i]))
+            self.list_button.append(tk.Button(text=l[i][0:50],
+                                              width=w,
+                                              command=b_press[i]))
+            self.list_button[i].configure(width=0,
+                                          activebackground='#D2D2D2')
+            button_windows.append(c.create_window((0,butt_height),
+                                                  anchor='nw',
+                                                  width=w,
+                                                  window=self.list_button[i]))
+            self.list_button[i].update()
+            butt_height += self.list_button[i].winfo_height()
+
+        c.sbar.grid(row=0, column=1, rowspan=5, sticky='ns')
+        self.frame.canvas.update()
+        b_press, self.list_button = [], []
 
     def calendarUpdate(self):
         url = 'https://www.blueletterbible.org/dailyreading/index.cfm'
@@ -892,8 +913,8 @@ class Bible:
         child.title('Importing')
         msg = 'Please wait while the text is compiled...'
         info = tk.Label(child, text=msg, relief='flat')
-        progress = tk.ttk.Progressbar(child, orient='horizontal',
-                                      length=100, mode='determinate')
+        progress = ttk.Progressbar(child, orient='horizontal',
+                                   length=100, mode='determinate')
         info.pack(padx=5, pady=5)
         progress.pack(padx=5, pady=5)
 
