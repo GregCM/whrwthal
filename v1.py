@@ -119,17 +119,17 @@ class Bible:
             with open('config.ini', 'w') as cfg:
                 self.config_obj.write(cfg)
 
+        fileName = ''.join(['.ToC_', self.language, '.json'])
+        # Path for the full bible text.
         try:
-            fileName = ''.join(['.ToC_', self.language, '.json'])
-            # Path for the full bible text.
             with open(fileName, 'r') as TableCont:
                 [self.bkNames, self.bkAbbrv] = json.load(TableCont)
         except FileNotFoundError:
             messagebox.showerror('Error', 'Table of Contents not found.')
 
+        # Attempt to import bible dictionary as "BibDict".
+        fileName = ''.join(['.BibDict_', self.language, '.json'])
         try:
-            # Attempt to import bible dictionary as "BibDict".
-            fileName = ''.join(['.BibDict_', self.language, '.json'])
             with open(fileName, 'r') as b:
                 d = collections.OrderedDict
                 self.BibDict = json.load(b, object_pairs_hook=d)
@@ -192,13 +192,21 @@ class Bible:
 
         self.frame.canvas = tk.Canvas(self.frame)
         self.frame.canvas.config(scrollregion=self.frame.canvas.bbox('all'))
+        self.frame.canvas.grid(row=4, column=1, rowspan=8,
+                               columnspan=2, sticky='nsew')
+        cheight = self.frame.canvas.winfo_height()
+
+        self.frame.scrollFrame = tk.Frame(self.frame, width=16)
+        self.frame.scrollFrame.grid(row=4, column=0,
+                                    rowspan=8, sticky='nes')
+
         yview = self.frame.canvas.yview
-        self.frame.canvas.sbar = ttk.Scrollbar(self.frame.canvas,
-                                               orient='vertical',
-                                               command=yview)
+        self.frame.sbar = ttk.Scrollbar(self.frame.scrollFrame,
+                                        orient='vertical',
+                                        command=yview)
+        self.frame.sbar.pack(side='top', fill='y')
 
         self.frame.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
-
         self.list_button = []
 
         self.frame.statusBar = tk.Label(self.frame,
@@ -354,12 +362,15 @@ class Bible:
 
         # Table of contents entry check, any full or abbreviated reference
         ToC = self.bkAbbrv + self.bkNames
+        ToC = [C.upper() for C in ToC]
         unique_words = self.BibDict['CONCORDANCE']
+        unique_words = [W.upper() for W in unique_words]
 
         if self.frame.entry is not None:
-            ToC_entries = [e for e in ToC if e in self.frame.entry]
+            entry_upp = self.frame.entry.upper()
+            ToC_entries = [e for e in ToC if e in entry_upp]
             ToC_count = len(ToC_entries)
-            conc_entries = [e for e in unique_words if e in self.frame.entry]
+            conc_entries = [e for e in unique_words if e in entry_upp]
             con_count = len(conc_entries)
             numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
         else:
@@ -377,24 +388,30 @@ class Bible:
         # EX: "Genesis" --> GENESIS(book)
         # or if entry contents reference a book, and chapter or verse
         # EX: "Rom 12:1"
-        if (a and not b) or (a and c):
+        if (a and not(b)) or (a and c):
+            print(1)
             verses_out = self.VerseRef(self)
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
+            print(2)
             verses_out = self.VerseRef(self)
             verses_out.append(self.PhraseSearch(self))
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
+            print(3)
             verses_out = self.PhraseSearch(self)
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
+            print(4)
             # TODO: allow search of a chapter number
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
+            verses_out = []
             pass
         elif not(any([a, b, c])):
+            print(5)
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
             verses_out = []
@@ -430,14 +447,14 @@ class Bible:
         elif mode == 'a':
             pass
 
-        self.frame.canvas.grid(row=4, column=1, rowspan=6,
-                               columnspan=2, sticky='new')
-
         self.root.update()
+        self.frame.canvas.update()
         w = self.frame.SearchBar.winfo_width()
         h = self.frame.canvas.winfo_height()
         self.frame.canvas.config(width=w, height=h)
         self.frame.canvas.update()
+
+        self.root.update()
         c = self.frame.canvas
         butt_height = 0
         b_press = []
@@ -447,16 +464,16 @@ class Bible:
             self.list_button.append(tk.Button(text=l[i][0:50],
                                               width=w,
                                               command=b_press[i]))
-            self.list_button[i].configure(width=0,
+            self.list_button[i].configure(width=0, font=('calibri',9),
                                           activebackground='#D2D2D2')
-            button_windows.append(c.create_window((0,butt_height),
+            button_windows.append(c.create_window((0, butt_height),
                                                   anchor='nw',
                                                   width=w,
                                                   window=self.list_button[i]))
             self.list_button[i].update()
             butt_height += self.list_button[i].winfo_height()
 
-        c.sbar.grid(row=0, column=1, rowspan=5, sticky='ns')
+        self.root.update()
         self.frame.canvas.update()
         b_press, self.list_button = [], []
 
@@ -517,15 +534,10 @@ class Bible:
     ####################################
     '''
 
-    def VerseRef(self, toShow='None'):
+    def VerseRef(self):
         # Initialize 'verses_out' for concatenation.
         verses_out = list()
         status = ''
-        if toShow == 'Short':
-            self.textUpdate(self, self.miniPreamble())
-            self.frame.go_b.wait_variable(self.frame.var)
-        elif toShow == 'None':
-            pass
 
         location = self.frame.entry
         loc = list()
@@ -538,6 +550,7 @@ class Bible:
             # Saves the numeric part of location
             else:
                 locNumb += char
+
         loc.append(locAlph)
         # Combine the alphabetic and numeric parts to loc
         loc.append(locNumb.strip())
@@ -558,12 +571,12 @@ class Bible:
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 status += bkMark
+                print(bkMark)
                 break
             elif b == 65:
                 return self.PhraseSearch(self)
             # Proceed to next book. If no match is
             # found, 'book' would remain empty.
-            # parts (Lines 101-102 )...
             else:
                 continue
 
@@ -668,8 +681,8 @@ class Bible:
 
                     # TODO: BASED ON LANGUAGE, PRINT BACKWARDS
                     verses_out_collect += (cPrint + cFind[vKey])
-            # Verses acquired!
-            verses_out.append(verses_out_collect)
+                # Verses acquired!
+                verses_out.append(verses_out_collect)
 
         else:
             cKey = chpRef
@@ -752,7 +765,7 @@ class Bible:
     '''
 
     def PhraseSearch(self, toShow='None'):
-        verses_out = list()
+        verses_out = []
 
         Srch = self.frame.entry
         addOns = ''
@@ -763,8 +776,8 @@ class Bible:
             self.textUpdate(self, self.miniPreamble())
 
         count = 0
-        vFound = list()
-        vrsList = list()
+        vFound = []
+        vrsList = []
         for bKeySpaced in self.bkAbbrv:
             bKey = bKeySpaced.replace(' ', '')
             chpDict = self.BibDict[bKey]
@@ -783,10 +796,9 @@ class Bible:
                 count += vLen
                 if vLen > 0:
                     for v in range(vLen):
-                        if not (vFound[v])[0].isnumeric():
+                        if not ((vFound[v])[0].isnumeric()):
                             ref = ''.join([bKeySpaced, ' ', cKey, ':1 '])
-                            verses_out.append('\n '.join(['',
-                                                          ref,
+                            verses_out.append('\n '.join([ref,
                                                           vFound[v]]))
                         else:
                             vrsAlph, vrsNumb = '', ''
@@ -797,16 +809,11 @@ class Bible:
                                 else:
                                     vrsAlph += char
 
-                            ref = ''.join([' ',
-                                           bKeySpaced,
-                                           ' ',
-                                           cKey,
-                                           ':',
-                                           vrsNumb])
-                            verses_out.append('\n'.join(['',
-                                                         ref,
-                                                         '',
-                                                         vrsAlph]))
+                            ref = ''.join([' ', bKeySpaced,
+                                           ' ', cKey,
+                                           ':', vrsNumb])
+                            verses_out.append('\n'.join([ref, vrsAlph]))
+
                     del vFound[0]
 
         if count == 0:
@@ -903,10 +910,14 @@ class Bible:
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        fileBible = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
-        # Imports full bible text and books as "bib".
-        with open(fileBible, 'r') as Bfile:
-            bib = Bfile.read()
+        if self.ispc: 
+            pathPart = '\\'                                                                                     
+        elif (self.ismac or self.islinux):
+            pathPart = '/'
+
+        bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
+        with open(bfile, 'r') as f:
+            bib = f.read()
 
         # TODO: Add verbal details to progress bar status updates
         child = tk.Tk()
@@ -921,43 +932,34 @@ class Bible:
         progress['value'] = 1
         prog_max = len(bib)
 
-        # prints / digits originally for concordance, save for prospectv use
-        '''
-        prints = string.printable
-        digits = string.digits
-        # Printables - Digits
-        asdf = ''.join([s for s in prints if s not in digits])
-        '''
         # Letters and space for Concordance compilation
         alpha_space = string.ascii_letters + ' '
 
         n = len(self.bkNames)
         books = []
         trim_books = []
-        # Populate "books" to be placed
+        trim_text = ''
         for b in range(n):
-            child.update_idletasks()
-            text = re.split(self.bkNames[b], bib)[0]
-            if b == 0:
-                bib = bib.replace(self.bkNames[b], '')[1:-1]
+            m = re.compile(r'^(%s)' % (self.bkNames[b]))
+            if b < 65:
                 text = re.split(self.bkNames[b+1], bib)[0]
+                # Exclude titles from text.
+                bib = m.sub('', bib)
+                text = m.sub('', text)
 
             elif b == 65:
                 text = bib
 
-            # Exclude titles from text.
-            bib = bib.replace(self.bkNames[b], '')
             # Clear books already coverd.
             bkWiper = ''
             bkToWipe = text
             bib = bib.replace(bkToWipe, bkWiper)
 
             books.append(text)
-            trim_text = ''.join([l for l in text if l in alpha_space])
+            trim_text += ''.join([l for l in text if l in alpha_space])
             trim_books.append(trim_text)
-            scale = 1.0468556176346286
-            progress['value'] = (len(text) / prog_max) * (100 / scale)
 
+        bible = ''.join(books)
         trim_bible = ''.join(trim_books)
         # Whole Bible excluding punctuation and book titles.
         bib_letters = ''.join([l for l in trim_bible])
@@ -966,17 +968,13 @@ class Bible:
         # Concordance equivalent
         unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
-        progress['value'] = 1
         BibDict = collections.OrderedDict()
         # Loops to populate the book structure.
         for b in range(n):
-            # Chapters marked uniquely (":1 " = verse 1).
+            # Chapters marked uniquely (":1 " =  c.x:v.1)
             chapters = re.split(':1 ', books[b])[1:]
             cLen = len(chapters)
             chpDict = collections.OrderedDict()
-
-            progress['value'] = (b / n) * (100 / scale)
-            child.update_idletasks()
             # Loops to populate the chapter structure.
             for c in range(cLen):
                 # Add the verse 1 marker again for verse indexing:
@@ -995,42 +993,19 @@ class Bible:
                 for v in range(vLen):
                     if v == 0:
                         # Removes the extra colon left in each verse 1.
-                        vv = (verses[v])[1:]
-                    else:
-                        # Other verses don't have the extra colon.
-                        vv = verses[v]
+                        m = re.compile('\:1 ')
+                        verses[v] = m.sub('1 ',verses[v])
 
-                    # Newline whitespace strip.
-                    chars = ' '.join([chr(k) for k in [10, 13, 10]])
-                    verses[v] = re.split(chars, vv)[0]
-                    # Strips out chapter numbers at the end of the verse.
-                    if (verses[v])[-1].isnumeric():
-                        verses[v] = (verses[v])[:-1]
-                    # Strips out remaining whitespace.
-                    elif self.ismember(chr(10), verses[v]):
-                        for s in range(len(verses[v])):
-                            char = (verses[v])[s]
-                            # Replaces the void space
-                            # produced by newline deletion
-                            # with a space between words.
-                            ischr10 = char is chr(10)
-                            ischr13 = char is chr(13)
-                            if ischr10 or ischr13:
-                                verses[v].replace(char, chr(32))
+                    # Beginning of line whitespace strip
+                    m = re.compile(r'(^\s*)')
+                    verses[v] = m.sub('',verses[v])
 
-                    # Deletes any redundant spaces produced by the void
-                    # white space replacement.
-                    tplSpace = chr(32) + chr(32) + chr(32)
-                    dblSpace = chr(32) + chr(32)
-                    snglSpace = chr(32)
-                    vv = verses[v].replace(dblSpace, snglSpace)
+                    # End of line whitespace / misc. strip
+                    # EX: "Amen. I" / "Amen. 1" / "Amen.  "
+                    m = re.compile(r'([\s\dI]{1,}$)')
+                    verses[v] = m.sub('',verses[v])
 
-                    # Trims off lead/trail whitespace.
-                    # Structure field names cannot or
-                    # should not start with numbers.
-                    vvv = vv.replace(tplSpace, snglSpace)
-                    verses[v] = vvv.strip()
-                    vrsKey = str(v+1)
+                    vrsKey = str(v + 1)
                     vrsDict[vrsKey] = verses[v]
 
                 # Structure field names cannot or
@@ -1039,6 +1014,7 @@ class Bible:
                 # contain spaces (I SAM is ISAM).
                 chpKey = str(c+1)
                 chpDict[chpKey] = vrsDict
+
             bkKey = (self.bkAbbrv[b]).replace(' ', '')
             BibDict[bkKey] = chpDict
 
