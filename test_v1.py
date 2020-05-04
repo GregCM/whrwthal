@@ -9,7 +9,7 @@ class Test:
         v1.Bible.__init__(v1.Bible)
         d = v1.Bible.makeBibDict(v1.Bible)
         assert len(d) == 67
-        assert len(d['CONCORDANCE']) == 13673
+        assert len(d['CONCORDANCE']) == 13664
 
     '''
     def test_PhraseSearch(*kwargs):

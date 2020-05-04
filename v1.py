@@ -993,7 +993,7 @@ class Bible:
                 for v in range(vLen):
                     if v == 0:
                         # Removes the extra colon left in each verse 1.
-                        m = re.compile('\:1 ')
+                        m = re.compile(':1 ')
                         verses[v] = m.sub('1 ',verses[v])
 
                     # Beginning of line whitespace strip
