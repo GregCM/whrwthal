@@ -463,7 +463,7 @@ class Bible:
         for i in range(len(l)):
             b_press.append(partial(self.textUpdate, self, l[i]))
             button_frames.append(tk.Frame(c))
-            self.list_button.append(tk.Button(button_frame[i],
+            self.list_button.append(tk.Button(button_frames[i],
                                               text=l[i][0:50],
                                               width=w,
                                               command=b_press[i]))
