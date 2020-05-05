@@ -98,8 +98,8 @@ class Bible:
             # This directory contains BIBLE.txt & the directory's name itself.
             os.chdir(fd)
 
-            self.config_obj['PATH'] = {'dir': fd}
-            self.fileLocation = self.config_obj['PATH']['dir']
+            self.config_obj['PATH'] = {'main': fd}
+            self.fileLocation = self.config_obj['PATH']['main']
 
             self.config_obj['LANGUAGE'] = {'current': 'eng',
                                            'options':
