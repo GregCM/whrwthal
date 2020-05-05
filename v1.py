@@ -137,147 +137,150 @@ class Bible:
             with open(fileName, 'w') as b:
                 json.dump(self.BibDict, b, ensure_ascii=True)
 
-        # Create & Configure root
-        self.root = tk.Tk()
-        tk.Grid.rowconfigure(self.root, 0, weight=1)
-        tk.Grid.columnconfigure(self.root, 0, weight=1)
+        try:
+            # Create & Configure root
+            self.root = tk.Tk()
+            tk.Grid.rowconfigure(self.root, 0, weight=1)
+            tk.Grid.columnconfigure(self.root, 0, weight=1)
 
-        # Create & Configure frame
-        self.frame = tk.Frame(self.root)
-        self.frame.tk_focusFollowsMouse()
-        self.frame.master.title('The Bible')
-        self.frame.grid(row=0, column=0, sticky='nsew')
+            # Create & Configure frame
+            self.frame = tk.Frame(self.root)
+            self.frame.tk_focusFollowsMouse()
+            self.frame.master.title('The Bible')
+            self.frame.grid(row=0, column=0, sticky='nsew')
 
-        menubar = tk.Menu(self.frame)
-        fileMenu = tk.Menu(menubar, tearoff=0)
-        optionsMenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label='File', menu=fileMenu)
-        menubar.add_cascade(label='Options', menu=optionsMenu)
+            menubar = tk.Menu(self.frame)
+            fileMenu = tk.Menu(menubar, tearoff=0)
+            optionsMenu = tk.Menu(menubar, tearoff=0)
+            menubar.add_cascade(label='File', menu=fileMenu)
+            menubar.add_cascade(label='Options', menu=optionsMenu)
 
-        self.sv_Button = partial(self.save, self)
-        fileMenu.add_command(label='Save',
-                             accelerator='Ctrl+S',
-                             command=self.sv_Button)
-        self.frame.master.bind('<Control-s>', self.sv_Button)
+            self.sv_Button = partial(self.save, self)
+            fileMenu.add_command(label='Save',
+                                 accelerator='Ctrl+S',
+                                 command=self.sv_Button)
+            self.frame.master.bind('<Control-s>', self.sv_Button)
 
-        optionsMenu.add_cascade(label='Color Preferences',
-                                command=self.getColor())
-        self.frame.master.config(menu=menubar)
+            optionsMenu.add_cascade(label='Color Preferences',
+                                    command=self.getColor())
+            self.frame.master.config(menu=menubar)
 
-        self.w = self.frame.winfo_screenwidth()
-        self.h = self.frame.winfo_screenheight()
-        self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
+            self.w = self.frame.winfo_screenwidth()
+            self.h = self.frame.winfo_screenheight()
+            self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
 
-        # For any entry field, ensures one time only call.
-        self.frame.entry = '...'
-        self.getIN = partial(self.getInput, self)
-        self.frame.master.bind('<Return>', self.getIN)
+            # For any entry field, ensures one time only call.
+            self.frame.entry = '...'
+            self.getIN = partial(self.getInput, self)
+            self.frame.master.bind('<Return>', self.getIN)
 
-        self.qvar = tk.IntVar()
-        self.frame.var = tk.IntVar()
-        self.frame.SearchBar = tk.Entry(self.frame)
-        self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
-        slSB = partial(self.select, self)
-        self.frame.master.bind('<Control-l>', slSB)
+            self.qvar = tk.IntVar()
+            self.frame.var = tk.IntVar()
+            self.frame.SearchBar = tk.Entry(self.frame)
+            self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
+            slSB = partial(self.select, self)
+            self.frame.master.bind('<Control-l>', slSB)
 
-        self.getIN = partial(self.getInput, self)
-        self.frame.go_b = tk.Button(self.frame,
-                                    text='ENTER',
-                                    command=self.getIN,
-                                    relief='flat')
-        self.frame.go_b.grid(row=3, column=1, sticky='new')
-
-        self.frame.canvas = tk.Canvas(self.frame)
-        self.frame.canvas.config(scrollregion=self.frame.canvas.bbox('all'))
-        self.frame.canvas.grid(row=4, column=1, rowspan=8,
-                               columnspan=2, sticky='nsew')
-
-        self.frame.scrollFrame = tk.Frame(self.frame, width=16)
-        self.frame.scrollFrame.grid(row=4, column=0,
-                                    rowspan=8, sticky='nes')
-
-        yview = self.frame.canvas.yview
-        self.frame.sbar = ttk.Scrollbar(self.frame.scrollFrame,
-                                        orient='vertical',
-                                        command=yview)
-        self.frame.sbar.pack(side='top', fill='y')
-
-        self.frame.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
-        self.list_button = []
-
-        self.frame.statusBar = tk.Label(self.frame,
-                                        text='Welcome!',
+            self.getIN = partial(self.getInput, self)
+            self.frame.go_b = tk.Button(self.frame,
+                                        text='ENTER',
+                                        command=self.getIN,
                                         relief='flat')
+            self.frame.go_b.grid(row=3, column=1, sticky='new')
 
-        self.frame.statusBar.grid(row=1, column=7, sticky='sew')
+            self.frame.canvas = tk.Canvas(self.frame)
+            self.frame.canvas.config(scrollregion=self.frame.canvas.bbox('all'))
+            self.frame.canvas.grid(row=4, column=1, rowspan=8,
+                                   columnspan=2, sticky='nsew')
 
-        self.frame.textWidget = tk.Text(self.frame,
-                                        relief='sunken',
-                                        wrap='word')
-        self.frame.textWidget.grid(row=2,
-                                   rowspan=10,
-                                   column=7,
-                                   sticky='nsew')
-        self.cls(self.frame)
+            self.frame.scrollFrame = tk.Frame(self.frame, width=16)
+            self.frame.scrollFrame.grid(row=4, column=0,
+                                        rowspan=8, sticky='nes')
 
-        # Welcome message!
-        self.textUpdate(self, self.miniPreamble())
+            yview = self.frame.canvas.yview
+            self.frame.sbar = ttk.Scrollbar(self.frame.scrollFrame,
+                                            orient='vertical',
+                                            command=yview)
+            self.frame.sbar.pack(side='top', fill='y')
 
-        '''
-        self.frame.bind('<Enter>', self.enter)
-        self.frame.bind('<Leave>', self.leave)
-        self.frame.bind('<ButtonPress>', self.leave)
-        # 3 second pause before tooltip appears
-        self.waittime = 3000
-        '''
+            self.frame.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
+            self.list_button = []
 
-        self.qt_Button = partial(self.close_window, self)
-        self.frame.master.bind('<Control-q>', self.qt_Button)
-        self.frame.quitButton = tk.Button(self.frame,
-                                          text='Quit',
-                                          command=self.qt_Button,
-                                          relief='raised')
-        self.frame.quitButton.grid(row=11,
-                                   column=10,
-                                   columnspan=2,
-                                   sticky='sew')
+            self.frame.statusBar = tk.Label(self.frame,
+                                            text='Welcome!',
+                                            relief='flat')
 
-        self.frame.Tpadding = tk.Label(self.frame, text='', relief='flat')
-        self.frame.Tpadding.grid(row=0, column=0, columnspan=14, sticky='ew')
+            self.frame.statusBar.grid(row=1, column=7, sticky='sew')
 
-        self.frame.Bpadding = tk.Label(self.frame, text='', relief='flat')
-        self.frame.Bpadding.grid(row=14, column=0, columnspan=14, sticky='ew')
+            self.frame.textWidget = tk.Text(self.frame,
+                                            relief='sunken',
+                                            wrap='word')
+            self.frame.textWidget.grid(row=2,
+                                       rowspan=10,
+                                       column=7,
+                                       sticky='nsew')
+            self.cls(self.frame)
 
-        self.frame.Lpadding = tk.Label(self.frame, text='', relief='flat')
-        self.frame.Lpadding.grid(row=0, column=0, rowspan=14, sticky='ns')
+            # Welcome message!
+            self.textUpdate(self, self.miniPreamble())
 
-        self.frame.Rpadding = tk.Label(self.frame, text='', relief='flat')
-        self.frame.Rpadding.grid(row=0, column=14, rowspan=14, sticky='ns')
+            '''
+            self.frame.bind('<Enter>', self.enter)
+            self.frame.bind('<Leave>', self.leave)
+            self.frame.bind('<ButtonPress>', self.leave)
+            # 3 second pause before tooltip appears
+            self.waittime = 3000
+            '''
 
-        self.frame.configure(background='gray18')
-        self.frame.master.configure(background='gray18')
-        menubar.config(background='gray20',
-                       foreground='ghost white',
-                       relief='flat')
-        self.frame.quitButton.configure(background='gray26',
-                                        foreground='ghost white')
-        self.frame.statusBar.configure(background='gray18',
-                                       foreground='ghost white',
-                                       font=('times', 25))
-        self.frame.textWidget.configure(background='gray26',
-                                        foreground='ghost white')
-        self.frame.Tpadding.configure(background='gray18',
-                                      foreground='ghost white',
-                                      state='disabled')
-        self.frame.Bpadding.configure(background='gray18',
-                                      foreground='ghost white',
-                                      state='disabled')
-        self.frame.Lpadding.configure(background='gray18',
-                                      foreground='ghost white',
-                                      state='disabled')
-        self.frame.Rpadding.configure(background='gray18',
-                                      foreground='ghost white',
-                                      state='disabled')
+            self.qt_Button = partial(self.close_window, self)
+            self.frame.master.bind('<Control-q>', self.qt_Button)
+            self.frame.quitButton = tk.Button(self.frame,
+                                              text='Quit',
+                                              command=self.qt_Button,
+                                              relief='raised')
+            self.frame.quitButton.grid(row=11,
+                                       column=10,
+                                       columnspan=2,
+                                       sticky='sew')
+
+            self.frame.Tpadding = tk.Label(self.frame, text='', relief='flat')
+            self.frame.Tpadding.grid(row=0, column=0, columnspan=14, sticky='ew')
+
+            self.frame.Bpadding = tk.Label(self.frame, text='', relief='flat')
+            self.frame.Bpadding.grid(row=14, column=0, columnspan=14, sticky='ew')
+
+            self.frame.Lpadding = tk.Label(self.frame, text='', relief='flat')
+            self.frame.Lpadding.grid(row=0, column=0, rowspan=14, sticky='ns')
+
+            self.frame.Rpadding = tk.Label(self.frame, text='', relief='flat')
+            self.frame.Rpadding.grid(row=0, column=14, rowspan=14, sticky='ns')
+
+            self.frame.configure(background='gray18')
+            self.frame.master.configure(background='gray18')
+            menubar.config(background='gray20',
+                           foreground='ghost white',
+                           relief='flat')
+            self.frame.quitButton.configure(background='gray26',
+                                            foreground='ghost white')
+            self.frame.statusBar.configure(background='gray18',
+                                           foreground='ghost white',
+                                           font=('times', 25))
+            self.frame.textWidget.configure(background='gray26',
+                                            foreground='ghost white')
+            self.frame.Tpadding.configure(background='gray18',
+                                          foreground='ghost white',
+                                          state='disabled')
+            self.frame.Bpadding.configure(background='gray18',
+                                          foreground='ghost white',
+                                          state='disabled')
+            self.frame.Lpadding.configure(background='gray18',
+                                          foreground='ghost white',
+                                          state='disabled')
+            self.frame.Rpadding.configure(background='gray18',
+                                          foreground='ghost white',
+                                          state='disabled')
+        except tk._tkinter.TclError:
+            self.pytesting = True
 
     def _on_mousewheel(self, event):
         if (self.ispc or self.islinux):
@@ -899,7 +902,9 @@ class Bible:
             bib = f.read()
 
         # TODO: Add verbal details to progress bar status updates
-        try:
+        if self.pytesting:
+            pass
+        else:
             child = tk.Tk()
             child.title('Importing')
             msg = 'Please wait while the text is compiled...'
@@ -911,8 +916,6 @@ class Bible:
 
             progress['value'] = 1
             child.update()
-        except tk._tkinter.TclError:
-            pytesting = True
 
         # Letters and space for Concordance compilation
         alpha_space = string.ascii_letters + ' '
@@ -941,7 +944,7 @@ class Bible:
             trim_text += ''.join([l for l in text if l in alpha_space])
             trim_books.append(trim_text)
 
-            if pytesting:
+            if self.pytesting:
                 pass
             else:
                 progress['value'] = b / n * 100
@@ -955,7 +958,7 @@ class Bible:
         # Concordance equivalent
         unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
-        if pytesting:
+        if self.pytesting:
             pass
         else:
             progress['value'] = 1
@@ -1011,13 +1014,13 @@ class Bible:
             bkKey = (self.bkAbbrv[b]).replace(' ', '')
             BibDict[bkKey] = chpDict
 
-            if pytesting:
+            if self.pytesting:
                 pass
             else:
                 progress['value'] = b / n * 100
                 child.update()
 
-        if pytesting:
+        if self.pytesting:
             pass
         else:
             child.destroy()
