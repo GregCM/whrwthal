@@ -229,7 +229,7 @@ class bible:
         
         if not location:
             toShow = 'None'
-            self.VerseRef(toShow)
+            self.VerseRef(self, toShow)
         elif location.upper() == 'DONE':
                 self.cls()
                 return '\n'
@@ -252,7 +252,7 @@ class bible:
                              ' gregcaceres@gmail.com',
                              ' _______________________________________________']))
                 toShow = 'Long'
-                self.VerseRef(toShow)
+                self.VerseRef(self, toShow)
         elif location.upper() == 'OPTIONS':
                 self.cls()
                 ToC[0] = '_________________________'
@@ -266,10 +266,10 @@ class bible:
                 ToC[66+5]    = bkNames[66] + ' ... ' + bkAbbrv[66]
                 print(ToC)
                 toShow = 'None'
-                self.VerseRef(toShow)
+                self.VerseRef(self, toShow)
         elif location.upper() == 'HELP':
                 toShow = 'Long' 
-                self.VerseRef(toShow)
+                self.VerseRef(self, toShow)
         elif location.upper() == 'PHRASE':
                 self.PhraseSearch(self, bkNames, bkAbbrv, BibDict)
         
@@ -287,7 +287,7 @@ class bible:
             
             input('\n'.join([noBRef,'\n PRESS ENTER']))
             toShow = 'None'
-            self.VerseRef(toShow)
+            self.VerseRef(self, toShow)
         else:                                                                    # Assign structure value for BOOKS
             truthFind   = BibDict[book]                                          # according to input if it was found
             truth       = ''                                                     # in the table of contents (Lines -42 to -24).
@@ -352,7 +352,7 @@ class bible:
                   
                     print(noCRef)
                     toShow = 'None'
-                    self.VerseRef(toShow)
+                    self.VerseRef(self, toShow)
                 
                 if vrsRef == '0':                                                  # If only chapter is input, output whole chapter
                     vKeyList = range(len(cFind.keys()))
@@ -422,7 +422,7 @@ class bible:
                             else:
                                 noVRef = '\n Unf' + noVRef
                             print(noVRef)
-                            self.VerseRef()
+                            self.VerseRef(self)
                     
                     print(''.join(['\n', self.slowType( truth, self.type_speed//(lV-fV) )]))
                   
@@ -457,11 +457,11 @@ class bible:
                           noVRef = '\n Unf' + noVRef
                       print(noVRef)
                       toShow = 'None'
-                      self.VerseRef(toShow)
+                      self.VerseRef(self, toShow)
                      
                     print(''.join(['\n', self.slowType(truth,self.type_speed)]))
         
-        self.VerseRef('None')
+        self.VerseRef(self, 'None')
         
     
     
