@@ -340,7 +340,7 @@ class bible:
                     cFind  =   truthFind[cKey]
                 except:
                     cMax   =   len(truthFind.keys())
-                    if cMax is 1:                                                    # Plural or not?
+                    if cMax == 1:                                                    # Plural or not?
                         noCRef = 'ortunetly, %s only has %i chapter' %(bkMark,cMax)
                     else:
                         noCRef = 'ortunetly, %s only has %i chapters' %(bkMark,cMax)
@@ -665,10 +665,10 @@ class bible:
                                 print(hsLine)
                             count += vLen
             
-            if count is 0:
+            if count == 0:
                print('\n '.join(['\n','THERE ARE %i VERSES WHICH CONTAIN %s' %( count, Srch.upper() ),'']))
                
-            elif count is 1:
+            elif count == 1:
                print('\n '.join(['\n','THERE IS %i VERSE WHICH CONTAINS %s'  %( count, Srch.upper() ),'']))
                
             else:
