@@ -119,7 +119,7 @@ class Bible:
             self.font_size = self.config_obj['FONT']['size']
 
             # Change to Defaults available in Settings menubar
-            with open('config.ini', 'w') as cfg:
+            with open(configfile, 'w') as cfg:
                 self.config_obj.write(cfg)
 
         fileName = ''.join(['.ToC_', self.language, '.json'])
