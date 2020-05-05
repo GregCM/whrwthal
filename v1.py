@@ -185,7 +185,7 @@ class Bible:
 
         self.getIN = partial(self.getInput, self)
         self.frame.go_b = tk.Button(self.frame,
-                                    text='ENTER ↵',
+                                    text='ENTER',
                                     command=self.getIN,
                                     relief='flat')
         self.frame.go_b.grid(row=3, column=1, sticky='new')

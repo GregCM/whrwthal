@@ -50,6 +50,17 @@ class bible:
         ##              ##
         ##################
         '''
+        self.ispc = sys.platform.startswith('win')
+        self.ismac = sys.platform.startswith('darwin')
+        self.islinux = sys.platform.startswith('linux')
+
+        if self.ispc:
+            self.homeDirectory = '%userprofile%'
+            self.pathPart = '\\'
+        elif (self.ismac or self.islinux):
+            self.homeDirectory = '/home'
+            self.pathPart = '/'
+
 
         self.config_obj = ConfigParser()
         try:
