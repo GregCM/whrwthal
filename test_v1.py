@@ -8,7 +8,7 @@ class Test:
 
     def test_makeBibDict(*kwargs):
         Bible.__init__(Bible, configfile='config_test.ini')
-        d = Bible.makeBibDict(Bible)
+        d = Bible.BibDict
         assert len(d) == 67
         assert len(d['CONCORDANCE']) == 13664
 

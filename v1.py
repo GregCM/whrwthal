@@ -88,17 +88,11 @@ class Bible:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
             self.font_size = self.config_obj['FONT']['size']
-            os.chdir(self.fileLocation)
         except KeyError:
-            # Manual input required if searchpath isn't
-            # already defined. This will then be saved for
-            # next time and used as the working directory.
-            if configfile == 'config_test.ini':
-                fd = self.homeDirectory
-            elif configfile == 'config.ini':
-                fd = filedialog.askdirectory(initialdir=self.homeDirectory,
-                                             title="Select directory")
-            # This directory contains BIBLE.txt & the directory's name itself.
+            # This directory contains BIBLE.txt & the configureation file.
+            # This will then be saved for next time
+            # and used as the working directory.
+            fd = os.getcwd()
             os.chdir(fd)
 
             self.config_obj['PATH'] = {'main': fd}
@@ -905,17 +899,20 @@ class Bible:
             bib = f.read()
 
         # TODO: Add verbal details to progress bar status updates
-        child = tk.Tk()
-        child.title('Importing')
-        msg = 'Please wait while the text is compiled...'
-        info = tk.Label(child, text=msg, relief='flat')
-        progress = ttk.Progressbar(child, orient='horizontal',
-                                   length=100, mode='determinate')
-        info.pack(padx=5, pady=5)
-        progress.pack(padx=5, pady=5)
+        try:
+            child = tk.Tk()
+            child.title('Importing')
+            msg = 'Please wait while the text is compiled...'
+            info = tk.Label(child, text=msg, relief='flat')
+            progress = ttk.Progressbar(child, orient='horizontal',
+                                       length=100, mode='determinate')
+            info.pack(padx=5, pady=5)
+            progress.pack(padx=5, pady=5)
 
-        progress['value'] = 1
-        child.update()
+            progress['value'] = 1
+            child.update()
+        except tk._tkinter.TclError:
+            pytesting = True
 
         # Letters and space for Concordance compilation
         alpha_space = string.ascii_letters + ' '
@@ -944,8 +941,11 @@ class Bible:
             trim_text += ''.join([l for l in text if l in alpha_space])
             trim_books.append(trim_text)
 
-            progress['value'] = b / n * 100
-            child.update()
+            if pytesting:
+                pass
+            else:
+                progress['value'] = b / n * 100
+                child.update()
 
         trim_bible = ''.join(trim_books)
         # Whole Bible excluding punctuation and book titles.
@@ -955,8 +955,12 @@ class Bible:
         # Concordance equivalent
         unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
-        progress['value'] = 1
-        child.update()
+        if pytesting:
+            pass
+        else:
+            progress['value'] = 1
+            child.update()
+
         BibDict = collections.OrderedDict()
         # Loops to populate the book structure.
         for b in range(n):
@@ -1006,11 +1010,19 @@ class Bible:
 
             bkKey = (self.bkAbbrv[b]).replace(' ', '')
             BibDict[bkKey] = chpDict
-            progress['value'] = b / n * 100
-            child.update()
+
+            if pytesting:
+                pass
+            else:
+                progress['value'] = b / n * 100
+                child.update()
+
+        if pytesting:
+            pass
+        else:
+            child.destroy()
 
         BibDict['CONCORDANCE'] = unique_words
-        child.destroy()
         return BibDict
 
     def ismember(a, b):
