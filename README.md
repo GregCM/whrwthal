@@ -15,7 +15,7 @@ W-H-R-W-T-H-A-L (acronymn):
   That're
   Hallowed
   And
-  Laudablewhrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation. #TODO Despite these constraints, whrwthal has
+  Laudablewhrwthal
 
 
 whrwthal is a lightweight and easy to use application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
