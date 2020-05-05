@@ -60,7 +60,7 @@ import urllib
 
 class Bible:
 
-    def __init__(self):
+    def __init__(self, configfile='config.ini'):
 
         '''
         ##################
@@ -83,7 +83,7 @@ class Bible:
 
         self.config_obj = ConfigParser()
         try:
-            self.config_obj.read('config.ini')
+            self.config_obj.read(configfile)
             self.fileLocation = self.config_obj['PATH']['main']
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
@@ -93,8 +93,11 @@ class Bible:
             # Manual input required if searchpath isn't
             # already defined. This will then be saved for
             # next time and used as the working directory.
-            fd = filedialog.askdirectory(initialdir=self.homeDirectory,
-                                         title="Select directory")
+            if configfile == 'config_test.ini':
+                fd = self.homeDirectory
+            elif configfile == 'config.ini':
+                fd = filedialog.askdirectory(initialdir=self.homeDirectory,
+                                             title="Select directory")
             # This directory contains BIBLE.txt & the directory's name itself.
             os.chdir(fd)
 
