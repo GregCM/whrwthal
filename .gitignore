@@ -1,8 +1,0 @@
-config.ini
-Makefile
-.BibDict_eng.json
-.fileLocation.json
-__pycache__
-.pytest_cache
-.*.swp
-.gitignore
