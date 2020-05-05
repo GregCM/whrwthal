@@ -902,9 +902,7 @@ class Bible:
             bib = f.read()
 
         # TODO: Add verbal details to progress bar status updates
-        if self.pytesting:
-            pass
-        else:
+        try:
             child = tk.Tk()
             child.title('Importing')
             msg = 'Please wait while the text is compiled...'
@@ -916,6 +914,8 @@ class Bible:
 
             progress['value'] = 1
             child.update()
+        except tk._tkinter.TclError:
+            self.pytesting = True
 
         # Letters and space for Concordance compilation
         alpha_space = string.ascii_letters + ' '
