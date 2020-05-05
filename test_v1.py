@@ -12,6 +12,7 @@ class Test:
         assert len(d) == 67
         assert len(d['CONCORDANCE']) == 13664
 
+    '''
     def test_PhraseSearch(*kwargs):
         Bible.frame.entry = 'rightly dividing'
         print(Bible.PhraseSearch(Bible))
@@ -20,3 +21,4 @@ class Test:
         assert len(Bible.PhraseSearch(Bible)) == 18906
         v1.Bible.frame.entry = 'truth'
         assert len(Bible.PhraseSearch(Bible)) == 222
+    '''
