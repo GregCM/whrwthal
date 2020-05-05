@@ -25,7 +25,7 @@ As such, whrwthal totals just under 5MB (consider Xiphos-Unix at just under 30MB
 whrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
 # //WARNING//
-IF YOU LIVE IN A CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE. IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT GREGCACERES@GMAIL.COM FOR A SNAIL-MAIL COPY ON USB/CD.
+IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT GREGCACERES@GMAIL.COM FOR A SNAIL-MAIL COPY ON USB/CD. WORD YOUR EMAIL IN AN INCONSPICUOUS PHRASING, ALONG THESE LINES: "Hello, I recieved your promotional letter, please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
 # TODO
-Despite these constraints, whrwthal has
+Despite the constraints, whrwthal has
