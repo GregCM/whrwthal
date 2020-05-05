@@ -458,10 +458,13 @@ class Bible:
         c = self.frame.canvas
         butt_height = 0
         b_press = []
+        button_frames = []
         button_windows = []
         for i in range(len(l)):
             b_press.append(partial(self.textUpdate, self, l[i]))
-            self.list_button.append(tk.Button(text=l[i][0:50],
+            button_frame.append(tk.Frame(c))
+            self.list_button.append(tk.Button(button_frame[i],
+                                              text=l[i][0:50],
                                               width=w,
                                               command=b_press[i]))
             self.list_button[i].configure(width=0, font=('calibri',9),
