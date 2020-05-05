@@ -15,7 +15,7 @@ W-H-R-W-T-H-A-L (acronymn):
   That're
   Hallowed
   And
-  Laudablewhrwthal
+  Laudable
 
 
 whrwthal is a lightweight and easy to use application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
