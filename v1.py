@@ -467,12 +467,13 @@ class Bible:
                                               text=l[i][0:50],
                                               width=w,
                                               command=b_press[i]))
-            self.list_button[i].configure(width=0, font=('calibri',9),
+            self.list_button[i].pack()
+            self.list_button[i].configure(font=('calibri',9),
                                           activebackground='#D2D2D2')
             button_windows.append(c.create_window((0, butt_height),
                                                   anchor='nw',
                                                   width=w,
-                                                  window=self.list_button[i]))
+                                                  window=button_frames[i]))
             self.list_button[i].update()
             butt_height += self.list_button[i].winfo_height()
 
