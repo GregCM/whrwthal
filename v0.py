@@ -290,7 +290,7 @@ class bible:
         else:                                                                    # Assign structure value for BOOKS
             truthFind   = BibDict[book]                                          # according to input if it was found
             truth       = ''                                                     # in the table of contents (Lines -42 to -24).
-            if chpRef is '0':                                                    # If only book name is input, output whole book  
+            if chpRef == '0':                                                    # If only book name is input, output whole book  
                                                                                  # LOOP through chapter keys
                 cKeyList = range(len(truthFind.keys()))
                 for cKey in cKeyList:                                            # Hone in on a chapter for the verse loop sake: 
@@ -353,7 +353,7 @@ class bible:
                     toShow = 'None'
                     self.VerseRef(toShow)
                 
-                if vrsRef is '0':                                                  # If only chapter is input, output whole chapter
+                if vrsRef == '0':                                                  # If only chapter is input, output whole chapter
                     vKeyList = range(len(cFind.keys()))
                     for vKey in vKeyList:                                          # LOOP through these verses,
                         vKey       = str(vKey+1)
@@ -787,19 +787,6 @@ class bible:
         bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
         with open(bfile, 'r') as f:
             bib = f.read()
-
-        # TODO: Add verbal details to progress bar status updates
-        child = tk.Tk()
-        child.title('Importing')
-        msg = 'Please wait while the text is compiled...'
-        info = tk.Label(child, text=msg, relief='flat')
-        progress = ttk.Progressbar(child, orient='horizontal',
-                                   length=100, mode='determinate')
-        info.pack(padx=5, pady=5)
-        progress.pack(padx=5, pady=5)
-
-        progress['value'] = 1
-        prog_max = len(bib)
 
         # Letters and space for Concordance compilation
         alpha_space = string.ascii_letters + ' '
