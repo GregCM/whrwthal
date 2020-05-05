@@ -40,7 +40,6 @@ _______________________________________________
 
 '''
 
-import bs4
 import collections
 from configparser import ConfigParser
 import datetime as dt
@@ -481,6 +480,7 @@ class Bible:
         self.frame.canvas.update()
         b_press, self.list_button = [], []
 
+    '''
     def calendarUpdate(self):
         url = 'https://www.blueletterbible.org/dailyreading/index.cfm'
         netloc = urllib.request.urlparse(url).netloc
@@ -495,6 +495,7 @@ class Bible:
 
         # TODO HREFS TO PDFS
         self.calendar = ''
+    '''
 
     def save(self):
         text = self.frame.textWidget.get('1.0', 'end')

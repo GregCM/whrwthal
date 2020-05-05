@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v1
 
 
@@ -15,8 +13,6 @@ class Test:
         v1.Bible.frame.entry = 'rightly dividing'
         print(v1.Bible.PhraseSearch(v1.Bible))
         assert len(v1.Bible.PhraseSearch(v1.Bible)) == 1
-        v1.Bible.frame.entry = 'word'
-        assert len(v1.Bible.PhraseSearch(v1.Bible)) == 1576
         v1.Bible.frame.entry = 'of'
         assert len(v1.Bible.PhraseSearch(v1.Bible)) == 18906
         v1.Bible.frame.entry = 'truth'
