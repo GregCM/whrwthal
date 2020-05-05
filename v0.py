@@ -31,6 +31,7 @@ import random as rnd
 import curses.ascii
 import collections
 import subprocess
+import string
 import json
 import time
 import sys
