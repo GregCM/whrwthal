@@ -22,7 +22,9 @@ whrwthal is a lightweight and easy to use application, compared to current alter
 
 As such, whrwthal totals just under 5MB (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
-whrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation. IF YOU LIVE IN A CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE. IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT GREGCACERES@GMAIL.COM FOR A MAIL-IN COPY.
+whrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
+
+IF YOU LIVE IN A CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE. IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT GREGCACERES@GMAIL.COM FOR A MAIL-IN COPY.
 
 # TODO
 Despite these constraints, whrwthal has
