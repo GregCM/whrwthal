@@ -9,19 +9,12 @@ whrwthal (adverb):
 W-H-R-W-T-H-A-L (acronymn):
 
   Whrwthal
-
   Helps
-
   Rake
-
   Wverses
-
   That're
-
   Hallowed
-
   And
-
   Laudable
 
 
