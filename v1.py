@@ -40,6 +40,7 @@ _______________________________________________
 
 '''
 
+import bs4
 import collections
 from configparser import ConfigParser
 import datetime as dt
@@ -193,7 +194,6 @@ class Bible:
         self.frame.canvas.config(scrollregion=self.frame.canvas.bbox('all'))
         self.frame.canvas.grid(row=4, column=1, rowspan=8,
                                columnspan=2, sticky='nsew')
-        cheight = self.frame.canvas.winfo_height()
 
         self.frame.scrollFrame = tk.Frame(self.frame, width=16)
         self.frame.scrollFrame.grid(row=4, column=0,
@@ -467,7 +467,7 @@ class Bible:
                                               width=w,
                                               command=b_press[i]))
             self.list_button[i].pack()
-            self.list_button[i].configure(font=('calibri',9),
+            self.list_button[i].configure(font=('calibri', 9),
                                           activebackground='#D2D2D2')
             button_windows.append(c.create_window((0, butt_height),
                                                   anchor='nw',
@@ -480,7 +480,6 @@ class Bible:
         self.frame.canvas.update()
         b_press, self.list_button = [], []
 
-    '''
     def calendarUpdate(self):
         url = 'https://www.blueletterbible.org/dailyreading/index.cfm'
         netloc = urllib.request.urlparse(url).netloc
@@ -495,7 +494,6 @@ class Bible:
 
         # TODO HREFS TO PDFS
         self.calendar = ''
-    '''
 
     def save(self):
         text = self.frame.textWidget.get('1.0', 'end')
@@ -625,7 +623,6 @@ class Bible:
         if not location:
             next
         elif location.upper() == 'ABOUT':
-            toShow = 'Long'
             self.textUpdate(self,
                             '''
                             ____________________________________________
@@ -647,24 +644,9 @@ class Bible:
                             ____________________________________________
                             ___\n
                             ''')
-        elif location.upper() == 'OPTIONS':
-            toShow = 'None'
-            self.cls(self.frame)
-            ToC = ['_________________________',
-                   '                         ',
-                   'Table of Contents --- ToC',
-                   '_________________________',
-                   '                         ']
-            for i in range(5, (n+4)):
-                ToC.append(self.bkNames[i-4] + ' ... ' + self.bkAbbrv[i-4])
-
-            ToC[66+5] = self.bkNames[66] + ' ... ' + self.bkAbbrv[66]
-            self.textUpdate(self, ToC)
-        elif location.upper() == 'HELP':
-            toShow = 'Long'
 
         verses_outFind = self.BibDict[book]
-        verses_out = list()
+        verses_out = []
 
         # If only book name is input, output whole book ##
         if chpRef == '0':
@@ -915,11 +897,6 @@ class Bible:
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        if self.ispc: 
-            pathPart = '\\'                                                                                     
-        elif (self.ismac or self.islinux):
-            pathPart = '/'
-
         bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
         with open(bfile, 'r') as f:
             bib = f.read()
@@ -935,7 +912,7 @@ class Bible:
         progress.pack(padx=5, pady=5)
 
         progress['value'] = 1
-        prog_max = len(bib)
+        child.update()
 
         # Letters and space for Concordance compilation
         alpha_space = string.ascii_letters + ' '
@@ -964,7 +941,9 @@ class Bible:
             trim_text += ''.join([l for l in text if l in alpha_space])
             trim_books.append(trim_text)
 
-        bible = ''.join(books)
+            progress['value'] = b / n * 100
+            child.update()
+
         trim_bible = ''.join(trim_books)
         # Whole Bible excluding punctuation and book titles.
         bib_letters = ''.join([l for l in trim_bible])
@@ -973,6 +952,8 @@ class Bible:
         # Concordance equivalent
         unique_words = [s for s in set(bib_words) if s not in self.bkNames]
 
+        progress['value'] = 1
+        child.update()
         BibDict = collections.OrderedDict()
         # Loops to populate the book structure.
         for b in range(n):
@@ -999,16 +980,16 @@ class Bible:
                     if v == 0:
                         # Removes the extra colon left in each verse 1.
                         m = re.compile(':1 ')
-                        verses[v] = m.sub('1 ',verses[v])
+                        verses[v] = m.sub('1 ', verses[v])
 
                     # Beginning of line whitespace strip
                     m = re.compile(r'(^\s*)')
-                    verses[v] = m.sub('',verses[v])
+                    verses[v] = m.sub('', verses[v])
 
                     # End of line whitespace / misc. strip
                     # EX: "Amen. I" / "Amen. 1" / "Amen.  "
                     m = re.compile(r'([\s\dI]{1,}$)')
-                    verses[v] = m.sub('',verses[v])
+                    verses[v] = m.sub('', verses[v])
 
                     vrsKey = str(v + 1)
                     vrsDict[vrsKey] = verses[v]
@@ -1022,6 +1003,8 @@ class Bible:
 
             bkKey = (self.bkAbbrv[b]).replace(' ', '')
             BibDict[bkKey] = chpDict
+            progress['value'] = b / n * 100
+            child.update()
 
         BibDict['CONCORDANCE'] = unique_words
         child.destroy()

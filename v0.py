@@ -255,15 +255,16 @@ class bible:
                 self.VerseRef(self, toShow)
         elif location.upper() == 'OPTIONS':
                 self.cls()
-                ToC[0] = '_________________________'
-                ToC[1] = '                         '
-                ToC[2] = 'Table of Contents --- ToC'
-                ToC[3] = '_________________________'
-                ToC[4] = '                         '
+                ToC = []
+                ToC.append('_________________________')
+                ToC.append('                         ')
+                ToC.append('Table of Contents --- ToC')
+                ToC.append('_________________________')
+                ToC.append('                         ')
                 for i in range(5,(n+4)):
-                    ToC[i] = bkNames[i-4] + ' ... ' + bkAbbrv[i-4]
+                    ToC.append(bkNames[i-4] + ' ... ' + bkAbbrv[i-4])
                 
-                ToC[66+5]    = bkNames[66] + ' ... ' + bkAbbrv[66]
+                ToC.append(bkNames[66] + ' ... ' + bkAbbrv[66])
                 print(ToC)
                 toShow = 'None'
                 self.VerseRef(self, toShow)
