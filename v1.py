@@ -51,6 +51,7 @@ import datetime as dt
 from functools import partial
 import json
 import os
+import psutil
 import random as rnd
 import re
 import string
@@ -192,22 +193,8 @@ class Bible:
                                         relief='flat')
             self.frame.go_b.grid(row=3, column=1, sticky='new')
 
-            self.frame.canvas = tk.Canvas(self.frame)
-            self.frame.canvas.config(scrollregion=self.frame.canvas.bbox('all'))
-            self.frame.canvas.grid(row=4, column=1, rowspan=8,
-                                   columnspan=2, sticky='nsew')
+            self.canvas = tk.Canvas(self.frame)
 
-            self.frame.scrollFrame = tk.Frame(self.frame, width=16)
-            self.frame.scrollFrame.grid(row=4, column=0,
-                                        rowspan=8, sticky='nes')
-
-            yview = self.frame.canvas.yview
-            self.frame.sbar = ttk.Scrollbar(self.frame.scrollFrame,
-                                            orient='vertical',
-                                            command=yview)
-            self.frame.sbar.pack(side='top', fill='y')
-
-            self.frame.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
             self.list_button = []
 
             self.frame.statusBar = tk.Label(self.frame,
@@ -291,7 +278,7 @@ class Bible:
             event.delta /= 120
         elif self.ismac:
             event.delta /= 1
-        self.frame.canvas.yview_scroll(-1*(event.delta), 'units')
+        self.canvas.yview_scroll(-1*(event.delta), 'units')
 
     def focus(self, event=None):
         self.focus_set()
@@ -352,6 +339,10 @@ class Bible:
 
     def close_window(self, event=None):
         self.root.destroy()
+        pn = 'v1.py'
+        for proc in psutil.process_iter():
+            if proc.name() == pn:
+                proc.kill()
 
     def getColor():
         return
@@ -450,38 +441,45 @@ class Bible:
         elif mode == 'a':
             pass
 
-        self.root.update()
-        self.frame.canvas.update()
         w = self.frame.SearchBar.winfo_width()
-        h = self.frame.canvas.winfo_height()
-        self.frame.canvas.config(width=w, height=h)
-        self.frame.canvas.update()
+        h = self.frame.SearchBar.winfo_height() * 2
 
-        self.root.update()
-        c = self.frame.canvas
+        c = self.canvas
         butt_height = 0
         b_press = []
         button_frames = []
         button_windows = []
         for i in range(len(l)):
             b_press.append(partial(self.textUpdate, self, l[i]))
-            button_frames.append(tk.Frame(c))
-            self.list_button.append(tk.Button(button_frames[i],
-                                              text=l[i][0:50],
-                                              width=w,
+            # button_frames.append(tk.Frame(c))
+            self.list_button.append(tk.Button(c, text=l[i][0:50],
+                                              width=w, height=h,
                                               command=b_press[i]))
-            self.list_button[i].pack()
+            # button_frames[i].pack()
+            # self.list_button[i].grid(row=i, column=0, sticky='ew')
             self.list_button[i].configure(font=('calibri', 9),
                                           activebackground='#D2D2D2')
             button_windows.append(c.create_window((0, butt_height),
                                                   anchor='nw',
-                                                  width=w,
-                                                  window=button_frames[i]))
+                                                  width=w, height=h,
+                                                  window=self.list_button[i]))
+            butt_height += h
             self.list_button[i].update()
-            butt_height += self.list_button[i].winfo_height()
 
-        self.root.update()
-        self.frame.canvas.update()
+        c.grid(row=4, column=1, rowspan=8, columnspan=1, sticky='nsew')
+        c.update()
+
+        self.sbar = ttk.Scrollbar(self.frame,
+                                  orient='vertical',
+                                  command=self.canvas.yview)
+        self.sbar.grid(row=4, column=0,
+                       rowspan=8, sticky='nes')
+        self.sbar.update()
+
+        c.config(yscrollcommand=self.sbar.set)
+        c.bind_all('<MouseWheel>', self._on_mousewheel)
+        c.config(scrollregion=c.bbox('all'))
+
         b_press, self.list_button = [], []
 
     def calendarUpdate(self):
