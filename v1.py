@@ -28,7 +28,11 @@ are made to the content therein.
 If you are running on MicroSoft Windows,
 see the install support for Python at
 
+https://www.python.org/downloads/release/python-382/
 https://docs.python.org/3/using/windows.html
+
+You will need to include "pip" and 
+"tkinter" in your install
 
 For other support, or if you have any
 questions about the app's functionality,
