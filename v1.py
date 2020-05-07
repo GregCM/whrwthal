@@ -193,8 +193,6 @@ class Bible:
                                         relief='flat')
             self.frame.go_b.grid(row=3, column=1, sticky='new')
 
-            self.canvas = tk.Canvas(self.frame)
-
             self.list_button = []
 
             self.frame.statusBar = tk.Label(self.frame,
@@ -216,8 +214,6 @@ class Bible:
             self.textUpdate(self, self.miniPreamble())
 
             '''
-            self.frame.bind('<Enter>', self.enter)
-            self.frame.bind('<Leave>', self.leave)
             self.frame.bind('<ButtonPress>', self.leave)
             # 3 second pause before tooltip appears
             self.waittime = 3000
@@ -280,6 +276,14 @@ class Bible:
             event.delta /= 1
         self.canvas.yview_scroll(-1*(event.delta), 'units')
 
+    '''
+    def _bound_mouse_to_scrollbar(self, event):
+        self.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
+
+    def _unbound_mouse_to_scrollbar(self, event):
+        self.canvas.unbind_all('<MouseWheel>')
+    '''
+
     def focus(self, event=None):
         self.focus_set()
 
@@ -290,11 +294,8 @@ class Bible:
 
     '''
     def enter(self, event=None):
-        self.schedule()
 
     def leave(self, event=None):
-        self.unschedule()
-        self.hidetip()
 
     def schedule(self, child):
         self.unschedule()
@@ -433,6 +434,15 @@ class Bible:
         self.frame.textWidget.configure(state='disabled')
 
     def listUpdate(self, l, mode='w'):
+        try:
+            c = self.canvas
+            c.destroy()
+        except AttributeError:
+            pass
+        finally:
+            self.canvas = tk.Canvas(self.frame)
+            c = self.canvas
+
         for lb in self.list_button:
             lb.destroy()
 
@@ -444,19 +454,15 @@ class Bible:
         w = self.frame.SearchBar.winfo_width()
         h = self.frame.SearchBar.winfo_height() * 2
 
-        c = self.canvas
         butt_height = 0
         b_press = []
         button_frames = []
         button_windows = []
         for i in range(len(l)):
             b_press.append(partial(self.textUpdate, self, l[i]))
-            # button_frames.append(tk.Frame(c))
             self.list_button.append(tk.Button(c, text=l[i][0:50],
                                               width=w, height=h,
                                               command=b_press[i]))
-            # button_frames[i].pack()
-            # self.list_button[i].grid(row=i, column=0, sticky='ew')
             self.list_button[i].configure(font=('calibri', 9),
                                           activebackground='#D2D2D2')
             button_windows.append(c.create_window((0, butt_height),
@@ -476,9 +482,11 @@ class Bible:
                        rowspan=8, sticky='nes')
         self.sbar.update()
 
-        c.config(yscrollcommand=self.sbar.set)
-        c.bind_all('<MouseWheel>', self._on_mousewheel)
-        c.config(scrollregion=c.bbox('all'))
+        c.config(yscrollcommand=self.sbar.set, scrollregion=c.bbox('all'))
+        '''
+        self.canvas.bind('<Enter>', self._bound_mouse_to_scrollbar)
+        self.canvas.bind('<Leave>', self._unbound_mouse_to_scrollbar)
+        '''
 
         b_press, self.list_button = [], []
 
