@@ -760,10 +760,12 @@ class Bible:
 
         Srch = r'%s' % (self.frame.entry)
         addOns = ''
-        m = re.compile(r'(?i)(\w*' + Srch + r'\w*)')
+        # Case insensitive search anywhere within a word.
+        # EX: Srch = "tempt" --> 
+        # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
+        m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
 
         count = 0
-        vFound = []
         for bKeySpaced in self.bkAbbrv:
             bKey = bKeySpaced.replace(' ', '')
             chpDict = self.BibDict[bKey]
@@ -779,7 +781,8 @@ class Bible:
                         vFound = lines
                         for item in m.finditer(vFound):
                             g = item.group(1)
-                            vFound = re.sub(g, g.upper(), vFound)
+                            n = re.compile(r'(?i)%s' % (g))
+                            vFound = n.sub(g.upper(), vFound)
 
                         vrsAlph, vrsNumb = '', ''
                         for char in vFound:
