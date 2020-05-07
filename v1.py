@@ -760,7 +760,7 @@ class Bible:
 
         Srch = r'%s' % (self.frame.entry)
         addOns = ''
-        m = re.compile(r'(?i)\w*' + Srch + r'\w*')
+        m = re.compile(r'(?i)(\w*' + Srch + r'\w*)')
 
         count = 0
         vFound = []
@@ -773,9 +773,13 @@ class Bible:
                 vrsIter = vrsDict.keys()
                 for vKey in vrsIter:
                     lines = vrsDict[vKey]
-                    if m.search(lines):
+                    s = m.search(lines)
+                    if s:
                         # Precompiled - pattern.sub(replacement, str)
-                        vFound = m.sub(Srch.upper(), lines)
+                        vFound = lines
+                        for item in m.finditer(vFound):
+                            g = item.group(1)
+                            vFound = re.sub(g, g.upper(), vFound)
 
                         vrsAlph, vrsNumb = '', ''
                         for char in vFound:
