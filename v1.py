@@ -384,29 +384,24 @@ class Bible:
         # or if entry contents reference a book, and chapter or verse
         # EX: "Rom 12:1"
         if (a and not(b)) or (a and c):
-            print(1)
             verses_out = self.VerseRef(self)
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
-            print(2)
             verses_out = self.VerseRef(self)
             verses_out.append(self.PhraseSearch(self))
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            print(3)
             verses_out = self.PhraseSearch(self)
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
-            print(4)
             # TODO: allow search of a chapter number
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
             verses_out = []
             pass
         elif not(any([a, b, c])):
-            print(5)
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
             verses_out = []
@@ -584,7 +579,6 @@ class Bible:
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 status += bkMark
-                print(bkMark)
                 break
             elif b == 65:
                 return self.PhraseSearch(self)
@@ -764,17 +758,12 @@ class Bible:
     def PhraseSearch(self, toShow='None'):
         verses_out = []
 
-        Srch = self.frame.entry
+        Srch = r'%s' % (self.frame.entry)
         addOns = ''
-        m = re.compile('(?i)'+Srch)
-        if Srch.isnumeric():
-            self.frame.entry.delete(0, 'end')
-            self.statusUpdate(self.frame, 'Non-numeric Input Please')
-            self.textUpdate(self, self.miniPreamble())
+        m = re.compile(r'(?i)\w*' + Srch + r'\w*')
 
         count = 0
         vFound = []
-        vrsList = []
         for bKeySpaced in self.bkAbbrv:
             bKey = bKeySpaced.replace(' ', '')
             chpDict = self.BibDict[bKey]
@@ -784,34 +773,22 @@ class Bible:
                 vrsIter = vrsDict.keys()
                 for vKey in vrsIter:
                     lines = vrsDict[vKey]
-                    vrsList.append(lines)
-                    if re.search(addOns+Srch, vrsList[-1]):
+                    if m.search(lines):
                         # Precompiled - pattern.sub(replacement, str)
-                        vFound.append(m.sub(Srch.upper(), vrsList[-1]))
+                        vFound = m.sub(Srch.upper(), lines)
 
-                vLen = len(vFound)
-                count += vLen
-                if vLen > 0:
-                    for v in range(vLen):
-                        if not ((vFound[v])[0].isnumeric()):
-                            ref = ''.join([bKeySpaced, ' ', cKey, ':1 '])
-                            verses_out.append('\n '.join([ref,
-                                                          vFound[v]]))
-                        else:
-                            vrsAlph, vrsNumb = '', ''
-                            for char in vFound[v]:
-                                # Saves the numeric part of the verse.
-                                if char.isdigit():
-                                    vrsNumb += char
-                                else:
-                                    vrsAlph += char
+                        vrsAlph, vrsNumb = '', ''
+                        for char in vFound:
+                            if char.isdigit():
+                                vrsNumb += char
+                            else:
+                                vrsAlph += char
 
-                            ref = ''.join([' ', bKeySpaced,
-                                           ' ', cKey,
-                                           ':', vrsNumb])
-                            verses_out.append('\n'.join([ref, vrsAlph]))
-
-                    del vFound[0]
+                        ref = ''.join([' ', bKeySpaced,
+                                       ' ', cKey,
+                                       ':', vrsNumb])
+                        verses_out.append('\n'.join([ref, vrsAlph]))
+                        count += 1
 
         if count == 0:
             self.statusUpdate(self.frame, ('%i VERSES CONTAINING %s'
