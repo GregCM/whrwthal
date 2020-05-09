@@ -365,9 +365,9 @@ class Bible:
 
         if self.frame.entry is not None:
             entry_upp = self.frame.entry.upper()
-            ToC_entries = [e for e in ToC if e in entry_upp]
+            ToC_entries = [e for e in ToC if e == entry_upp]
             ToC_count = len(ToC_entries)
-            conc_entries = [e for e in unique_words if e in entry_upp]
+            conc_entries = [e for e in unique_words if e == entry_upp]
             con_count = len(conc_entries)
             numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
         else:
@@ -385,30 +385,38 @@ class Bible:
         # EX: "Genesis" --> GENESIS(book)
         # or if entry contents reference a book, and chapter or verse
         # EX: "Rom 12:1"
+        out = {}
         if (a and not(b)) or (a and c):
-            verses_out = self.VerseRef(self)
+            print(1)
+            out['VR'] = self.VerseRef(self)
+
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
-            verses_out = self.VerseRef(self)
-            verses_out.append(self.PhraseSearch(self))
+            print(2)
+            out['VR'] = self.VerseRef(self)
+            out['PS'] = self.PhraseSearch(self)
+
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            verses_out = self.PhraseSearch(self)
+            print(3)
+            out['PS'] = self.PhraseSearch(self)
+
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
             # TODO: allow search of a chapter number
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
-            verses_out = []
+            out = []
             pass
+
         elif not(any([a, b, c])):
+            out = []
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
-            verses_out = []
 
-        self.listUpdate(self, verses_out)
+        self.listUpdate(self, out)
         self.frame.go_b.wait_variable(self.frame.var)
 
     def getQueryInput(setting_list, self, event=None):
@@ -430,7 +438,7 @@ class Bible:
         self.frame.textWidget.insert('end', text)
         self.frame.textWidget.configure(state='disabled')
 
-    def listUpdate(self, l, mode='w'):
+    def listUpdate(self, d, mode='w'):
         try:
             c = self.canvas
             c.destroy()
@@ -454,19 +462,27 @@ class Bible:
         butt_height = 0
         b_press = []
         button_windows = []
-        for i in range(len(l)):
-            b_press.append(partial(self.textUpdate, self, l[i]))
-            self.list_button.append(tk.Button(c, text=l[i][0:50],
-                                              width=w, height=h,
-                                              command=b_press[i]))
-            self.list_button[i].configure(font=('calibri', 9),
-                                          activebackground='#D2D2D2')
-            button_windows.append(c.create_window((0, butt_height),
-                                                  anchor='nw',
+        # FIXME: (1) Phrases must all have their own button.
+        # (2) Label must only refer to book name if unaccompanied by chapters and accompanied by phrases.
+        # (3) Philemon must not return Philippians, but PHM & PHIL must remain their respective abbreviations.
+        # (4) Phrase labels should read -- "... not TEMPT the ... ye TEMPTED him..." for DEUT 6:16 and the like.
+        for key in d.keys():
+            # "x" will be list of length 1 for VerseRef dict,
+            # list of length == output for PhraseSearch dict.
+            x = [d[key][k] for k in d[key].keys() if k != 'label']
+            for i in range(len(x)):
+                b_press.append(partial(self.textUpdate, self, x[i]))
+                self.list_button.append(tk.Button(c, text=d[key]['label'][i],
                                                   width=w, height=h,
-                                                  window=self.list_button[i]))
-            butt_height += h
-            self.list_button[i].update()
+                                                  command=b_press[-1]))
+                button_windows.append(c.create_window((0, butt_height),
+                                                      anchor='nw',
+                                                      width=w, height=h,
+                                                      window=self.list_button[-1]))
+                self.list_button[-1].configure(font=('calibri', 9),
+                                              activebackground='#D2D2D2')
+                self.list_button[-1].update()
+                butt_height += h
 
         c.grid(row=4, column=1, rowspan=8, columnspan=1, sticky='nsew')
         c.update()
@@ -543,13 +559,13 @@ class Bible:
     ####################################
     '''
 
+    # TODO: BASED ON LANGUAGE, PRINT BACKWARDS
     def VerseRef(self):
-        # Initialize 'verses_out' for concatenation.
-        verses_out = list()
-        status = ''
+        # Initialize 'out' for concatenation.
+        out = collections.OrderedDict({'verses': '', 'label': ''})
 
         location = self.frame.entry
-        loc = list()
+        loc = []
         locAlph = ''
         locNumb = ''
         for char in location:
@@ -579,7 +595,7 @@ class Bible:
                 book = self.bkAbbrv[b]
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
-                status += bkMark
+                out['label'] += bkMark
                 break
             elif b == 65:
                 return self.PhraseSearch(self)
@@ -650,39 +666,35 @@ class Bible:
                             ___\n
                             ''')
 
-        verses_outFind = self.BibDict[book]
-        verses_out = []
-
-        # If only book name is input, output whole book ##
+        outFind = self.BibDict[book]
+        # If only book name is input, output whole book
         if chpRef == '0':
-            cKeyList = range(len(verses_outFind.keys()))
+            cKeyList = range(len(outFind.keys()))
             # Hone in on a chapter for the verse loop sake:
+            out['verses'] = '\n %s' % (out['label'])
             for cKey in cKeyList:
                 cKey = str(cKey+1)
                 # LOOP through verses keys
                 # and concatenate each verse-field's string.
-                cFind = verses_outFind[cKey]
+                cFind = outFind[cKey]
                 vKeyList = range(len(cFind.keys()))
-                verses_out_collect = ''
                 for vKey in vKeyList:
                     vKey = str(vKey+1)
                     if vKey == '1':
-                        cPrint = '\n\n Chapter %s \n\n' % (cKey)
+                        cPrint = '\n\n Chapter %s\n\n' % (cKey)
                     else:
                         cPrint = '\n'
 
-                    # TODO: BASED ON LANGUAGE, PRINT BACKWARDS
-                    verses_out_collect += (cPrint + cFind[vKey])
-                # Verses acquired!
-                verses_out.append(verses_out_collect)
+                    # Verses acquired!
+                    out['verses'] += (cPrint + cFind[vKey])
 
         else:
             cKey = chpRef
-            status += ' %s' % (cKey)
+            out['label'] = ' %s' % (cKey)
             try:
-                cFind = verses_outFind[cKey]
+                cFind = outFind[cKey]
             except KeyError:
-                cMax = len(verses_outFind.keys())
+                cMax = len(outFind.keys())
 
                 # Plural or not?
                 if cMax == 1:
@@ -697,18 +709,18 @@ class Bible:
                 else:
                     noCRef = '\n Unf' + noCRef
 
-            # If only chapter is input, output whole chapter ##
+            # If only chapter is input, output whole chapter
             if vrsRef == '0':
+                out['label']= bkMark + cKey
                 vKeyList = range(len(cFind.keys()))
-                verses_out_collect = ''
+                out['verses'] = '\n %s' % (out['label'])
                 # LOOP through these verses, and
                 # concatenate each verse-field's string.
                 for vKey in vKeyList:
                     vKey = str(vKey+1)
-                    verses_out_collect += '\n' + cFind[vKey]
-                verses_out.append(verses_out_collect)
+                    out['verses'] += '\n' + cFind[vKey]
 
-            # Range of verses ##
+            # Range of verses
             elif severalVrs:
                 vMax = len(cFind.keys())
                 e_raised = False
@@ -716,24 +728,23 @@ class Bible:
                     vKey = str(verseNum)
                     try:
                         # Verses acquired!
-                        verses_out.append('\n' + cFind[vKey])
+                        out['verses'] += '\n%s' % (cFind[vKey])
+                        vEnd = lV
+                    # Verse number larger than max number of verses in chapter
+                    # --> print only to chapter's end and cast change to label
                     except KeyError:
-                        e_raised = True
-                    finally:
-                        if e_raised:
-                            vEnd = vMax
-                        else:
-                            vEnd = lV
+                        vEnd = vMax
+                        out['verses'] += '\n%s' % (cFind[vEnd])
 
-                status += ':%s-%s' % (str(fV), str(vEnd-1))
+                out['label'] += ':%s-%s' % (str(fV), str(vEnd-1))
 
             # Just one verse
             else:
                 vKey = vrsRef
-                status += ':%s' % (vKey)
+                out['label'] += ':%s' % (vKey)
                 try:
                     # Verse acquired!
-                    verses_out.append('\n' + cFind[vKey])
+                    out['verses'] += '\n%s' % (cFind[vKey])
                 except KeyError:
                     vMax = len(cFind.keys())
                     noVRef = ('ortunetly, %s %s only has %i verses'
@@ -743,10 +754,10 @@ class Bible:
                         noVRef = '\n F' + noVRef
                     else:
                         noVRef = '\n Unf' + noVRef
-                        verses_out = [noVRef]
+                        out = [noVRef]
 
-        self.statusUpdate(self.frame, status)
-        return verses_out
+        self.statusUpdate(self.frame, out['label'])
+        return out
 
     '''
     ###########################
@@ -757,7 +768,7 @@ class Bible:
     '''
 
     def PhraseSearch(self, toShow='None'):
-        verses_out = []
+        out = []
 
         Srch = r'%s' % (self.frame.entry)
         # addOns = ''
@@ -796,7 +807,7 @@ class Bible:
                         ref = ''.join([' ', bKeySpaced,
                                        ' ', cKey,
                                        ':', vrsNumb])
-                        verses_out.append('\n'.join([ref, vrsAlph]))
+                        out.append('\n'.join([ref, vrsAlph]))
                         count += 1
 
         if count == 0:
@@ -809,7 +820,7 @@ class Bible:
             self.statusUpdate(self.frame, ('%i VERSES CONTAINING %s'
                                            % (count, Srch.upper())))
 
-        return verses_out
+        return out
 
     def preamble():
         cross = '''\n\n
