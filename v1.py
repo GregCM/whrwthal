@@ -31,7 +31,7 @@ see the install support for Python at
 https://www.python.org/downloads/release/python-382/
 https://docs.python.org/3/using/windows.html
 
-You will need to include "pip" and 
+You will need to include "pip" and
 "tkinter" in your install
 
 For other support, or if you have any
@@ -231,10 +231,12 @@ class Bible:
                                        sticky='sew')
 
             self.frame.Tpadding = tk.Label(self.frame, text='', relief='flat')
-            self.frame.Tpadding.grid(row=0, column=0, columnspan=14, sticky='ew')
+            self.frame.Tpadding.grid(row=0, column=0,
+                                     columnspan=14, sticky='ew')
 
             self.frame.Bpadding = tk.Label(self.frame, text='', relief='flat')
-            self.frame.Bpadding.grid(row=14, column=0, columnspan=14, sticky='ew')
+            self.frame.Bpadding.grid(row=14, column=0,
+                                     columnspan=14, sticky='ew')
 
             self.frame.Lpadding = tk.Label(self.frame, text='', relief='flat')
             self.frame.Lpadding.grid(row=0, column=0, rowspan=14, sticky='ns')
@@ -451,7 +453,6 @@ class Bible:
 
         butt_height = 0
         b_press = []
-        button_frames = []
         button_windows = []
         for i in range(len(l)):
             b_press.append(partial(self.textUpdate, self, l[i]))
@@ -759,9 +760,10 @@ class Bible:
         verses_out = []
 
         Srch = r'%s' % (self.frame.entry)
-        addOns = ''
+        # addOns = ''
+
         # Case insensitive search anywhere within a word.
-        # EX: Srch = "tempt" --> 
+        # EX: Srch = "tempt" -->
         # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
         m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
 
