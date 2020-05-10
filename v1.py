@@ -385,7 +385,7 @@ class Bible:
         # EX: "Genesis" --> GENESIS(book)
         # or if entry contents reference a book, and chapter or verse
         # EX: "Rom 12:1"
-        out = {}
+        out = collections.OrderedDict()
         if (a and not(b)) or (a and c):
             print(1)
             out['VR'] = self.VerseRef(self)
@@ -462,17 +462,16 @@ class Bible:
         butt_height = 0
         b_press = []
         button_windows = []
-        # FIXME: (1) Phrases must all have their own button.
-        # (2) Label must only refer to book name if unaccompanied by chapters and accompanied by phrases.
-        # (3) Philemon must not return Philippians, but PHM & PHIL must remain their respective abbreviations.
+        # FIXME: (3) Philemon must not return Philippians, but PHM & PHIL must remain their respective abbreviations.
         # (4) Phrase labels should read -- "... not TEMPT the ... ye TEMPTED him..." for DEUT 6:16 and the like.
         for key in d.keys():
             # "x" will be list of length 1 for VerseRef dict,
             # list of length == output for PhraseSearch dict.
-            x = [d[key][k] for k in d[key].keys() if k != 'label']
-            for i in range(len(x)):
-                b_press.append(partial(self.textUpdate, self, x[i]))
-                self.list_button.append(tk.Button(c, text=d[key]['label'][i],
+            label = d[key]['label']
+            x = [k for k in d[key].keys() if k != 'label'][0]
+            for i in range(len(d[key][x])):
+                b_press.append(partial(self.textUpdate, self, d[key][x][i]))
+                self.list_button.append(tk.Button(c, text=label[i],
                                                   width=w, height=h,
                                                   command=b_press[-1]))
                 button_windows.append(c.create_window((0, butt_height),
@@ -480,7 +479,7 @@ class Bible:
                                                       width=w, height=h,
                                                       window=self.list_button[-1]))
                 self.list_button[-1].configure(font=('calibri', 9),
-                                              activebackground='#D2D2D2')
+                                               activebackground='#D2D2D2')
                 self.list_button[-1].update()
                 butt_height += h
 
@@ -711,7 +710,7 @@ class Bible:
 
             # If only chapter is input, output whole chapter
             if vrsRef == '0':
-                out['label']= bkMark + cKey
+                out['label'] = bkMark + cKey
                 vKeyList = range(len(cFind.keys()))
                 out['verses'] = '\n %s' % (out['label'])
                 # LOOP through these verses, and
@@ -757,6 +756,8 @@ class Bible:
                         out = [noVRef]
 
         self.statusUpdate(self.frame, out['label'])
+        out['verses'] = [out['verses']]
+        out['label'] = [out['label']]
         return out
 
     '''
@@ -768,7 +769,7 @@ class Bible:
     '''
 
     def PhraseSearch(self, toShow='None'):
-        out = []
+        out = collections.OrderedDict({'phrases': [], 'label': []})
 
         Srch = r'%s' % (self.frame.entry)
         # addOns = ''
@@ -796,6 +797,24 @@ class Bible:
                             g = item.group(1)
                             n = re.compile(r'(?i)%s' % (g))
                             vFound = n.sub(g.upper(), vFound)
+                        o = re.compile(r'(?i)^(\S*%s\S* \S* \S*)' % (g))
+                        p = re.compile(r'(?i)([A-Za-z]* \S*%s\S* \S*)' % (g))
+                        q = re.compile(r'(?i)(\w* \w* \S*%s\S*)$' % (g))
+                        iterspan = ''
+                        for item in o.finditer(vFound):
+                            s = item.start()
+                            e = item.end()
+                            iterspan += '%s...' % (vFound[s:e])
+
+                        for item in p.finditer(vFound):
+                            s = item.start()
+                            e = item.end()
+                            iterspan += '... %s...' % (vFound[s:e])
+
+                        for item in p.finditer(vFound):
+                            s = item.start()
+                            e = item.end()
+                            iterspan += '... %s' % (vFound[s:e])
 
                         vrsAlph, vrsNumb = '', ''
                         for char in vFound:
@@ -807,7 +826,8 @@ class Bible:
                         ref = ''.join([' ', bKeySpaced,
                                        ' ', cKey,
                                        ':', vrsNumb])
-                        out.append('\n'.join([ref, vrsAlph]))
+                        out['phrases'].append(vrsAlph)
+                        out['label'].append('%s\n%s' % (ref, iterspan))
                         count += 1
 
         if count == 0:
