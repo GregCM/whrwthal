@@ -811,7 +811,7 @@ class Bible:
                             e = item.end()
                             iterspan += '... %s...' % (vFound[s:e])
 
-                        for item in p.finditer(vFound):
+                        for item in q.finditer(vFound):
                             s = item.start()
                             e = item.end()
                             iterspan += '... %s' % (vFound[s:e])
