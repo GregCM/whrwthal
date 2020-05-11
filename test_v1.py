@@ -14,9 +14,10 @@ class Test:
 
     def test_PhraseSearch(*kwargs):
         Bible.frame.entry = 'rightly dividing'
-        print(Bible.PhraseSearch(Bible))
-        assert len(Bible.PhraseSearch(Bible)) == 1
+        assert len(Bible.PhraseSearch(Bible)['phrases']) == 1
+        v1.Bible.frame.entry = 'word'
+        assert len(Bible.PhraseSearch(Bible)['phrases']) == 1581
         v1.Bible.frame.entry = 'of'
-        assert len(Bible.PhraseSearch(Bible)) == 18940
+        assert len(Bible.PhraseSearch(Bible)['phrases']) == 18940
         v1.Bible.frame.entry = 'truth'
-        assert len(Bible.PhraseSearch(Bible)) == 224
+        assert len(Bible.PhraseSearch(Bible)['phrases']) == 224
