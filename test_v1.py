@@ -12,6 +12,9 @@ class Test:
         assert len(d) == 67
         assert len(d['CONCORDANCE']) == 13664
 
+    # If you experience weird search output, uncomment the following
+    # test function and run "pytest" to confirm basic search parameters.
+    '''
     def test_PhraseSearch(*kwargs):
         Bible.__init__(Bible, configfile='config_test.ini')
         Bible.frame.entry = 'rightly dividing'
@@ -22,3 +25,4 @@ class Test:
         assert len(Bible.PhraseSearch(Bible)['phrases']) == 18940
         v1.Bible.frame.entry = 'truth'
         assert len(Bible.PhraseSearch(Bible)['phrases']) == 224
+    '''
