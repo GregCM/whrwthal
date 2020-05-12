@@ -440,15 +440,15 @@ class Bible:
     def listUpdate(self, d, mode='w'):
         try:
             c = self.canvas
+            for lb in self.list_button:
+                lb.destroy()
             c.destroy()
         except AttributeError:
             pass
         finally:
+            self.list_button = []
             self.canvas = tk.Canvas(self.frame)
             c = self.canvas
-
-        for lb in self.list_button:
-            lb.destroy()
 
         if mode == 'w':
             self.cls(self.frame)
@@ -461,8 +461,10 @@ class Bible:
         butt_height = 0
         b_press = []
         button_windows = []
-        # FIXME: (3) Philemon must not return Philippians, but PHM & PHIL must remain their respective abbreviations.
-        # (4) Phrase labels should read -- "... not TEMPT the ... ye TEMPTED him..." for DEUT 6:16 and the like.
+        # FIXME: (3) Philemon must not return Philippians,
+        # but PHM & PHIL must remain their respective abbreviations.
+        # (4) Phrase labels should read -->
+        # "... not TEMPT the ... ye TEMPTED him..." for DEUT 6:16, etc.
         for key in d.keys():
             # "x" will be list of length 1 for VerseRef dict,
             # list of length == output for PhraseSearch dict.
@@ -473,10 +475,11 @@ class Bible:
                 self.list_button.append(tk.Button(c, text=label[i],
                                                   width=w, height=h,
                                                   command=b_press[-1]))
+                lb = self.list_button[-1]
                 button_windows.append(c.create_window((0, butt_height),
                                                       anchor='nw',
                                                       width=w, height=h,
-                                                      window=self.list_button[-1]))
+                                                      window=lb))
                 self.list_button[-1].configure(font=('calibri', 9),
                                                activebackground='#D2D2D2')
                 self.list_button[-1].update()
@@ -497,8 +500,6 @@ class Bible:
         self.canvas.bind('<Enter>', self._bound_mouse_to_scrollbar)
         self.canvas.bind('<Leave>', self._unbound_mouse_to_scrollbar)
         '''
-
-        b_press, self.list_button = [], []
 
     def calendarUpdate(self):
         url = 'https://www.blueletterbible.org/dailyreading/index.cfm'
@@ -594,7 +595,6 @@ class Bible:
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 out['label'] += bkMark
-                status += bkMark
                 break
             elif b == 65:
                 return self.PhraseSearch(self)
@@ -722,7 +722,6 @@ class Bible:
             # Range of verses
             elif severalVrs:
                 vMax = len(cFind.keys())
-                e_raised = False
                 for verseNum in range(fV, lV):
                     vKey = str(verseNum)
                     try:
@@ -808,7 +807,7 @@ class Bible:
                         ocond = o.search(vFound)
                         pcond = p.search(vFound)
                         qcond = q.search(vFound)
-                        if ocond: 
+                        if ocond:
                             print('o')
                             for item in o.finditer(vFound):
                                 s = item.start()
