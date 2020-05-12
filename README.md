@@ -4,7 +4,7 @@ Offline bible referencing for bible minded folk! Including terminal and/or UI di
 # What is it?
 whrwthal (adverb):
 
-  As in "Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word." - Psalm 119:9
+ As in "Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word." - Psalm 119:9
 
 W-H-R-W-T-H-A-L (acronymn):
 
