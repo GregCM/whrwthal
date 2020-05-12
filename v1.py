@@ -384,29 +384,29 @@ class Bible:
         # or if entry contents reference a book, and chapter or verse
         # EX: "Rom 12:1"
         if (a and not(b)) or (a and c):
-            print(1)
+            # print(1)
             verses_out = self.VerseRef(self)
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
-            print(2)
+            # print(2)
             verses_out = self.VerseRef(self)
             verses_out.append(self.PhraseSearch(self))
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            print(3)
+            # print(3)
             verses_out = self.PhraseSearch(self)
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
-            print(4)
+            # print(4)
             # TODO: allow search of a chapter number
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
             verses_out = []
             pass
         elif not(any([a, b, c])):
-            print(5)
+            # print(5)
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
             verses_out = []
@@ -584,7 +584,6 @@ class Bible:
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 status += bkMark
-                print(bkMark)
                 break
             elif b == 65:
                 return self.PhraseSearch(self)
