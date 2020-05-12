@@ -143,7 +143,7 @@ class Bible:
             # Create & Configure frame
             self.frame = tk.Frame(self.root)
             self.frame.tk_focusFollowsMouse()
-            self.frame.master.title('The Bible')
+            self.frame.master.title('whrwthal')
             self.frame.grid(row=0, column=0, sticky='nsew')
 
             menubar = tk.Menu(self.frame)
@@ -380,31 +380,52 @@ class Bible:
         out = collections.OrderedDict()
         if (a and not(b)) or (a and c):
             # print(1)
+<<<<<<< HEAD
             out['VR'] = self.VerseRef(self)
 
+=======
+            verses_out = self.VerseRef(self)
+>>>>>>> 8d125bdca71d2944de2fb635a63d04fcd6252e84
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
             # print(2)
+<<<<<<< HEAD
             out['VR'] = self.VerseRef(self)
             out['PS'] = self.PhraseSearch(self)
 
+=======
+            verses_out = self.VerseRef(self)
+            verses_out.append(self.PhraseSearch(self))
+>>>>>>> 8d125bdca71d2944de2fb635a63d04fcd6252e84
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
             # print(3)
+<<<<<<< HEAD
             out['PS'] = self.PhraseSearch(self)
 
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
+=======
+            verses_out = self.PhraseSearch(self)
+        # else if entry contents only reference a number
+        # EX: "23"
+        elif (c and not(any([a, b]))):
+            # print(4)
+>>>>>>> 8d125bdca71d2944de2fb635a63d04fcd6252e84
             # TODO: allow search of a chapter number
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
             out = []
             pass
 
         elif not(any([a, b, c])):
+<<<<<<< HEAD
             out = []
+=======
+            # print(5)
+>>>>>>> 8d125bdca71d2944de2fb635a63d04fcd6252e84
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
 
@@ -586,7 +607,11 @@ class Bible:
                 book = self.bkAbbrv[b]
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
+<<<<<<< HEAD
                 out['label'] += bkMark
+=======
+                status += bkMark
+>>>>>>> 8d125bdca71d2944de2fb635a63d04fcd6252e84
                 break
             elif b == 65:
                 return self.PhraseSearch(self)
