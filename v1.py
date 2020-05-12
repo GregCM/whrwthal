@@ -75,6 +75,7 @@ class Bible:
         ##################
         '''
 
+        self.pytesting = False
         self.ispc = sys.platform.startswith('win')
         self.ismac = sys.platform.startswith('darwin')
         self.islinux = sys.platform.startswith('linux')
