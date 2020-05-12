@@ -388,20 +388,20 @@ class Bible:
         # EX: "Rom 12:1"
         out = collections.OrderedDict()
         if (a and not(b)) or (a and c):
-            print(1)
+            # print(1)
             out['VR'] = self.VerseRef(self)
 
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
-            print(2)
+            # print(2)
             out['VR'] = self.VerseRef(self)
             out['PS'] = self.PhraseSearch(self)
 
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            print(3)
+            # print(3)
             out['PS'] = self.PhraseSearch(self)
 
         # else if entry contents only reference a number
