@@ -25,16 +25,7 @@ in the public domain, and free to use, quote,
 or share without limit, provided no changes
 are made to the content therein.
 
-If you are running on MicroSoft Windows,
-see the install support for Python at
-
-https://www.python.org/downloads/release/python-382/
-https://docs.python.org/3/using/windows.html
-
-You will need to include "pip" and
-"tkinter" in your install
-
-For other support, or if you have any
+For general support, or if you have any
 questions about the app's functionality,
 the content of the word of God, or
 anything else related, contact at
@@ -75,6 +66,7 @@ class Bible:
         ##################
         '''
 
+        self.pytesting = False
         self.ispc = sys.platform.startswith('win')
         self.ismac = sys.platform.startswith('darwin')
         self.islinux = sys.platform.startswith('linux')
@@ -387,20 +379,20 @@ class Bible:
         # EX: "Rom 12:1"
         out = collections.OrderedDict()
         if (a and not(b)) or (a and c):
-            print(1)
+            # print(1)
             out['VR'] = self.VerseRef(self)
 
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
-            print(2)
+            # print(2)
             out['VR'] = self.VerseRef(self)
             out['PS'] = self.PhraseSearch(self)
 
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            print(3)
+            # print(3)
             out['PS'] = self.PhraseSearch(self)
 
         # else if entry contents only reference a number
