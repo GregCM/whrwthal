@@ -810,21 +810,21 @@ class Bible:
                         pcond = p.search(vFound)
                         qcond = q.search(vFound)
                         if ocond:
-                            print('o')
+                            # print('o')
                             for item in o.finditer(vFound):
                                 s = item.start()
                                 e = item.end()
                                 iterspan += '%s...' % (vFound[s:e])
 
                         if pcond:
-                            print('p')
+                            # print('p')
                             for item in p.finditer(vFound):
                                 s = item.start()
                                 e = item.end()
                                 iterspan += '... %s...' % (vFound[s:e])
 
                         if qcond:
-                            print('q')
+                            # print('q')
                             for item in q.finditer(vFound):
                                 s = item.start()
                                 e = item.end()
