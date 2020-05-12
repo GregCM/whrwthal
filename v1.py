@@ -25,16 +25,7 @@ in the public domain, and free to use, quote,
 or share without limit, provided no changes
 are made to the content therein.
 
-If you are running on MicroSoft Windows,
-see the install support for Python at
-
-https://www.python.org/downloads/release/python-382/
-https://docs.python.org/3/using/windows.html
-
-You will need to include "pip" and
-"tkinter" in your install
-
-For other support, or if you have any
+For general support, or if you have any
 questions about the app's functionality,
 the content of the word of God, or
 anything else related, contact at
