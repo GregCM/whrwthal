@@ -40,6 +40,7 @@ returned, you're good to go. Python 2.X users will need to upgrade. To get Pytho
 https://www.python.org/downloads/windows/
 
 You will need to include "pip" and "tkinter" in your install to use whrwthal.v1
+
 For the easiest method, choose "web-based installer".
 
 Keep in mind this will take up about 60MB of space on your machine, which is a drop in the bucket compared to putting the same on a thumb drive. The best thing to do where internet is reliable is install python to your computer instead of your thumb drive, in order to maximize space on the drive. If internet is unreliable, see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter".
