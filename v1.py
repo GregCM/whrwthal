@@ -797,24 +797,37 @@ class Bible:
                             g = item.group(1)
                             n = re.compile(r'(?i)%s' % (g))
                             vFound = n.sub(g.upper(), vFound)
-                        o = re.compile(r'(?i)^(\S*%s\S* \S* \S*)' % (g))
-                        p = re.compile(r'(?i)([A-Za-z]* \S*%s\S* \S*)' % (g))
-                        q = re.compile(r'(?i)(\w* \w* \S*%s\S*)$' % (g))
+
+                        # \S instead of \w to include
+                        # punctuation at fringes of words
+                        o = re.compile(r'(?i)^\S*%s\S* \S* \S*' % (g))
+                        p = re.compile(r'(?i)\S* \S*%s\S* \S*' % (g))
+                        q = re.compile(r'(?i)\S* \S* \S*%s\S*$' % (g))
                         iterspan = ''
-                        for item in o.finditer(vFound):
-                            s = item.start()
-                            e = item.end()
-                            iterspan += '%s...' % (vFound[s:e])
 
-                        for item in p.finditer(vFound):
-                            s = item.start()
-                            e = item.end()
-                            iterspan += '... %s...' % (vFound[s:e])
+                        ocond = o.search(vFound)
+                        pcond = p.search(vFound)
+                        qcond = q.search(vFound)
+                        if ocond: 
+                            print('o')
+                            for item in o.finditer(vFound):
+                                s = item.start()
+                                e = item.end()
+                                iterspan += '%s...' % (vFound[s:e])
 
-                        for item in q.finditer(vFound):
-                            s = item.start()
-                            e = item.end()
-                            iterspan += '... %s' % (vFound[s:e])
+                        if pcond:
+                            print('p')
+                            for item in p.finditer(vFound):
+                                s = item.start()
+                                e = item.end()
+                                iterspan += '... %s...' % (vFound[s:e])
+
+                        if qcond:
+                            print('q')
+                            for item in q.finditer(vFound):
+                                s = item.start()
+                                e = item.end()
+                                iterspan += '... %s' % (vFound[s:e])
 
                         vrsAlph, vrsNumb = '', ''
                         for char in vFound:
