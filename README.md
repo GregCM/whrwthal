@@ -25,6 +25,9 @@ As such, whrwthal totals just under 9MB, or 5MB if low-footprint mode is on (con
 
 whrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
+# WARNING
+IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT GREGCACERES@GMAIL.COM FOR A SNAIL-MAIL COPY ON USB/CD. WORD YOUR EMAIL IN AN INCONSPICUOUS PHRASING, ALONG THESE LINES: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
+
 # Installation
 whrwthal runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check if you have Python3 already by typing
 
@@ -50,5 +53,15 @@ https://tkdocs.com/tutorial/install.html,
 
 To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python and run whrwthal.v0 in the same folder (still totaling just under 25MB).
 
-# WARNING
-IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT GREGCACERES@GMAIL.COM FOR A SNAIL-MAIL COPY ON USB/CD. WORD YOUR EMAIL IN AN INCONSPICUOUS PHRASING, ALONG THESE LINES: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
+# FIRST-USE
+On Windows, open the command prompt and type
+
+"cd *installdir*"
+
+where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. From now on, you can proceed the same way through the command prompt, or simply create a shortcut to the file v1.py
+
+On Mac or Linux, open a terminal and proceed the same way. Instead of running "v1.py", however, you'll type
+
+"./v1.py"
+
+You can change the default settings stored during this one-time setup at any time through the options menubar; this includes language, colors, directories, and more!
