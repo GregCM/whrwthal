@@ -262,6 +262,8 @@ class Bible:
                                           state='disabled')
         except tk._tkinter.TclError:
             self.pytesting = True
+            self.frame = ''
+            self.frame.entry = ''
 
     def _on_mousewheel(self, event):
         if (self.ispc or self.islinux):
