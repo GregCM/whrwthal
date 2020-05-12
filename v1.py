@@ -151,7 +151,7 @@ class Bible:
             # Create & Configure frame
             self.frame = tk.Frame(self.root)
             self.frame.tk_focusFollowsMouse()
-            self.frame.master.title('The Bible')
+            self.frame.master.title('whrwthal')
             self.frame.grid(row=0, column=0, sticky='nsew')
 
             menubar = tk.Menu(self.frame)
