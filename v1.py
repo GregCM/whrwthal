@@ -262,7 +262,7 @@ class Bible:
                                           state='disabled')
         except tk._tkinter.TclError:
             self.pytesting = True
-            self.frame = ''
+            self.frame = type('test', (object,), {})()
             self.frame.entry = ''
 
     def _on_mousewheel(self, event):
