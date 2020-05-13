@@ -53,7 +53,7 @@ https://tkdocs.com/tutorial/install.html,
 
 To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python and run whrwthal.v0 in the same folder (still totaling just under 25MB).
 
-# FIRST-USE
+# First-Use
 On Windows, open the command prompt and type
 
 "cd *installdir*"
