@@ -1,5 +1,5 @@
 # whrwthal
-Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is whrwthal better than other systems (honorable mentions: BlueLetterBible.org, SWORD Project & Xiphos.org)? Read on:
+Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is whrwthal better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://www.Xiphos.org/)? Read on:
 
 # What is it?
 whrwthal (adverb):
@@ -17,9 +17,7 @@ W-H-R-W-T-H-A-L (acronymn):
   And
   Laudable
 
-whrwthal is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/,
-
-https://flashdrivesforfreedom.org/
+whrwthal is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
 
 As such, whrwthal totals just under 9MB, or 5MB if low-footprint mode is on (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
@@ -58,10 +56,10 @@ On Windows, open the command prompt and type
 
 "cd *installdir*"
 
-where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. From now on, you can proceed the same way through the command prompt, or simply create a shortcut to the file v1.py
+where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use whrwthal. Otherwise, from first setup on you can proceed the same way through the command prompt, or simply create a shortcut to the file v1.py
 
 On Mac or Linux, open a terminal and proceed the same way. Instead of running "v1.py", however, you'll type
 
 "./v1.py"
 
-You can change the default settings stored during this one-time setup at any time through the options menubar; this includes language, colors, directories, and more!
+You can change the default settings stored during this one-time setup at any time through the options menubar; this includes language, colors, directories, and more.
