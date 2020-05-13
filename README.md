@@ -63,3 +63,35 @@ On Mac or Linux, open a terminal and proceed the same way. Instead of running "v
 "./v1.py"
 
 You can change the default settings stored during this one-time setup at any time through the options menubar; this includes language, colors, directories, and more.
+
+Linux users can create a desktop application referencing whrwthal by writing to a desktop file. Most likely, the best place for this is
+
+~/.local/share/applications/
+
+Once you cd to this directory, make a file called "whrwthal.desktop" populated by the following:
+
+
+[DESKTOP ENTRY]
+
+Version=1.0
+
+Encoding=UTF-8
+
+Name=whrwthal
+
+Comment=Offline Bible referencing
+
+Exec=*installdir*/v1.py
+
+Icon=*installdir*/book.png
+
+Path=*installdir*
+
+Terminal=false
+
+Type=Application
+
+Categories=Educational;Application;
+
+
+An icon will now appear in your applications menu to easily access whrwthal!
