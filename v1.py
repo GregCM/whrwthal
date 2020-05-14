@@ -48,6 +48,7 @@ import re
 import string
 import sys
 import tkinter as tk
+from tkinter import colorchooser
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
@@ -85,6 +86,7 @@ class Bible:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
             self.font_size = self.config_obj['FONT']['size']
+            self.footprint = self.config_obj['FOOTPRINT']['weight']
         except KeyError:
             # This directory contains BIBLE.txt & the configuration file.
             # This will then be saved for next time
@@ -104,6 +106,8 @@ class Bible:
                                        'roman,calibri,courier',
                                        'size options':
                                        '9,10,11,12,13,14,15'}
+            self.config_obj['FOOTPRINT'] = {'weight': 'normal',
+                                            'options': 'normal,low'}
             # Defaults:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
@@ -147,19 +151,31 @@ class Bible:
             self.frame.grid(row=0, column=0, sticky='nsew')
 
             menubar = tk.Menu(self.frame)
-            fileMenu = tk.Menu(menubar, tearoff=0)
-            optionsMenu = tk.Menu(menubar, tearoff=0)
-            menubar.add_cascade(label='File', menu=fileMenu)
-            menubar.add_cascade(label='Options', menu=optionsMenu)
+            file_menu = tk.Menu(menubar, tearoff=0)
+            edit_menu = tk.Menu(menubar, tearoff=0)
+            options_menu = tk.Menu(menubar, tearoff=0)
+            help_menu = tk.Menu(menubar, tearoff=0)
+            menubar.add_cascade(label='File', menu=file_menu)
+            menubar.add_cascade(label='Edit', menu=edit_menu)
+            menubar.add_cascade(label='Options', menu=options_menu)
+            menubar.add_cascade(label='Help', menu=help_menu)
 
-            self.sv_Button = partial(self.save, self)
-            fileMenu.add_command(label='Save',
-                                 accelerator='Ctrl+S',
-                                 command=self.sv_Button)
-            self.frame.master.bind('<Control-s>', self.sv_Button)
+            self.sv_button = partial(self.save, self)
+            file_menu.add_command(label='Save',
+                                  accelerator='Ctrl+S',
+                                  command=self.sv_button)
+            self.svas_button = partial(self.saveas, self)
+            file_menu.add_command(label='SaveAs',
+                                  accelerator='Ctrl+Shift+S',
+                                  command=self.sv_button)
+            self.frame.master.bind('<Control-Shift-s>', self.svas_button)
 
-            optionsMenu.add_cascade(label='Color Preferences',
-                                    command=self.getColor())
+            options_menu.add_command(label='Settings',
+                                     command=self.settings())
+
+            options_menu.add_command(label='Color Preferences',
+                                     command=self.get_color())
+
             self.frame.master.config(menu=menubar)
 
             self.w = self.frame.winfo_screenwidth()
@@ -339,10 +355,10 @@ class Bible:
             if proc.name() == pn:
                 proc.kill()
 
-    def getColor():
+    def get_color():
+        color = colorchooser.askcolor()
+        print(color)
         return
-        # color = tk.tkColorChooser.askcolor()
-        # rint(color)
 
     def getInput(self, event=None):
         self.frame.var.set(1)
