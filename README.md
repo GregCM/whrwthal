@@ -1,5 +1,5 @@
 # whrwthal
-Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is whrwthal better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://www.Xiphos.org/)? Read on:
+Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is whrwthal better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://Xiphos.org/)? Read on:
 
 # What is it?
 whrwthal (adverb):
