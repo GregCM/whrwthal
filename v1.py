@@ -170,11 +170,12 @@ class Bible:
                                   command=self.sv_button)
             self.frame.master.bind('<Control-Shift-s>', self.svas_button)
 
+            sett = partial(self.settings, self)
             options_menu.add_command(label='Settings',
-                                     command=self.settings())
+                                     command=sett)
 
             options_menu.add_command(label='Color Preferences',
-                                     command=self.get_color())
+                                     command=self.get_color)
 
             self.frame.master.config(menu=menubar)
 
@@ -183,16 +184,9 @@ class Bible:
             self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
 
             # For any entry field, ensures one time only call.
-            self.frame.entry = '...'
+            self.frame.entry = ''
             self.getIN = partial(self.getInput, self)
             self.frame.master.bind('<Return>', self.getIN)
-
-            self.qvar = tk.IntVar()
-            self.frame.var = tk.IntVar()
-            self.frame.SearchBar = tk.Entry(self.frame)
-            self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
-            slSB = partial(self.select, self)
-            self.frame.master.bind('<Control-l>', slSB)
 
             self.getIN = partial(self.getInput, self)
             self.frame.go_b = tk.Button(self.frame,
@@ -200,6 +194,13 @@ class Bible:
                                         command=self.getIN,
                                         relief='flat')
             self.frame.go_b.grid(row=3, column=1, sticky='new')
+
+            self.qvar = tk.IntVar()
+            self.frame.var = tk.IntVar()
+            self.frame.SearchBar = tk.Entry(self.frame)
+            self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
+            slSB = partial(self.select, self)
+            self.frame.master.bind('<Control-l>', slSB)
 
             self.list_button = []
 
@@ -355,9 +356,12 @@ class Bible:
             if proc.name() == pn:
                 proc.kill()
 
+    def settings(self):
+        sett_branch = tk.Tk(self.root)
+        return ''
+
     def get_color():
         color = colorchooser.askcolor()
-        print(color)
         return
 
     def getInput(self, event=None):
@@ -397,15 +401,12 @@ class Bible:
         if (a and not(b)) or (a and c):
             # print(1)
             out['VR'] = self.VerseRef(self)
-            verses_out = self.VerseRef(self)
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
             # print(2)
             out['VR'] = self.VerseRef(self)
             out['PS'] = self.PhraseSearch(self)
-            verses_out = self.VerseRef(self)
-            verses_out.append(self.PhraseSearch(self))
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
@@ -415,7 +416,7 @@ class Bible:
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
-            verses_out = self.PhraseSearch(self)
+            out['PS'] = self.PhraseSearch(self)
         # else if entry contents only reference a number
         # EX: "23"
         elif (c and not(any([a, b]))):
@@ -431,7 +432,7 @@ class Bible:
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
 
-        self.listUpdate(self, out)
+        self.listUpdate(self, out), self.listUpdate(self, out)
         self.frame.go_b.wait_variable(self.frame.var)
 
     def getQueryInput(setting_list, self, event=None):
@@ -538,6 +539,7 @@ class Bible:
         try:
             wd = os.getcwd()
             os.chdir(self.fileLocation)
+            self.config_obj.read('config.ini')
             self.save_directory = self.config_obj['PATH']['save']
             with open('config.ini', 'w') as cfg:
                 self.config_obj.write(cfg)
@@ -545,7 +547,7 @@ class Bible:
             with open('%s.txt' % (log_time), 'w') as saved:
                 # Save file found and amended
                 saved.write(text)
-        except FileNotFoundError:
+        except KeyError or FileNotFoundError:
             # Save file not found, saveas:
             self.saveas(self)
         finally:
@@ -553,16 +555,19 @@ class Bible:
 
     def saveas(self):
         text = self.frame.textWidget.get('1.0', 'end')
-        fileName = filedialog.asksaveasfilename(
-                    initialdir=self.homeDirectory, title="Save as",
-                    filetypes=(("text file", "*.txt"),
-                               ("all files", "*.*")))
-        with open(fileName, 'w') as saved_as:
+        dirName = filedialog.askdirectory(
+                   initialdir=self.homeDirectory, title="Save as")
+
+        # FIXME
+        os.chdir(dirName)
+        log_time = dt.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        with open(log_time, 'w') as saved_as:
             saved_as.write(text)
+
         os.chdir(self.fileLocation)
         self.config_obj = ConfigParser()
-        self.config_obj['PATH']['save'] = re.split('.', fileName)[0]
-        self.save_directory = self.config_obj['PATH']['save']
+        self.config_obj.read('config.ini')
+        self.config_obj['PATH'] = {'save': re.split('.', dirName)[0]}
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
