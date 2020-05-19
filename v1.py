@@ -87,6 +87,7 @@ class Bible:
             self.font = self.config_obj['FONT']['font']
             self.font_size = self.config_obj['FONT']['size']
             self.footprint = self.config_obj['FOOTPRINT']['weight']
+            self.colors = self.config_obj['COLORS']
         except KeyError:
             # This directory contains BIBLE.txt & the configuration file.
             # This will then be saved for next time
@@ -108,14 +109,56 @@ class Bible:
                                        '9,10,11,12,13,14,15'}
             self.config_obj['FOOTPRINT'] = {'weight': 'normal',
                                             'options': 'normal,low'}
+            self.config_obj['COLORS'] = {'frame': 'gray18',
+                                         'master': 'gray18',
+                                         'menubar': {'bg': 'gray20',
+                                                     'fg': 'ghost white'},
+                                         'statusBar': {'bg': 'gray18',
+                                                       'fg': 'ghost white'},
+                                         'textWidget': {'bg': 'gray26',
+                                                        'fg': 'ghost white'},
+                                         'Tpadding': {'bg': 'gray18',
+                                                      'fg': 'ghost white'},
+                                         'Bpadding': {'bg': 'gray18',
+                                                      'fg': 'ghost white'},
+                                         'Lpadding': {'bg': 'gray18',
+                                                      'fg': 'ghost white'},
+                                         'Rpadding': {'bg': 'gray18',
+                                                      'fg': 'ghost white'},
+
             # Defaults:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
             self.font_size = self.config_obj['FONT']['size']
+            self.colors = self.config_obj['COLORS']
 
             # Change to Defaults available in Settings menubar
             with open(configfile, 'w') as cfg:
                 self.config_obj.write(cfg)
+
+        self.frame.configure(bg=self.colors['frame']['bg'])
+        self.frame.master.configure(bg=self.colors['master']['bg'])
+        menubar.config(bg=self.colors['menubar']['bg'],
+                       fg=self.colors['menubar']['fg'],
+                       relief='flat')
+        self.frame.statusBar.configure(bg='gray18',
+                                       fg='ghost white',
+                                       font=('times', 25))
+        self.frame.textWidget.configure(bg='gray26',
+                                        fg='ghost white')
+        self.frame.Tpadding.configure(bg='gray18',
+                                      fg='ghost white',
+                                      state='disabled')
+        self.frame.Bpadding.configure(bg='gray18',
+                                      fg='ghost white',
+                                      state='disabled')
+        self.frame.Lpadding.configure(bg='gray18',
+                                      fg='ghost white',
+                                      state='disabled')
+        self.frame.Rpadding.configure(bg='gray18',
+                                      fg='ghost white',
+                                      state='disabled')
+
 
         fileName = ''.join(['.ToC_', self.language, '.json'])
         # Path for the full bible text.
@@ -160,22 +203,35 @@ class Bible:
             menubar.add_cascade(label='Options', menu=options_menu)
             menubar.add_cascade(label='Help', menu=help_menu)
 
+            # File menu choices:
             self.sv_button = partial(self.save, self)
+            self.frame.master.bind('<Control-s>', self.sv_button)
             file_menu.add_command(label='Save',
                                   accelerator='Ctrl+S',
                                   command=self.sv_button)
+
             self.svas_button = partial(self.saveas, self)
+            self.frame.master.bind('<Control-Shift-s>', self.svas_button)
             file_menu.add_command(label='SaveAs',
                                   accelerator='Ctrl+Shift+S',
-                                  command=self.sv_button)
-            self.frame.master.bind('<Control-Shift-s>', self.svas_button)
+                                  command=self.svas_button)
+
+            self.qt_Button = partial(self.close_window, self)
+            self.frame.master.bind('<Control-q>', self.qt_Button)
+            file_menu.add_command(label='Quit',
+                                  accelerator='Ctrl+Q',
+                                  command=self.qt_Button)
 
             sett = partial(self.settings, self)
             options_menu.add_command(label='Settings',
                                      command=sett)
 
-            options_menu.add_command(label='Color Preferences',
-                                     command=self.get_color)
+            self.show_toc = tk.BooleanVar()
+            tocq = partial(self.toc_query, self)
+            options_menu.add_checkbutton(label='Display Table of Contents',
+                                         onvalue=1, offvalue=0,
+                                         variable=self.show_toc,
+                                         command=tocq)
 
             self.frame.master.config(menu=menubar)
 
@@ -183,8 +239,16 @@ class Bible:
             self.h = self.frame.winfo_screenheight()
             self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
 
+            self.qvar = tk.IntVar()
+            self.frame.var = tk.IntVar()
+            self.frame.SearchBar = tk.Entry(self.frame)
+            self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
+            slSB = partial(self.select, self)
+            self.frame.master.bind('<Control-l>', slSB)
+
             # For any entry field, ensures one time only call.
-            self.frame.entry = ''
+            self.frame.entry = 'Search'
+            self.frame.SearchBar.insert('end', self.frame.entry)
             self.getIN = partial(self.getInput, self)
             self.frame.master.bind('<Return>', self.getIN)
 
@@ -194,13 +258,6 @@ class Bible:
                                         command=self.getIN,
                                         relief='flat')
             self.frame.go_b.grid(row=3, column=1, sticky='new')
-
-            self.qvar = tk.IntVar()
-            self.frame.var = tk.IntVar()
-            self.frame.SearchBar = tk.Entry(self.frame)
-            self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
-            slSB = partial(self.select, self)
-            self.frame.master.bind('<Control-l>', slSB)
 
             self.list_button = []
 
@@ -228,17 +285,6 @@ class Bible:
             self.waittime = 3000
             '''
 
-            self.qt_Button = partial(self.close_window, self)
-            self.frame.master.bind('<Control-q>', self.qt_Button)
-            self.frame.quitButton = tk.Button(self.frame,
-                                              text='Quit',
-                                              command=self.qt_Button,
-                                              relief='raised')
-            self.frame.quitButton.grid(row=11,
-                                       column=10,
-                                       columnspan=2,
-                                       sticky='sew')
-
             self.frame.Tpadding = tk.Label(self.frame, text='', relief='flat')
             self.frame.Tpadding.grid(row=0, column=0,
                                      columnspan=14, sticky='ew')
@@ -253,30 +299,6 @@ class Bible:
             self.frame.Rpadding = tk.Label(self.frame, text='', relief='flat')
             self.frame.Rpadding.grid(row=0, column=14, rowspan=14, sticky='ns')
 
-            self.frame.configure(background='gray18')
-            self.frame.master.configure(background='gray18')
-            menubar.config(background='gray20',
-                           foreground='ghost white',
-                           relief='flat')
-            self.frame.quitButton.configure(background='gray26',
-                                            foreground='ghost white')
-            self.frame.statusBar.configure(background='gray18',
-                                           foreground='ghost white',
-                                           font=('times', 25))
-            self.frame.textWidget.configure(background='gray26',
-                                            foreground='ghost white')
-            self.frame.Tpadding.configure(background='gray18',
-                                          foreground='ghost white',
-                                          state='disabled')
-            self.frame.Bpadding.configure(background='gray18',
-                                          foreground='ghost white',
-                                          state='disabled')
-            self.frame.Lpadding.configure(background='gray18',
-                                          foreground='ghost white',
-                                          state='disabled')
-            self.frame.Rpadding.configure(background='gray18',
-                                          foreground='ghost white',
-                                          state='disabled')
         except tk._tkinter.TclError:
             self.pytesting = True
 
@@ -357,12 +379,92 @@ class Bible:
                 proc.kill()
 
     def settings(self):
-        sett_branch = tk.Tk(self.root)
-        return ''
+        branch = tk.Tk()
+        branch.title('Settings')
+        # One third the size of the fullscreen main window
+        w = self.frame.winfo_screenwidth() / 3
+        h = self.frame.winfo_screenheight() / 3
+        branch.geometry('%dx%d+0+0' % (w, h))
 
-    def get_color():
+        # Notebook lists Tabs within window.
+        nb = ttk.Notebook(branch)
+        nb.grid(row=0, column=0, sticky='nsew')
+
+        # Tabs each show component of config.ini
+        config_obj = ConfigParser()
+        config_obj.read('config.ini')
+        
+        path_tab = tk.Frame(nb)
+        nb.add(path_tab, text='Path')
+
+        text_tab = tk.Frame(nb)
+        nb.add(text_tab, text='Text')
+
+        # TODO: Move color configuration defaults from __init__ to
+        # config.ini, to be read/written into this settings tab.
+        color_tab = tk.Frame(nb)
+        nb.add(color_tab, text='Colors')
+
+        frame_color = tk.Label(color_tab, text='Background: ')
+        gcf = partial(self.get_color, self.frame)
+        fcb = tk.Button(color_tab,
+                        relief='sunken',
+                        bg=self.frame['bg'],
+                        command=gcf)
+        frame_color.grid(row=0, column=0)
+        fcb.grid(row=0, column=1)
+
+        master_color = tk.Label(color_tab, text='Title Bar: ')
+        gcm = partial(self.get_color, self.master)
+        mcb = tk.Button(color_tab,
+                        relief='sunken',
+                        bg=self.master['bg'],
+                        command=gcm)
+        master_color.grid(row=0, column=0)
+        mcb.grid(row=0, column=1)
+
+        menubar_color = tk.Label(color_tab, text='Menu Bar: ')
+        gcmb = partial(self.get_color, self.frame.menu)
+        mbcb = tk.Button(color_tab,
+                         relief='sunken',
+                         bg=self.frame.menu['bg'],
+                         fg=self.frame.menu['fg'],
+                         command=gcm)
+        master_color.grid(row=0, column=0)
+        mcb.grid(row=0, column=1)
+
+        main = config_obj['PATH']['main']
+        m_choice = tk.Entry(path_tab, relief='flat')
+        m_choice.grid(row=1, column=0, columnspan=2)
+        m_choice.configure(state='normal')
+        m_choice.insert('end', main)
+
+        save = config_obj['PATH']['save']
+        s_choice = tk.Entry(path_tab, relief='flat')
+        s_choice.grid(row=2, column=0, columnspan=2)
+        s_choice.configure(state='normal')
+        s_choice.insert('end', save)
+
+    def get_color(tk_obj):
         color = colorchooser.askcolor()
-        return
+        self.config_obj['COLORS'] = {'frame': 'gray18',
+                                     'master': 'gray18',
+                                     'menubar': {'bg': 'gray20',
+                                                 'fg': 'ghost white'},
+                                     'statusBar': {'bg': 'gray18',
+                                                   'fg': 'ghost white'},
+                                     'textWidget': {'bg': 'gray26',
+                                                    'fg': 'ghost white'},
+                                     'Tpadding': {'bg': 'gray18',
+                                                  'fg': 'ghost white'},
+                                     'Bpadding': {'bg': 'gray18',
+                                                  'fg': 'ghost white'},
+                                     'Lpadding': {'bg': 'gray18',
+                                                  'fg': 'ghost white'},
+                                     'Rpadding': {'bg': 'gray18',
+
+    def toc_query(self):
+        print(self.show_toc.get())
 
     def getInput(self, event=None):
         self.frame.var.set(1)
@@ -432,7 +534,8 @@ class Bible:
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
 
-        self.listUpdate(self, out), self.listUpdate(self, out)
+        self.listUpdate(self, out)
+        self.listUpdate(self, out)
         self.frame.go_b.wait_variable(self.frame.var)
 
     def getQueryInput(setting_list, self, event=None):
@@ -536,20 +639,23 @@ class Bible:
     def save(self):
         text = self.frame.textWidget.get('1.0', 'end')
         log_time = dt.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        wd = os.getcwd()
         try:
-            wd = os.getcwd()
             os.chdir(self.fileLocation)
             self.config_obj.read('config.ini')
             self.save_directory = self.config_obj['PATH']['save']
             with open('config.ini', 'w') as cfg:
                 self.config_obj.write(cfg)
+
             os.chdir(self.save_directory)
             with open('%s.txt' % (log_time), 'w') as saved:
                 # Save file found and amended
                 saved.write(text)
-        except KeyError or FileNotFoundError:
+
+        except (KeyError, FileNotFoundError):
             # Save file not found, saveas:
             self.saveas(self)
+
         finally:
             os.chdir(wd)
 
@@ -558,7 +664,6 @@ class Bible:
         dirName = filedialog.askdirectory(
                    initialdir=self.homeDirectory, title="Save as")
 
-        # FIXME
         os.chdir(dirName)
         log_time = dt.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
         with open(log_time, 'w') as saved_as:
@@ -567,7 +672,7 @@ class Bible:
         os.chdir(self.fileLocation)
         self.config_obj = ConfigParser()
         self.config_obj.read('config.ini')
-        self.config_obj['PATH'] = {'save': re.split('.', dirName)[0]}
+        self.config_obj['PATH']['save'] = dirName
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
