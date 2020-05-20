@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 '''
-This program is free software: you can redistribute it and/or modify'
+This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -85,9 +85,12 @@ class Bible:
             self.fileLocation = self.config_obj['PATH']['main']
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
-            self.font_size = self.config_obj['FONT']['size']
+            self.font_size = self.config_obj['FONT']['text size']
             self.footprint = self.config_obj['FOOTPRINT']['weight']
-            self.colors = self.config_obj['COLORS']
+            self.colors = dict(self.config_obj['COLORS'])
+            for key in self.colors.keys():
+                self.colors[key] = self.colors[key].split(',')
+
         except KeyError:
             # This directory contains BIBLE.txt & the configuration file.
             # This will then be saved for next time
@@ -95,70 +98,39 @@ class Bible:
             fd = os.getcwd()
             os.chdir(fd)
 
-            self.config_obj['PATH'] = {'main': fd}
+            self.config_obj['PATH'] = {'main': fd, 'save': ''}
             self.fileLocation = self.config_obj['PATH']['main']
 
             self.config_obj['LANGUAGE'] = {'current': 'eng',
                                            'options':
                                            'eng,spa,fre,ger,heb,gre'}
-            self.config_obj['FONT'] = {'font': 'roman',
-                                       'size': '12',
+            self.config_obj['FONT'] = {'font': 'times',
+                                       'text size': '12',
+                                       'title size': '25',
                                        'font options':
                                        'roman,calibri,courier',
                                        'size options':
                                        '9,10,11,12,13,14,15'}
             self.config_obj['FOOTPRINT'] = {'weight': 'normal',
                                             'options': 'normal,low'}
-            self.config_obj['COLORS'] = {'frame': 'gray18',
-                                         'master': 'gray18',
-                                         'menubar': {'bg': 'gray20',
-                                                     'fg': 'ghost white'},
-                                         'statusBar': {'bg': 'gray18',
-                                                       'fg': 'ghost white'},
-                                         'textWidget': {'bg': 'gray26',
-                                                        'fg': 'ghost white'},
-                                         'Tpadding': {'bg': 'gray18',
-                                                      'fg': 'ghost white'},
-                                         'Bpadding': {'bg': 'gray18',
-                                                      'fg': 'ghost white'},
-                                         'Lpadding': {'bg': 'gray18',
-                                                      'fg': 'ghost white'},
-                                         'Rpadding': {'bg': 'gray18',
-                                                      'fg': 'ghost white'},
+            # FIXME
+            self.config_obj['COLORS'] = {'frame': 'gray18,',
+                                         'master': 'gray18,',
+                                         'menubar': 'gray20,ghost white',
+                                         'status_bar': 'gray18,ghost white',
+                                         'text_widget': 'gray26,ghost white'}
 
             # Defaults:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
-            self.font_size = self.config_obj['FONT']['size']
-            self.colors = self.config_obj['COLORS']
+            self.font_size = self.config_obj['FONT']['text size']
+            self.colors = dict(self.config_obj['COLORS'])
+            for key in self.colors.keys():
+                self.colors[key] = self.colors[key].split(',')
 
             # Change to Defaults available in Settings menubar
             with open(configfile, 'w') as cfg:
                 self.config_obj.write(cfg)
-
-        self.frame.configure(bg=self.colors['frame']['bg'])
-        self.frame.master.configure(bg=self.colors['master']['bg'])
-        menubar.config(bg=self.colors['menubar']['bg'],
-                       fg=self.colors['menubar']['fg'],
-                       relief='flat')
-        self.frame.statusBar.configure(bg='gray18',
-                                       fg='ghost white',
-                                       font=('times', 25))
-        self.frame.textWidget.configure(bg='gray26',
-                                        fg='ghost white')
-        self.frame.Tpadding.configure(bg='gray18',
-                                      fg='ghost white',
-                                      state='disabled')
-        self.frame.Bpadding.configure(bg='gray18',
-                                      fg='ghost white',
-                                      state='disabled')
-        self.frame.Lpadding.configure(bg='gray18',
-                                      fg='ghost white',
-                                      state='disabled')
-        self.frame.Rpadding.configure(bg='gray18',
-                                      fg='ghost white',
-                                      state='disabled')
-
 
         fileName = ''.join(['.ToC_', self.language, '.json'])
         # Path for the full bible text.
@@ -188,20 +160,27 @@ class Bible:
             tk.Grid.columnconfigure(self.root, 0, weight=1)
 
             # Create & Configure frame
-            self.frame = tk.Frame(self.root)
+            self.frame = tk.Frame(self.root, name='frame')
             self.frame.tk_focusFollowsMouse()
-            self.frame.master.title('whrwthal')
             self.frame.grid(row=0, column=0, sticky='nsew')
 
-            menubar = tk.Menu(self.frame)
-            file_menu = tk.Menu(menubar, tearoff=0)
-            edit_menu = tk.Menu(menubar, tearoff=0)
-            options_menu = tk.Menu(menubar, tearoff=0)
-            help_menu = tk.Menu(menubar, tearoff=0)
-            menubar.add_cascade(label='File', menu=file_menu)
-            menubar.add_cascade(label='Edit', menu=edit_menu)
-            menubar.add_cascade(label='Options', menu=options_menu)
-            menubar.add_cascade(label='Help', menu=help_menu)
+            # Configure frame master
+            self.w = self.frame.winfo_screenwidth()
+            self.h = self.frame.winfo_screenheight()
+            self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
+            self.frame.master.title('whrwthal')
+
+            # Create & Configure menubar
+            self.menubar = tk.Menu(self.frame, name='menubar')
+            self.frame.master.config(menu=self.menubar)
+            file_menu = tk.Menu(self.menubar, tearoff=0)
+            edit_menu = tk.Menu(self.menubar, tearoff=0)
+            options_menu = tk.Menu(self.menubar, tearoff=0)
+            help_menu = tk.Menu(self.menubar, tearoff=0)
+            self.menubar.add_cascade(label='File', menu=file_menu)
+            self.menubar.add_cascade(label='Edit', menu=edit_menu)
+            self.menubar.add_cascade(label='Options', menu=options_menu)
+            self.menubar.add_cascade(label='Help', menu=help_menu)
 
             # File menu choices:
             self.sv_button = partial(self.save, self)
@@ -222,6 +201,7 @@ class Bible:
                                   accelerator='Ctrl+Q',
                                   command=self.qt_Button)
 
+            # Options menu choices:
             sett = partial(self.settings, self)
             options_menu.add_command(label='Settings',
                                      command=sett)
@@ -233,12 +213,7 @@ class Bible:
                                          variable=self.show_toc,
                                          command=tocq)
 
-            self.frame.master.config(menu=menubar)
-
-            self.w = self.frame.winfo_screenwidth()
-            self.h = self.frame.winfo_screenheight()
-            self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
-
+            # Search Bar placement
             self.qvar = tk.IntVar()
             self.frame.var = tk.IntVar()
             self.frame.SearchBar = tk.Entry(self.frame)
@@ -249,37 +224,39 @@ class Bible:
             # For any entry field, ensures one time only call.
             self.frame.entry = 'Search'
             self.frame.SearchBar.insert('end', self.frame.entry)
-            self.getIN = partial(self.getInput, self)
-            self.frame.master.bind('<Return>', self.getIN)
 
             self.getIN = partial(self.getInput, self)
+            self.frame.master.bind('<Return>', self.getIN)
             self.frame.go_b = tk.Button(self.frame,
                                         text='ENTER',
                                         command=self.getIN,
-                                        relief='flat')
+                                        relief='raised')
             self.frame.go_b.grid(row=3, column=1, sticky='new')
 
             self.list_button = []
 
-            self.frame.statusBar = tk.Label(self.frame,
-                                            text='Welcome!',
-                                            relief='flat')
+            self.frame.status_bar = tk.Label(self.frame,
+                                             text='Welcome!',
+                                             relief='flat',
+                                             name='status_bar')
 
-            self.frame.statusBar.grid(row=1, column=7, sticky='sew')
+            self.frame.status_bar.grid(row=1, column=7, sticky='sew')
 
-            self.frame.textWidget = tk.Text(self.frame,
-                                            relief='sunken',
-                                            wrap='word')
-            self.frame.textWidget.grid(row=2,
-                                       rowspan=10,
-                                       column=7,
-                                       sticky='nsew')
+            self.frame.text_widget = tk.Text(self.frame,
+                                             relief='sunken',
+                                             wrap='word',
+                                             name='text_widget')
+            self.frame.text_widget.grid(row=2,
+                                        rowspan=10,
+                                        column=7,
+                                        sticky='nsew')
             self.cls(self.frame)
 
             # Welcome message!
             self.textUpdate(self, self.miniPreamble())
 
             '''
+            TOOL-TIPS
             self.frame.bind('<ButtonPress>', self.leave)
             # 3 second pause before tooltip appears
             self.waittime = 3000
@@ -298,6 +275,28 @@ class Bible:
 
             self.frame.Rpadding = tk.Label(self.frame, text='', relief='flat')
             self.frame.Rpadding.grid(row=0, column=14, rowspan=14, sticky='ns')
+
+            self.frame.configure(bg=self.colors['frame'][0])
+            self.frame.master.configure(bg=self.colors['master'][0])
+            self.menubar.config(bg=self.colors['menubar'][0],
+                                fg=self.colors['menubar'][1],
+                                relief='flat')
+            self.frame.status_bar.configure(bg=self.colors['status_bar'][0],
+                                            fg=self.colors['status_bar'][1],
+                                            font=(self.font,
+                                                  self.config_obj[
+                                                      'FONT'][
+                                                          'title size']))
+            self.frame.text_widget.configure(bg=self.colors['text_widget'][0],
+                                             fg=self.colors['text_widget'][1])
+            self.frame.Tpadding.configure(bg=self.colors['frame'][0],
+                                          state='disabled')
+            self.frame.Bpadding.configure(bg=self.colors['frame'][0],
+                                          state='disabled')
+            self.frame.Lpadding.configure(bg=self.colors['frame'][0],
+                                          state='disabled')
+            self.frame.Rpadding.configure(bg=self.colors['frame'][0],
+                                          state='disabled')
 
         except tk._tkinter.TclError:
             self.pytesting = True
@@ -382,8 +381,8 @@ class Bible:
         branch = tk.Tk()
         branch.title('Settings')
         # One third the size of the fullscreen main window
-        w = self.frame.winfo_screenwidth() / 3
-        h = self.frame.winfo_screenheight() / 3
+        w = self.frame.winfo_width() / 3
+        h = self.frame.winfo_height() / 3
         branch.geometry('%dx%d+0+0' % (w, h))
 
         # Notebook lists Tabs within window.
@@ -393,75 +392,92 @@ class Bible:
         # Tabs each show component of config.ini
         config_obj = ConfigParser()
         config_obj.read('config.ini')
-        
+
         path_tab = tk.Frame(nb)
         nb.add(path_tab, text='Path')
 
         text_tab = tk.Frame(nb)
         nb.add(text_tab, text='Text')
 
-        # TODO: Move color configuration defaults from __init__ to
-        # config.ini, to be read/written into this settings tab.
         color_tab = tk.Frame(nb)
         nb.add(color_tab, text='Colors')
 
-        frame_color = tk.Label(color_tab, text='Background: ')
-        gcf = partial(self.get_color, self.frame)
-        fcb = tk.Button(color_tab,
-                        relief='sunken',
-                        bg=self.frame['bg'],
-                        command=gcf)
-        frame_color.grid(row=0, column=0)
-        fcb.grid(row=0, column=1)
-
-        master_color = tk.Label(color_tab, text='Title Bar: ')
-        gcm = partial(self.get_color, self.master)
-        mcb = tk.Button(color_tab,
-                        relief='sunken',
-                        bg=self.master['bg'],
-                        command=gcm)
-        master_color.grid(row=0, column=0)
-        mcb.grid(row=0, column=1)
-
-        menubar_color = tk.Label(color_tab, text='Menu Bar: ')
-        gcmb = partial(self.get_color, self.frame.menu)
-        mbcb = tk.Button(color_tab,
-                         relief='sunken',
-                         bg=self.frame.menu['bg'],
-                         fg=self.frame.menu['fg'],
-                         command=gcm)
-        master_color.grid(row=0, column=0)
-        mcb.grid(row=0, column=1)
-
+        # PATH TAB:
         main = config_obj['PATH']['main']
-        m_choice = tk.Entry(path_tab, relief='flat')
+        m_choice = tk.Entry(path_tab, relief='sunken')
         m_choice.grid(row=1, column=0, columnspan=2)
         m_choice.configure(state='normal')
         m_choice.insert('end', main)
 
         save = config_obj['PATH']['save']
-        s_choice = tk.Entry(path_tab, relief='flat')
+        s_choice = tk.Entry(path_tab, relief='sunken')
         s_choice.grid(row=2, column=0, columnspan=2)
         s_choice.configure(state='normal')
         s_choice.insert('end', save)
 
-    def get_color(tk_obj):
-        color = colorchooser.askcolor()
-        self.config_obj['COLORS'] = {'frame': 'gray18',
-                                     'master': 'gray18',
-                                     'menubar': {'bg': 'gray20',
-                                                 'fg': 'ghost white'},
-                                     'statusBar': {'bg': 'gray18',
-                                                   'fg': 'ghost white'},
-                                     'textWidget': {'bg': 'gray26',
-                                                    'fg': 'ghost white'},
-                                     'Tpadding': {'bg': 'gray18',
-                                                  'fg': 'ghost white'},
-                                     'Bpadding': {'bg': 'gray18',
-                                                  'fg': 'ghost white'},
-                                     'Lpadding': {'bg': 'gray18',
-                                                  'fg': 'ghost white'},
-                                     'Rpadding': {'bg': 'gray18',
+        # TEXT TAB:
+        x = ''
+        print(x)
+
+        # COLOR TAB:
+        bg_label = tk.Label(color_tab, text='Background')
+        fg_label = tk.Label(color_tab, text='Foreground')
+
+        frame_color_label = tk.Label(color_tab, text='Main screen: ')
+        gcf = partial(self.get_color, self, self.frame)
+        fcb = tk.Button(color_tab,
+                        relief='sunken',
+                        bg=self.frame['bg'],
+                        command=gcf)
+
+        master_color_label = tk.Label(color_tab, text='Title Bar: ')
+        gcm = partial(self.get_color, self, self.frame.master)
+        mcb = tk.Button(color_tab,
+                        relief='sunken',
+                        bg=self.frame.master['bg'],
+                        command=gcm)
+
+        menubar_color_label = tk.Label(color_tab, text='Menu Bar: ')
+        gcmb_bg = partial(self.get_color, self, self.menubar)
+        mbcb_bg = tk.Button(color_tab,
+                            relief='sunken',
+                            bg=self.menubar['bg'],
+                            command=gcmb_bg)
+
+        gcmb_fg = partial(self.get_color, self, self.menubar, 'fg')
+        mbcb_fg = tk.Button(color_tab,
+                            relief='sunken',
+                            bg=self.menubar['fg'],
+                            command=gcmb_fg)
+
+        bg_label.grid(row=0, column=1)
+        fg_label.grid(row=0, column=2)
+
+        frame_color_label.grid(row=1, column=0)
+        fcb.grid(row=1, column=1)
+
+        master_color_label.grid(row=2, column=0)
+        mcb.grid(row=2, column=1)
+
+        menubar_color_label.grid(row=3, column=0)
+        mbcb_bg.grid(row=3, column=1)
+        mbcb_fg.grid(row=3, column=2)
+
+    def get_color(self, tk_obj, ground='bg'):
+        # Queries a color choice
+        choice = colorchooser.askcolor()[1]
+        # Color is applied to tkinter object in the background or foreground
+        tk_obj[ground] = choice
+
+        # Object's name is used to change its configuration file color value
+        n = tk_obj.winfo_name()
+        if ground == 'bg':
+            self.config_obj['COLORS'][n] = ','.join([choice, self.colors[n][1]])
+        elif ground == 'fg':
+            self.config_obj['COLORS'][n] = ','.join([self.colors[n][0], choice])
+
+        with open('config.ini', 'w') as cfg:
+            self.config_obj.write(cfg)
 
     def toc_query(self):
         print(self.show_toc.get())
@@ -544,18 +560,18 @@ class Bible:
             self.pref_to_dump.append(setting_list[i].get())
 
     def statusUpdate(self, status):
-        self.statusBar.configure(text=status)
+        self.status_bar.configure(text=status)
 
     def cls(self):
-        self.textWidget.configure(state='normal')
-        self.textWidget.delete('1.0', 'end')
-        self.textWidget.configure(state='disabled')
+        self.text_widget.configure(state='normal')
+        self.text_widget.delete('1.0', 'end')
+        self.text_widget.configure(state='disabled')
 
     def textUpdate(self, text):
         self.cls(self.frame)
-        self.frame.textWidget.configure(state='normal')
-        self.frame.textWidget.insert('end', text)
-        self.frame.textWidget.configure(state='disabled')
+        self.frame.text_widget.configure(state='normal')
+        self.frame.text_widget.insert('end', text)
+        self.frame.text_widget.configure(state='disabled')
 
     def listUpdate(self, d, mode='w'):
         try:
@@ -581,9 +597,9 @@ class Bible:
         butt_height = 0
         b_press = []
         button_windows = []
-        # FIXME: (3) Philemon must not return Philippians,
+        # TODO: (1) Philemon must not return Philippians,
         # but PHM & PHIL must remain their respective abbreviations.
-        # (4) Phrase labels should read -->
+        # (2) Phrase labels should read -->
         # "... not TEMPT the ... ye TEMPTED him..." for DEUT 6:16, etc.
         for key in d.keys():
             # "x" will be list of length 1 for VerseRef dict,
@@ -637,13 +653,18 @@ class Bible:
         self.calendar = ''
 
     def save(self):
-        text = self.frame.textWidget.get('1.0', 'end')
+        text = self.frame.text_widget.get('1.0', 'end')
         log_time = dt.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
         wd = os.getcwd()
         try:
             os.chdir(self.fileLocation)
             self.config_obj.read('config.ini')
             self.save_directory = self.config_obj['PATH']['save']
+            # Technical necessity in the case of accessing
+            # settings from the menubar, before saving manually:
+            if self.save_directory == '':
+                raise KeyError
+
             with open('config.ini', 'w') as cfg:
                 self.config_obj.write(cfg)
 
@@ -660,7 +681,7 @@ class Bible:
             os.chdir(wd)
 
     def saveas(self):
-        text = self.frame.textWidget.get('1.0', 'end')
+        text = self.frame.text_widget.get('1.0', 'end')
         dirName = filedialog.askdirectory(
                    initialdir=self.homeDirectory, title="Save as")
 
