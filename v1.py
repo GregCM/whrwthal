@@ -190,7 +190,7 @@ class Bible:
                                   command=self.sv_button)
 
             self.svas_button = partial(self.saveas, self)
-            self.frame.master.bind('<Control-Shift-s>', self.svas_button)
+            self.frame.master.bind('<Control-Shift-S>', self.svas_button)
             file_menu.add_command(label='SaveAs',
                                   accelerator='Ctrl+Shift+S',
                                   command=self.svas_button)
@@ -652,9 +652,9 @@ class Bible:
         # TODO HREFS TO PDFS
         self.calendar = ''
 
-    def save(self):
+    def save(self, event=None):
         text = self.frame.text_widget.get('1.0', 'end')
-        log_time = dt.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        log_time = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         wd = os.getcwd()
         try:
             os.chdir(self.fileLocation)
@@ -680,13 +680,16 @@ class Bible:
         finally:
             os.chdir(wd)
 
-    def saveas(self):
+    def saveas(self, event=None):
         text = self.frame.text_widget.get('1.0', 'end')
         dirName = filedialog.askdirectory(
-                   initialdir=self.homeDirectory, title="Save as")
+                   initialdir=self.homeDirectory, title="SaveAs")
 
-        os.chdir(dirName)
-        log_time = dt.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        try:
+            os.chdir(dirName)
+        except OSError:
+            return None
+        log_time = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         with open(log_time, 'w') as saved_as:
             saved_as.write(text)
 
