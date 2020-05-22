@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# FIXME: MACOSX ERROR
+# xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
+
+
 '''
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
