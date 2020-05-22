@@ -85,3 +85,29 @@ Categories=Educational;Application;
 
 
 An icon will now appear in your applications menu to easily access whrwthal!
+
+# TODO
+
+In future releases, expect to see:
+
+- More translations in a variety of tongues, in the public domain and reliable in their source and lineage, akin to the KJV. Examples include:
+
+    Spanish (RV)
+
+    French (OST)
+
+    German (LUT)
+
+    Hebrew (LC)
+
+    Greek (TR)
+
+    Russian (RUSV)
+    
+    Chinese (CKJV)
+
+    (See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
+
+- Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
+
+- Calendar synced "Daily Readings" to serve as a structured study tool (retrieved from BLB sites)
