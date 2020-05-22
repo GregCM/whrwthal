@@ -80,7 +80,6 @@ class Bible:
             self.homeDirectory = '%userprofile%'
             self.pathPart = '\\'
         elif (self.ismac or self.islinux):
-            print('ok')
             self.homeDirectory = '/home'
             self.pathPart = '/'
 
