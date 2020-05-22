@@ -465,16 +465,16 @@ class Bible:
 
     def get_color(self, tk_obj, ground='bg'):
         # Queries a color choice
-        choice = colorchooser.askcolor()[1]
+        c = colorchooser.askcolor()[1]
         # Color is applied to tkinter object in the background or foreground
-        tk_obj[ground] = choice
+        tk_obj[ground] = c
 
         # Object's name is used to change its configuration file color value
         n = tk_obj.winfo_name()
         if ground == 'bg':
-            self.config_obj['COLORS'][n] = ','.join([choice, self.colors[n][1]])
+            self.config_obj['COLORS'][n] = ','.join([c, self.colors[n][1]])
         elif ground == 'fg':
-            self.config_obj['COLORS'][n] = ','.join([self.colors[n][0], choice])
+            self.config_obj['COLORS'][n] = ','.join([self.colors[n][0], c])
 
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
@@ -491,20 +491,33 @@ class Bible:
         ToC = self.bkAbbrv + self.bkNames
         ToC = [C.upper() for C in ToC]
         unique_words = self.BibDict['CONCORDANCE']
+        # TODO: (1) Upper?
         unique_words = [W.upper() for W in unique_words]
 
         if self.frame.entry is not None:
-            entry_upp = self.frame.entry.upper()
-            ToC_entries = [e for e in ToC if e == entry_upp]
+            upper = self.frame.entry.upper()
+            entry_upp = [u for u in upper if u.isalpha()]
+
+            ToC_entries = [e for e in ToC if e == ''.join(entry_upp)]
             ToC_count = len(ToC_entries)
-            conc_entries = [e for e in unique_words if e == entry_upp]
+
+            words = self.frame.entry.upper().split(' ')
+            # TODO: (2) Case sensitive search options,
+            # potentially supported by the several entries
+            # contained in "unique_words".
+            conc_entries = [w for w in unique_words if w in words]
+            # SEE: "dispensation of"
+            print(conc_entries)
             con_count = len(conc_entries)
+
             numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
         else:
             ToC_entries = []
             ToC_count = len(ToC_entries)
+
             conc_entries = []
             con_count = len(conc_entries)
+
             numeric_entries = []
 
         a = any(ToC_entries)
@@ -516,39 +529,48 @@ class Bible:
         # or if entry contents reference a book, and chapter or verse
         # EX: "Rom 12:1"
         out = collections.OrderedDict()
+        vcount = pcount = 0
         if (a and not(b)) or (a and c):
-            # print(1)
-            out['VR'] = self.VerseRef(self)
+            print(1)
+            out['VR'], vcount = self.VerseRef(self)
         # else if certain entry contents reference a book and a word in text
         # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
         elif (a and b):
-            # print(2)
-            out['VR'] = self.VerseRef(self)
-            out['PS'] = self.PhraseSearch(self)
+            print(2)
+            out['VR'], vcount = self.VerseRef(self)
+            out['PS'], pcount = self.PhraseSearch(self)
         # else if some entry contents reference a book, and some text
         # EX: "if we being romans" --> "... if we being romans ..."
         elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            # print(3)
-            out['PS'] = self.PhraseSearch(self)
-
-        # else if entry contents only reference a number
-        # EX: "23"
+            print(3)
+            out['PS'], pcount = self.PhraseSearch(self)
+        # else if entry contents only reference a number combo
+        # EX: "23", "3:23", "119:8-9"
         elif (c and not(any([a, b]))):
-            out['PS'] = self.PhraseSearch(self)
-        # else if entry contents only reference a number
-        # EX: "23"
-        elif (c and not(any([a, b]))):
-            # print(4)
-            # TODO: allow search of a chapter number
+            print(4)
+            # TODO: allow number searches
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
+            # && "1:3" --> GEN 1:3, EXO 1:3 ... ACT 1:3
+            # && "1-3" --> GEN 1:1-3, 2:1-3 ... EXO 1:1-3, 2:1-3 ... etc.
             out = []
             pass
 
         elif not(any([a, b, c])):
             out = []
-            # print(5)
+            print(5)
             messagebox.showerror('Error',
                                  '"%s" not found.' % (self.frame.entry))
+
+        count = vcount + pcount
+        if count == 0:
+            self.statusUpdate(self.frame, ('%i RESULTS MATCHING %s'
+                                           % (count, upper)))
+        elif count == 1:
+            self.statusUpdate(self.frame, ('%i RESULT MATCHING %s'
+                                           % (count, upper)))
+        elif count > 1:
+            self.statusUpdate(self.frame, ('%i RESULTS MATCHING %s'
+                                           % (count, upper)))
 
         self.listUpdate(self, out)
         self.listUpdate(self, out)
@@ -746,8 +768,6 @@ class Bible:
                 bkMark = self.bkNames[b]
                 out['label'] += bkMark
                 break
-            elif b == 65:
-                return self.PhraseSearch(self)
             # Proceed to next book. If no match is
             # found, 'book' would remain empty.
             else:
@@ -907,7 +927,9 @@ class Bible:
         self.statusUpdate(self.frame, out['label'])
         out['verses'] = [out['verses']]
         out['label'] = [out['label']]
-        return out
+        # TODO: count > 1 for instances such as many chapters containing "1-3"
+        count = 1
+        return out, count
 
     '''
     ###########################
@@ -992,17 +1014,7 @@ class Bible:
                         out['label'].append('%s\n%s' % (ref, iterspan))
                         count += 1
 
-        if count == 0:
-            self.statusUpdate(self.frame, ('%i VERSES CONTAINING %s'
-                                           % (count, Srch.upper())))
-        elif count == 1:
-            self.statusUpdate(self.frame, ('%i VERSE CONTAINING %s'
-                                           % (count, Srch.upper())))
-        elif count > 1:
-            self.statusUpdate(self.frame, ('%i VERSES CONTAINING %s'
-                                           % (count, Srch.upper())))
-
-        return out
+        return out, count
 
     def preamble():
         cross = '''\n\n
