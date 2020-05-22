@@ -253,7 +253,7 @@ class Bible:
             self.cls(self.frame)
 
             # Welcome message!
-            self.textUpdate(self, self.miniPreamble())
+            self.textUpdate(self, self.miniPreamble(), 'center')
 
             '''
             TOOL-TIPS
@@ -507,7 +507,6 @@ class Bible:
             # contained in "unique_words".
             conc_entries = [w for w in unique_words if w in words]
             # SEE: "dispensation of"
-            print(conc_entries)
             con_count = len(conc_entries)
 
             numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
@@ -548,11 +547,11 @@ class Bible:
         # EX: "23", "3:23", "119:8-9"
         elif (c and not(any([a, b]))):
             print(4)
-            # TODO: allow number searches
+            # TODO: (3) allow number searches
             # ie "23" --> GEN 23, EXO 23 ... ACT 23
             # && "1:3" --> GEN 1:3, EXO 1:3 ... ACT 1:3
             # && "1-3" --> GEN 1:1-3, 2:1-3 ... EXO 1:1-3, 2:1-3 ... etc.
-            out = []
+            out, vcount = self.VerseRef(self)
             pass
 
         elif not(any([a, b, c])):
@@ -589,11 +588,15 @@ class Bible:
         self.text_widget.delete('1.0', 'end')
         self.text_widget.configure(state='disabled')
 
-    def textUpdate(self, text):
+    def textUpdate(self, text, just='left'):
         self.cls(self.frame)
-        self.frame.text_widget.configure(state='normal')
-        self.frame.text_widget.insert('end', text)
-        self.frame.text_widget.configure(state='disabled')
+        t = self.frame.text_widget
+        t.configure(state='normal')
+        t.insert('end', text)
+        # Justification
+        t.tag_add('just', '1.0', 'end')
+        t.tag_config('just', justify=just)
+        t.configure(state='disabled')
 
     def listUpdate(self, d, mode='w'):
         try:
@@ -730,7 +733,8 @@ class Bible:
     ####################################
     '''
 
-    # TODO: BASED ON LANGUAGE, PRINT BACKWARDS
+    # TODO: (1) Languages
+    # (2) Trim fat code
     def VerseRef(self):
         # Initialize 'out' for concatenation.
         out = collections.OrderedDict({'verses': '', 'label': ''})
@@ -767,6 +771,13 @@ class Bible:
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 out['label'] += bkMark
+                break
+            # SEE <TODO (3)> in getInput
+            elif not(locAlph):
+                book = 'all'
+                bkMark = 'Parellel References'
+                out['label'] += bkMark
+                self.close_window(self)
                 break
             # Proceed to next book. If no match is
             # found, 'book' would remain empty.
@@ -1071,29 +1082,30 @@ class Bible:
 
     def miniPreamble():
         cross = '''\n\n
-                         \\              /
-                          \\     _      /
-                               | |
-                               | |
-                          _____| |_____
-                         |_____   _____|
-                               | |
-                               | |
-                               | |
-                               | |
-                               | |
-                               | |
-                               |_|
-                       _______/   \\_______        \n\n
-                '''
+-   \\              /  +
++    \\     _      /   -
+-         | |         +
++         | |         -
+-    _____| |_____    +
++   |_____   _____|   -
+-         | |         +
++         | |         -
+-         | |         +
++         | |         -
+-         | |         +
++         | |         -
+-         |_|         +
++ _______/   \\_______ -
+'''
 
-        version = '''      ______________________
+        version = '''
+______________________
 
-                       THE KING JAMES BIBLE
-                      ______________________
+ THE KING JAMES BIBLE
+______________________
 
-                      Please rightly divide and handle with prayer. \n\n
-                  '''
+Please rightly divide and handle with prayer.
+\n\n'''
 
         return ''.join([cross, version])
 
