@@ -479,6 +479,8 @@ class Bible:
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
+        # git push test
+
     def toc_query(self):
         print(self.show_toc.get())
 
