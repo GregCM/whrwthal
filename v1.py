@@ -51,6 +51,7 @@ import random as rnd
 import re
 import string
 import sys
+import time
 import tkinter as tk
 from tkinter import colorchooser
 from tkinter import filedialog
@@ -117,7 +118,6 @@ class Bible:
                                        '9,10,11,12,13,14,15'}
             self.config_obj['FOOTPRINT'] = {'weight': 'normal',
                                             'options': 'normal,low'}
-            # FIXME
             self.config_obj['COLORS'] = {'frame': 'gray18,',
                                          'master': 'gray18,',
                                          'menubar': 'gray20,ghost white',
@@ -128,6 +128,7 @@ class Bible:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
             self.font_size = self.config_obj['FONT']['text size']
+            self.footprint = self.config_obj['FOOTPRINT']['weight']
             self.colors = dict(self.config_obj['COLORS'])
             for key in self.colors.keys():
                 self.colors[key] = self.colors[key].split(',')
@@ -375,6 +376,12 @@ class Bible:
     '''
 
     def close_window(self, event=None):
+        # Removes BibDict file if footprint mode is 'low'
+        if self.footprint == 'low':
+            os.chdir(self.fileLocation)
+            fileName = ''.join(['.BibDict_', self.language, '.json'])
+            os.remove(fileName)
+
         self.root.destroy()
         pn = 'v1.py'
         for proc in psutil.process_iter():
@@ -1167,21 +1174,49 @@ Please rightly divide and handle with prayer.
                 progress['value'] = b / n * 100
                 child.update()
 
-        trim_bible = ''.join(trim_books)
-        # Whole Bible excluding punctuation and book titles.
-        bib_letters = ''.join([l for l in trim_bible])
-        bib_words = re.split(' ', bib_letters)
-        bib_words = [w for w in bib_words if w != '']
-        # Concordance equivalent
-        unique_words = [s for s in set(bib_words) if s not in self.bkNames]
-
         if self.pytesting:
             pass
         else:
             progress['value'] = 1
             child.update()
 
+        trim_bible = ''.join(trim_books)
+        if self.pytesting:
+            pass
+        else:
+            progress['value'] = 18
+            child.update()
+        # Whole Bible excluding punctuation and book titles.
+        bib_letters = ''.join([l for l in trim_bible])
+        if self.pytesting:
+            pass
+        else:
+            progress['value'] = 47
+            child.update()
+
+        bib_words = re.split(' ', bib_letters)
+        bib_words = [w for w in bib_words if w != '']
+        if self.pytesting:
+            pass
+        else:
+            progress['value'] = 91
+            child.update()
+
+        # Concordance equivalent
+        unique_words = [s for s in set(bib_words) if s not in self.bkNames]
+        if self.pytesting:
+            pass
+        else:
+            progress['value'] = 99
+            child.update()
+
         BibDict = collections.OrderedDict()
+        if self.pytesting:
+            pass
+        else:
+            progress['value'] = 1
+            child.update()
+
         # Loops to populate the book structure.
         for b in range(n):
             # Chapters marked uniquely (":1 " =  c.x:v.1)
