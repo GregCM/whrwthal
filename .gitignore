@@ -1,6 +1,0 @@
-config.ini
-.BibDict_eng.json
-__pycache__
-.pytest_cache
-.*.swp
-.gitignore
