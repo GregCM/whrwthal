@@ -10,7 +10,7 @@ class Test:
         Bible.__init__(Bible, configfile='config_test.ini')
         d = Bible.BibDict
         assert len(d) == 67
-        assert len(d['CONCORDANCE']) == 13664
+        assert len(d['CONCORDANCE']) == 29650
 
     # If you experience weird search output, uncomment the following
     # test function and run "pytest" to confirm basic search parameters.
