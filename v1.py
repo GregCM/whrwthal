@@ -106,7 +106,7 @@ class Bible:
             self.config_obj['PATH'] = {'main': fd, 'save': ''}
             self.fileLocation = self.config_obj['PATH']['main']
 
-            self.config_obj['LANGUAGE'] = {'current': 'eng',
+            self.config_obj['LANGUAGE'] = {'current': 'spa',
                                            'options':
                                            'eng,spa,fre,ger,heb,gre'}
             self.config_obj['FONT'] = {'font': 'times',
