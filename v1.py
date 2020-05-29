@@ -749,7 +749,7 @@ class Bible:
         locNumb = ''
         for char in location:
             # Saves the alphabetic part of location
-            if char.isalpha():
+            if char.isalpha() or char.isspace():
                 locAlph += char
             # Saves the numeric part of location
             else:
@@ -770,14 +770,18 @@ class Bible:
             # for abbreviations of books.
             LenAbb = len(self.bkAbbrv[b])
             inToC = (self.bkAbbrv[b].upper() == locAlph.upper()[0:LenAbb])
+            print(self.bkAbbrv[b], inToC)
             if inToC:
+                print('IF (L774)')
                 book = self.bkAbbrv[b]
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 out['label'] += bkMark
+                print(bkMark)
                 break
             # SEE <TODO (3)> in getInput
             elif not(locAlph):
+                print('ELIF (L783)')
                 book = 'all'
                 bkMark = 'Parellel References'
                 out['label'] += bkMark
@@ -804,26 +808,24 @@ class Bible:
         if not chpRef == '0':
             loc = chpRef
             vrsRef = '0'
-            for char in loc:
-                # If there is a colon, there is a verse ref.
-                if char == ':':
-                    loc = re.split(char, loc)
-                    chpRef = loc[0]
-                    vrsRef = loc[1]
+            firstVerse = vrsRef
+            fV = int(firstVerse)
+            lV = 0
+            # If there is a colon, there is a verse ref.
+            if ':' in loc:
+                loc = re.split(char, loc)
+                chpRef = loc[0]
+                vrsRef = loc[1]
 
+                severalVrs = False
                 # If there is a dash, there are several verses.
-                if (char == '-') or (char == ','):
+                if ('-' in loc) or (',' in loc):
                     severalVrs = True
                     vrsRef = re.split(char, vrsRef)
                     firstVerse = vrsRef[0]
                     lastVerse = vrsRef[1]
                     fV = int(firstVerse)
                     lV = int(lastVerse)
-                else:
-                    severalVrs = False
-                    firstVerse = vrsRef
-                    fV = int(firstVerse)
-                    lV = 0
 
         if not location:
             next
@@ -966,8 +968,7 @@ class Bible:
         m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
 
         count = 0
-        for bKeySpaced in self.bkAbbrv:
-            bKey = bKeySpaced.replace(' ', '')
+        for bKey in self.bkAbbrv:
             chpDict = self.BibDict[bKey]
             chpIter = chpDict.keys()
             for cKey in chpIter:
@@ -1223,12 +1224,10 @@ Please rightly divide and handle with prayer.
 
                 # Structure field names cannot or
                 # should not start with numbers.
-                # Dictionary field names cannot
-                # contain spaces (I SAM is ISAM).
                 chpKey = str(c+1)
                 chpDict[chpKey] = vrsDict
 
-            bkKey = (self.bkAbbrv[b]).replace(' ', '')
+            bkKey = self.bkAbbrv[b]
             BibDict[bkKey] = chpDict
 
             if self.pytesting:
