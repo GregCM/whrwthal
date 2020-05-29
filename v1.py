@@ -148,15 +148,15 @@ class Bible:
         # Attempt to import bible dictionary as "BibDict".
         fileName = ''.join(['.BibDict_', self.language, '.json'])
         try:
-            with open(fileName, 'r') as b:
+            with open(fileName, 'r', encoding='utf-8') as b:
                 d = collections.OrderedDict
                 self.BibDict = json.load(b, object_pairs_hook=d)
         except FileNotFoundError:
             # Make "BibDict" if it doesn't already exist,
             # or isn't found in the specified searchpath
             self.BibDict = self.makeBibDict(self)
-            with open(fileName, 'w') as b:
-                json.dump(self.BibDict, b, ensure_ascii=True)
+            with open(fileName, 'w', encoding='utf-8') as b:
+                json.dump(self.BibDict, b)
 
         try:
             # Create & Configure root
@@ -705,7 +705,7 @@ class Bible:
                 self.config_obj.write(cfg)
 
             os.chdir(self.save_directory)
-            with open('%s.txt' % (log_time), 'w') as saved:
+            with open('%s.txt' % (log_time), 'w', encoding='utf-8') as saved:
                 # Save file found and amended
                 saved.write(text)
 
@@ -726,7 +726,7 @@ class Bible:
         except OSError:
             return None
         log_time = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        with open(log_time, 'w') as saved_as:
+        with open(log_time, 'w', encoding='utf-8') as saved_as:
             saved_as.write(text)
 
         os.chdir(self.fileLocation)
@@ -1122,7 +1122,7 @@ Please rightly divide and handle with prayer.
 
     def makeBibDict(self):
         bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
-        with open(bfile, 'r') as f:
+        with open(bfile, 'r', encoding='utf-8') as f:
             bib = f.read()
 
         # TODO: Add verbal details to progress bar status updates
