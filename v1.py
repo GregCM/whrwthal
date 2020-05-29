@@ -1023,7 +1023,7 @@ class Bible:
                             else:
                                 vrsAlph += char
 
-                        ref = ''.join([' ', bKeySpaced,
+                        ref = ''.join([' ', bKey,
                                        ' ', cKey,
                                        ':', vrsNumb])
                         out['phrases'].append(vrsAlph)
