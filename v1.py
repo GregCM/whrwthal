@@ -51,7 +51,6 @@ import random as rnd
 import re
 import string
 import sys
-import time
 import tkinter as tk
 from tkinter import colorchooser
 from tkinter import filedialog
@@ -106,7 +105,7 @@ class Bible:
             self.config_obj['PATH'] = {'main': fd, 'save': ''}
             self.fileLocation = self.config_obj['PATH']['main']
 
-            self.config_obj['LANGUAGE'] = {'current': 'heb',
+            self.config_obj['LANGUAGE'] = {'current': 'eng',
                                            'options':
                                            'eng,spa,fre,ger,heb,gre'}
             self.config_obj['FONT'] = {'font': 'times',
@@ -118,6 +117,7 @@ class Bible:
                                        '9,10,11,12,13,14,15'}
             self.config_obj['FOOTPRINT'] = {'weight': 'normal',
                                             'options': 'normal,low'}
+            # FIXME
             self.config_obj['COLORS'] = {'frame': 'gray18,',
                                          'master': 'gray18,',
                                          'menubar': 'gray20,ghost white',
@@ -128,7 +128,6 @@ class Bible:
             self.language = self.config_obj['LANGUAGE']['current']
             self.font = self.config_obj['FONT']['font']
             self.font_size = self.config_obj['FONT']['text size']
-            self.footprint = self.config_obj['FOOTPRINT']['weight']
             self.colors = dict(self.config_obj['COLORS'])
             for key in self.colors.keys():
                 self.colors[key] = self.colors[key].split(',')
@@ -376,12 +375,6 @@ class Bible:
     '''
 
     def close_window(self, event=None):
-        # Removes BibDict file if footprint mode is 'low'
-        if self.footprint == 'low':
-            os.chdir(self.fileLocation)
-            fileName = ''.join(['.BibDict_', self.language, '.json'])
-            os.remove(fileName)
-
         self.root.destroy()
         pn = 'v1.py'
         for proc in psutil.process_iter():
@@ -509,7 +502,7 @@ class Bible:
             upper = self.frame.entry.upper()
             entry_upp = [u for u in upper if u.isalpha()]
 
-            ToC_entries = [e for e in ToC if e == ''.join(entry_upp)]
+            ToC_entries = [e for e in ToC if e in ''.join(entry_upp)]
             ToC_count = len(ToC_entries)
 
             words = self.frame.entry.upper().split(' ')
@@ -756,7 +749,7 @@ class Bible:
         locNumb = ''
         for char in location:
             # Saves the alphabetic part of location
-            if char.isalpha():
+            if char.isalpha() or char.isspace():
                 locAlph += char
             # Saves the numeric part of location
             else:
@@ -777,14 +770,18 @@ class Bible:
             # for abbreviations of books.
             LenAbb = len(self.bkAbbrv[b])
             inToC = (self.bkAbbrv[b].upper() == locAlph.upper()[0:LenAbb])
+            print(self.bkAbbrv[b], inToC)
             if inToC:
+                print('IF (L774)')
                 book = self.bkAbbrv[b]
                 # The following Marks for statusUpdate
                 bkMark = self.bkNames[b]
                 out['label'] += bkMark
+                print(bkMark)
                 break
             # SEE <TODO (3)> in getInput
             elif not(locAlph):
+                print('ELIF (L783)')
                 book = 'all'
                 bkMark = 'Parellel References'
                 out['label'] += bkMark
@@ -811,26 +808,24 @@ class Bible:
         if not chpRef == '0':
             loc = chpRef
             vrsRef = '0'
-            for char in loc:
-                # If there is a colon, there is a verse ref.
-                if char == ':':
-                    loc = re.split(char, loc)
-                    chpRef = loc[0]
-                    vrsRef = loc[1]
+            firstVerse = vrsRef
+            fV = int(firstVerse)
+            lV = 0
+            # If there is a colon, there is a verse ref.
+            if ':' in loc:
+                loc = re.split(char, loc)
+                chpRef = loc[0]
+                vrsRef = loc[1]
 
+                severalVrs = False
                 # If there is a dash, there are several verses.
-                if (char == '-') or (char == ','):
+                if ('-' in loc) or (',' in loc):
                     severalVrs = True
                     vrsRef = re.split(char, vrsRef)
                     firstVerse = vrsRef[0]
                     lastVerse = vrsRef[1]
                     fV = int(firstVerse)
                     lV = int(lastVerse)
-                else:
-                    severalVrs = False
-                    firstVerse = vrsRef
-                    fV = int(firstVerse)
-                    lV = 0
 
         if not location:
             next
@@ -973,8 +968,7 @@ class Bible:
         m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
 
         count = 0
-        for bKeySpaced in self.bkAbbrv:
-            bKey = bKeySpaced.replace(' ', '')
+        for bKey in self.bkAbbrv:
             chpDict = self.BibDict[bKey]
             chpIter = chpDict.keys()
             for cKey in chpIter:
@@ -1174,49 +1168,21 @@ Please rightly divide and handle with prayer.
                 progress['value'] = b / n * 100
                 child.update()
 
+        trim_bible = ''.join(trim_books)
+        # Whole Bible excluding punctuation and book titles.
+        bib_letters = ''.join([l for l in trim_bible])
+        bib_words = re.split(' ', bib_letters)
+        bib_words = [w for w in bib_words if w != '']
+        # Concordance equivalent
+        unique_words = [s for s in set(bib_words) if s not in self.bkNames]
+
         if self.pytesting:
             pass
         else:
             progress['value'] = 1
-            child.update()
-
-        trim_bible = ''.join(trim_books)
-        if self.pytesting:
-            pass
-        else:
-            progress['value'] = 18
-            child.update()
-        # Whole Bible excluding punctuation and book titles.
-        bib_letters = ''.join([l for l in trim_bible])
-        if self.pytesting:
-            pass
-        else:
-            progress['value'] = 47
-            child.update()
-
-        bib_words = re.split(' ', bib_letters)
-        bib_words = [w for w in bib_words if w != '']
-        if self.pytesting:
-            pass
-        else:
-            progress['value'] = 91
-            child.update()
-
-        # Concordance equivalent
-        unique_words = [s for s in set(bib_words) if s not in self.bkNames]
-        if self.pytesting:
-            pass
-        else:
-            progress['value'] = 99
             child.update()
 
         BibDict = collections.OrderedDict()
-        if self.pytesting:
-            pass
-        else:
-            progress['value'] = 1
-            child.update()
-
         # Loops to populate the book structure.
         for b in range(n):
             # Chapters marked uniquely (":1 " =  c.x:v.1)
@@ -1258,12 +1224,10 @@ Please rightly divide and handle with prayer.
 
                 # Structure field names cannot or
                 # should not start with numbers.
-                # Dictionary field names cannot
-                # contain spaces (I SAM is ISAM).
                 chpKey = str(c+1)
                 chpDict[chpKey] = vrsDict
 
-            bkKey = (self.bkAbbrv[b]).replace(' ', '')
+            bkKey = self.bkAbbrv[b]
             BibDict[bkKey] = chpDict
 
             if self.pytesting:
