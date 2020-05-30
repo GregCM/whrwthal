@@ -502,7 +502,8 @@ class Bible:
             upper = self.frame.entry.upper()
             entry_upp = [u for u in upper if u.isalpha()]
 
-            ToC_entries = [e for e in ToC if e in ''.join(entry_upp)]
+            ToC_entries = [e for e in ToC if e in upper]
+            print(ToC_entries)
             ToC_count = len(ToC_entries)
 
             words = self.frame.entry.upper().split(' ')
