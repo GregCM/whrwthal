@@ -111,3 +111,15 @@ In future releases, expect to see:
 - Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
 
 - Calendar synced "Daily Readings" to serve as a structured study tool (retrieved from BLB sites)
+
+# Resources
+
+For study tools to use in Christ-averse regions, see the following for print in your personal library:
+
+Arabic -- https://www.thegrace.com/
+
+Chinese -- ...
+
+Korean -- ...
+
+Others -- ...
