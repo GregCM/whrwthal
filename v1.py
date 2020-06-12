@@ -176,38 +176,44 @@ class Bible:
             # Create & Configure menubar
             self.menubar = tk.Menu(self.frame, name='menubar')
             self.frame.master.config(menu=self.menubar)
+
             file_menu = tk.Menu(self.menubar, tearoff=0)
             edit_menu = tk.Menu(self.menubar, tearoff=0)
             options_menu = tk.Menu(self.menubar, tearoff=0)
             help_menu = tk.Menu(self.menubar, tearoff=0)
-            self.menubar.add_cascade(label='File', menu=file_menu)
-            self.menubar.add_cascade(label='Edit', menu=edit_menu)
-            self.menubar.add_cascade(label='Options', menu=options_menu)
-            self.menubar.add_cascade(label='Help', menu=help_menu)
+
+            self.menubar.add_cascade(label='File', menu=file_menu, underline=0)
+            self.menubar.add_cascade(label='Edit', menu=edit_menu, underline=0)
+            self.menubar.add_cascade(label='Options', menu=options_menu, underline=0)
+            self.menubar.add_cascade(label='Help', menu=help_menu, underline=0)
 
             # File menu choices:
             self.sv_button = partial(self.save, self)
             self.frame.master.bind('<Control-s>', self.sv_button)
             file_menu.add_command(label='Save',
                                   accelerator='Ctrl+S',
-                                  command=self.sv_button)
+                                  command=self.sv_button,
+                                  underline=0)
 
             self.svas_button = partial(self.saveas, self)
             self.frame.master.bind('<Control-Shift-S>', self.svas_button)
             file_menu.add_command(label='SaveAs',
                                   accelerator='Ctrl+Shift+S',
-                                  command=self.svas_button)
+                                  command=self.svas_button,
+                                  underline=0)
 
             self.qt_Button = partial(self.close_window, self)
             self.frame.master.bind('<Control-q>', self.qt_Button)
             file_menu.add_command(label='Quit',
                                   accelerator='Ctrl+Q',
-                                  command=self.qt_Button)
+                                  command=self.qt_Button,
+                                  underline=0)
 
             # Options menu choices:
             sett = partial(self.settings, self)
             options_menu.add_command(label='Settings',
-                                     command=sett)
+                                     command=sett,
+                                     underline=0)
 
             self.show_toc = tk.BooleanVar()
             tocq = partial(self.toc_query, self)
