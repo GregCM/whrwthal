@@ -96,7 +96,7 @@ class Bible:
                 self.colors[key] = self.colors[key].split(',')
 
         except KeyError:
-            # This directory contains BIBLE.txt & the configuration file.
+            # This directory contains BIBLE_***.txt & the configuration file.
             # This will then be saved for next time
             # and used as the working directory.
             fd = os.getcwd()
@@ -1113,7 +1113,7 @@ Please rightly divide and handle with prayer.
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
+        bfile = self.pathPart.join([self.fileLocation, 'BIBLE_%s.txt' % (self.language)])
         with open(bfile, 'r') as f:
             bib = f.read()
 
