@@ -117,7 +117,6 @@ class Bible:
                                        '9,10,11,12,13,14,15'}
             self.config_obj['FOOTPRINT'] = {'weight': 'normal',
                                             'options': 'normal,low'}
-            # FIXME
             self.config_obj['COLORS'] = {'frame': 'gray18,',
                                          'master': 'gray18,',
                                          'menubar': 'gray20,ghost white',
