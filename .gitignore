@@ -1,6 +1,10 @@
 config.ini
+<<<<<<< HEAD
 .BibDict_eng.json
 Makefile
+=======
+.BibDict*
+>>>>>>> ae4678828641d11f5e6f5e2c81a21bc0ac206ed9
 __pycache__
 .pytest_cache
 .*.swp

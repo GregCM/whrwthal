@@ -49,20 +49,20 @@ https://pip.pypa.io/en/stable/installing/,
 
 https://tkdocs.com/tutorial/install.html,
 
-To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python and run whrwthal.v0 in the same folder (still totaling just under 25MB).
+To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python to your folder of choice and run whrwthal.v0 in the same folder (still totaling just under 25MB).
 
 # First-Use
 On Windows, open the command prompt and type
 
 "cd *installdir*"
 
-where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use whrwthal. Otherwise, from first setup on you can proceed the same way through the command prompt, or simply create a shortcut to the file v1.py
+where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use whrwthal. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file v1.py
 
 On Mac or Linux, open a terminal and proceed the same way. Instead of running "v1.py", however, you'll type
 
 "./v1.py"
 
-You can change the default settings stored during this one-time setup at any time through the options menubar; this includes language, colors, directories, and more.
+You can change the default settings stored during this one-time setup at any time through the Options menu; this includes Language, Colors, Directories, and more.
 
 Linux users can create a desktop application referencing whrwthal by writing to a desktop file. Most likely, the best place for this is
 
@@ -77,7 +77,7 @@ Encoding=UTF-8
 Name=whrwthal
 Comment=Offline Bible referencing
 Exec=*installdir*/v1.py
-Icon=*installdir*/book.png
+Icon=*installdir*/icon.ico
 Path=*installdir*
 Terminal=false
 Type=Application
@@ -91,8 +91,6 @@ An icon will now appear in your applications menu to easily access whrwthal!
 In future releases, expect to see:
 
 - More translations in a variety of tongues, in the public domain and reliable in their source and lineage, akin to the KJV. Examples include:
-
-    Spanish (RV)
 
     French (OST)
 
@@ -123,3 +121,9 @@ Chinese -- ...
 Korean -- ...
 
 Others -- ...
+
+Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing app to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (as mentioned above, they are so confirmed to the best of my ability, not guaranteed in their quality or under any warranty whatsoever). If, under your personal circumstances, you find it better to use these simple Text files instead of whrwthal, you may find them at
+
+https://github.com/GregCM/whrwthal/tree/texts
+
+You may download any or all of them, and please distribute them liberally. As aforementioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
