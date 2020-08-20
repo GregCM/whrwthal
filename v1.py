@@ -119,7 +119,7 @@ class Bible:
             self.config_obj['COLORS'] = {'frame': 'gray18,',
                                          'master': 'gray18,',
                                          'menubar': 'gray20,ghost white',
-                                         'status_bar': 'gray18,ghost white',
+                                         'header': 'gray18,ghost white',
                                          'text_widget': 'gray26,ghost white'}
 
             # Defaults:
@@ -241,14 +241,21 @@ class Bible:
                                         relief='raised')
             self.frame.go_b.grid(row=3, column=1, sticky='new')
 
-            self.list_button = []
-
             self.frame.status_bar = tk.Label(self.frame,
-                                             text='Welcome!',
+                                             text='Awaiting input...',
                                              relief='flat',
                                              name='status_bar')
 
-            self.frame.status_bar.grid(row=1, column=7, sticky='sew')
+            self.frame.status_bar.grid(row=4, column=1, sticky='n')
+
+            self.list_button = []
+
+            self.frame.header = tk.Label(self.frame,
+                                             text='Welcome!',
+                                             relief='flat',
+                                             name='header')
+
+            self.frame.header.grid(row=1, column=7, sticky='sew')
 
             self.frame.text_widget = tk.Text(self.frame,
                                              relief='sunken',
@@ -289,12 +296,18 @@ class Bible:
             self.menubar.config(bg=self.colors['menubar'][0],
                                 fg=self.colors['menubar'][1],
                                 relief='flat')
-            self.frame.status_bar.configure(bg=self.colors['status_bar'][0],
-                                            fg=self.colors['status_bar'][1],
+            self.frame.header.configure(bg=self.colors['header'][0],
+                                            fg=self.colors['header'][1],
                                             font=(self.font,
                                                   self.config_obj[
                                                       'FONT'][
                                                           'title size']))
+            self.frame.status_bar.configure(bg=self.colors['header'][0],
+                                                fg=self.colors['header'][1],
+                                                font=(self.font,
+                                                      self.config_obj[
+                                                          'FONT'][
+                                                              'text size']))
             self.frame.text_widget.configure(bg=self.colors['text_widget'][0],
                                              fg=self.colors['text_widget'][1])
             self.frame.Tpadding.configure(bg=self.colors['frame'][0],
@@ -499,7 +512,7 @@ class Bible:
     def getInput(self, event=None):
         self.frame.var.set(1)
         self.frame.entry = self.frame.SearchBar.get()
-        self.statusUpdate(self.frame, self.frame.entry)
+        self.headerUpdate(self.frame, self.frame.entry.upper())
 
         # Table of contents entry check, any full or abbreviated reference
         ToC = self.bkAbbrv + self.bkNames
@@ -578,13 +591,13 @@ class Bible:
         count = vcount + pcount
         if count == 0:
             self.statusUpdate(self.frame, ('%i RESULTS MATCHING %s'
-                                           % (count, upper)))
+                                           % (count, '\"{}\"'.format(self.frame.entry))))
         elif count == 1:
             self.statusUpdate(self.frame, ('%i RESULT MATCHING %s'
-                                           % (count, upper)))
+                                           % (count, '\"{}\"'.format(self.frame.entry))))
         elif count > 1:
             self.statusUpdate(self.frame, ('%i RESULTS MATCHING %s'
-                                           % (count, upper)))
+                                           % (count, '\"{}\"'.format(self.frame.entry))))
 
         self.listUpdate(self, out)
         self.listUpdate(self, out)
@@ -597,6 +610,9 @@ class Bible:
 
     def statusUpdate(self, status):
         self.status_bar.configure(text=status)
+
+    def headerUpdate(self, status):
+        self.header.configure(text=status)
 
     def cls(self):
         self.text_widget.configure(state='normal')
@@ -661,13 +677,13 @@ class Bible:
                 self.list_button[-1].update()
                 butt_height += h
 
-        c.grid(row=4, column=1, rowspan=8, columnspan=1, sticky='nsew')
+        c.grid(row=5, column=1, rowspan=8, columnspan=1, sticky='nsew')
         c.update()
 
         self.sbar = ttk.Scrollbar(self.frame,
                                   orient='vertical',
                                   command=self.canvas.yview)
-        self.sbar.grid(row=4, column=0,
+        self.sbar.grid(row=5, column=0,
                        rowspan=8, sticky='nes')
         self.sbar.update()
 
@@ -785,7 +801,7 @@ class Bible:
             if inToC:
                 print('IF (L774)')
                 book = self.bkAbbrv[b]
-                # The following Marks for statusUpdate
+                # The following Marks for headerUpdate
                 bkMark = self.bkNames[b]
                 out['label'] += bkMark
                 print(bkMark)
@@ -955,7 +971,7 @@ class Bible:
                         noVRef = '\n Unf' + noVRef
                         out = [noVRef]
 
-        self.statusUpdate(self.frame, out['label'])
+        self.headerUpdate(self.frame, out['label'])
         out['verses'] = [out['verses']]
         out['label'] = [out['label']]
         # TODO: count > 1 for instances such as many chapters containing "1-3"
