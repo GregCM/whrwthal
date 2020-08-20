@@ -396,7 +396,7 @@ class Bible:
 
         # Notebook lists Tabs within window.
         nb = ttk.Notebook(branch)
-        nb.grid(row=0, column=0, sticky='nsew')
+        nb.pack(fill='both')
 
         # Tabs each show component of config.ini
         config_obj = ConfigParser()
@@ -414,15 +414,21 @@ class Bible:
         # PATH TAB:
         main = config_obj['PATH']['main']
         m_choice = tk.Entry(path_tab, relief='sunken')
-        m_choice.grid(row=1, column=0, columnspan=2)
+        m_choice.grid(row=0, column=0, columnspan=2)
         m_choice.configure(state='normal')
         m_choice.insert('end', main)
 
+        m_browse = tk.Button(path_tab, text='Browse', relief='raised')
+        m_browse.grid(row=0, column=2)
+
         save = config_obj['PATH']['save']
         s_choice = tk.Entry(path_tab, relief='sunken')
-        s_choice.grid(row=2, column=0, columnspan=2)
+        s_choice.grid(row=1, column=0, columnspan=2)
         s_choice.configure(state='normal')
         s_choice.insert('end', save)
+
+        s_browse = tk.Button(path_tab, text='Browse', relief='raised')
+        s_browse.grid(row=1, column=2)
 
         # TEXT TAB:
         x = ''
@@ -501,18 +507,19 @@ class Bible:
         ToC = [C.upper() for C in ToC]
         unique_words = self.BibDict['CONCORDANCE']
         # TODO: (1) Upper?
-        unique_words = [W.upper() for W in unique_words]
+        unique_words = [w.upper() for w in unique_words]
 
         if self.frame.entry is not None:
             upper = self.frame.entry.upper()
-            ToC_entries = [e for e in ToC if e in upper]
+            # There exists an entry "e" referencing the ToC if its uppercase
+            # form appears as either an abbreviation or word: e = "ROM/ROMAN"
+            ToC_entries = [e for e in upper.split() if e in ToC]
             ToC_count = len(ToC_entries)
 
-            words = self.frame.entry.upper().split(' ')
             # TODO: (2) Case sensitive search options,
             # potentially supported by the several entries
             # contained in "unique_words".
-            conc_entries = [w for w in unique_words if w in words]
+            conc_entries = [W for W in unique_words if W in upper.split()]
             # SEE: "dispensation of"
             con_count = len(conc_entries)
 
@@ -527,6 +534,8 @@ class Bible:
             numeric_entries = []
 
         a = any(ToC_entries)
+        print(a,ToC_entries)
+
         b = any(conc_entries)
         c = any(numeric_entries)
 
@@ -855,7 +864,10 @@ class Bible:
                             ___\n
                             ''')
 
-        outFind = self.BibDict[book]
+        try:
+            outFind = self.BibDict[book]
+        except KeyError:
+            return
         # If only book name is input, output whole book
         if chpRef == '0':
             cKeyList = range(len(outFind.keys()))
