@@ -48,6 +48,7 @@ import random as rnd
 import re
 import string
 import sys
+import time
 import tkinter as tk
 from tkinter import colorchooser
 from tkinter import filedialog
@@ -1146,11 +1147,18 @@ Please rightly divide and handle with prayer.
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        with open('bytes', 'rb') as f:
-            byte_bib = f.read()
+        t0 = time.time()
+        for i in range(66):
+            byte_bib = b''
+            with open('bytes', 'rb') as f:
+                while f.readline():
+                    byte_bib += f.readline()
 
-        x = dahuffman.HuffmanCodec.load('codec')
-        bib = x.decode(byte_bib)
+            x = dahuffman.HuffmanCodec.load('codec')
+            bib = x.decode(byte_bib)
+
+            with open('BIBLE_eng.txt') as f:
+                bib = f.read()
 
         # TODO: Add verbose details to progress bar status updates
         try:
@@ -1275,6 +1283,8 @@ Please rightly divide and handle with prayer.
             child.destroy()
 
         BibDict['CONCORDANCE'] = unique_words
+        t1 = time.time()
+        print('DIFF: ', t1-t0)
         return BibDict
 
     def ismember(a, b):

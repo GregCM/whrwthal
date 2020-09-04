@@ -17,9 +17,9 @@ W-H-R-W-T-H-A-L (acronymn):
   And
   Laudable
 
-whrwthal is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
+whrwthal-lite is an even more lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
 
-As such, whrwthal totals just under 9MB, or 5MB if low-footprint mode is on (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
+As such, whrwthal-lite totals just under 7.2MB, or 2.5MB if low-footprint mode is on (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
 whrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
@@ -56,7 +56,12 @@ On Windows, open the command prompt and type
 
 "cd *installdir*"
 
-where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use whrwthal. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file v1.py
+where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. From first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file v1.py
+
+whrwthal-lite comes in around 2.5MB at install, taking an average of 3.006 Seconds longer to install than whrwthal-master (not counting repository download time from GitHub). Your lite install will remain this size if you decide to enable low-footprint mode, taking XXX Seconds longer to start up than with low-footprint disabled. 
+
+In review: the fastest way to read your bible is to download from https://github.com/GregCM/whrwthal/tree/master with low-footprint disabled;
+           the most resource efficient way to read your bible is to download from https://github.com/GregCM/whrwthal/tree/lite with low-footprint enabled.
 
 On Mac or Linux, open a terminal and proceed the same way. Instead of running "v1.py", however, you'll type
 
