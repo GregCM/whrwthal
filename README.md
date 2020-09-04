@@ -58,7 +58,7 @@ On Windows, open the command prompt and type
 
 where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. From first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file v1.py
 
-whrwthal-lite comes in around 2.5MB at install, taking an average of 3.006 Seconds longer to install than whrwthal-master (not counting repository download time from GitHub). Your lite install will remain this size if you decide to enable low-footprint mode, taking XXX Seconds longer to start up than with low-footprint disabled. 
+whrwthal-lite comes in around 2.5MB at install, taking an average of 6.026 Seconds longer to install than whrwthal-master (not counting repository download time from GitHub). Your lite install will remain this size if you decide to enable low-footprint mode, taking an average of 13.391 Seconds longer to start up than with low-footprint disabled.
 
 In review: the fastest way to read your bible is to download from https://github.com/GregCM/whrwthal/tree/master with low-footprint disabled;
            the most resource efficient way to read your bible is to download from https://github.com/GregCM/whrwthal/tree/lite with low-footprint enabled.

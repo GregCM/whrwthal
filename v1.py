@@ -1147,18 +1147,20 @@ Please rightly divide and handle with prayer.
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        t0 = time.time()
-        for i in range(66):
+        diff = 0
+        for i in range(96):
+            t0 = time.time()
             byte_bib = b''
             with open('bytes', 'rb') as f:
-                while f.readline():
-                    byte_bib += f.readline()
+                byte_bib = f.read()
 
+            # TODO: Save over this codec excluding \n to save space
             x = dahuffman.HuffmanCodec.load('codec')
             bib = x.decode(byte_bib)
-
-            with open('BIBLE_eng.txt') as f:
-                bib = f.read()
+            t1 = time.time()
+            diff += t1 - t0
+        avg = diff / 66
+        print("Average Decoding Time: ", t1-t0)
 
         # TODO: Add verbose details to progress bar status updates
         try:
