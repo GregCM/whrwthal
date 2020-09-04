@@ -38,6 +38,7 @@ _______________________________________________
 import bs4
 import collections
 from configparser import ConfigParser
+import dahuffman
 import datetime as dt
 from functools import partial
 import json
@@ -221,11 +222,18 @@ class Bible:
                                          variable=self.show_toc,
                                          command=tocq)
 
+            self.frame.status_bar = tk.Label(self.frame,
+                                             text='Awaiting input...',
+                                             relief='flat',
+                                             name='status_bar')
+
+            self.frame.status_bar.grid(row=2, column=1, sticky='s')
+
             # Search Bar placement
             self.qvar = tk.IntVar()
             self.frame.var = tk.IntVar()
             self.frame.SearchBar = tk.Entry(self.frame)
-            self.frame.SearchBar.grid(row=2, column=1, sticky='ew')
+            self.frame.SearchBar.grid(row=3, column=1, sticky='ew')
             slSB = partial(self.select, self)
             self.frame.master.bind('<Control-l>', slSB)
 
@@ -239,14 +247,7 @@ class Bible:
                                         text='ENTER',
                                         command=self.getIN,
                                         relief='raised')
-            self.frame.go_b.grid(row=3, column=1, sticky='new')
-
-            self.frame.status_bar = tk.Label(self.frame,
-                                             text='Awaiting input...',
-                                             relief='flat',
-                                             name='status_bar')
-
-            self.frame.status_bar.grid(row=4, column=1, sticky='n')
+            self.frame.go_b.grid(row=4, column=1, sticky='new')
 
             self.list_button = []
 
@@ -277,19 +278,19 @@ class Bible:
             self.waittime = 3000
             '''
 
-            self.frame.Tpadding = tk.Label(self.frame, text='', relief='flat')
-            self.frame.Tpadding.grid(row=0, column=0,
-                                     columnspan=14, sticky='ew')
+            #self.frame.Tpadding = tk.Label(self.frame, text='', relief='flat')
+            #self.frame.Tpadding.grid(row=0, column=0,
+            #                         columnspan=14, sticky='ew')
 
             self.frame.Bpadding = tk.Label(self.frame, text='', relief='flat')
             self.frame.Bpadding.grid(row=14, column=0,
                                      columnspan=14, sticky='ew')
 
-            self.frame.Lpadding = tk.Label(self.frame, text='', relief='flat')
-            self.frame.Lpadding.grid(row=0, column=0, rowspan=14, sticky='ns')
+            #self.frame.Lpadding = tk.Label(self.frame, text='', relief='flat')
+            #self.frame.Lpadding.grid(row=0, column=0, rowspan=14, sticky='ns')
 
-            self.frame.Rpadding = tk.Label(self.frame, text='', relief='flat')
-            self.frame.Rpadding.grid(row=0, column=14, rowspan=14, sticky='ns')
+            #self.frame.Rpadding = tk.Label(self.frame, text='', relief='flat')
+            #self.frame.Rpadding.grid(row=0, column=14, rowspan=14, sticky='ns')
 
             self.frame.configure(bg=self.colors['frame'][0])
             self.frame.master.configure(bg=self.colors['master'][0])
@@ -310,14 +311,14 @@ class Bible:
                                                               'text size']))
             self.frame.text_widget.configure(bg=self.colors['text_widget'][0],
                                              fg=self.colors['text_widget'][1])
-            self.frame.Tpadding.configure(bg=self.colors['frame'][0],
-                                          state='disabled')
+            #self.frame.Tpadding.configure(bg=self.colors['frame'][0],
+            #                              state='disabled')
             self.frame.Bpadding.configure(bg=self.colors['frame'][0],
                                           state='disabled')
-            self.frame.Lpadding.configure(bg=self.colors['frame'][0],
-                                          state='disabled')
-            self.frame.Rpadding.configure(bg=self.colors['frame'][0],
-                                          state='disabled')
+            #self.frame.Lpadding.configure(bg=self.colors['frame'][0],
+            #                              state='disabled')
+            #self.frame.Rpadding.configure(bg=self.colors['frame'][0],
+            #                              state='disabled')
 
         except tk._tkinter.TclError:
             self.pytesting = True
@@ -1145,11 +1146,13 @@ Please rightly divide and handle with prayer.
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        bfile = self.pathPart.join([self.fileLocation, 'BIBLE_%s.txt' % (self.language)])
-        with open(bfile, 'r') as f:
-            bib = f.read()
+        with open('bytes', 'rb') as f:
+            byte_bib = f.read()
 
-        # TODO: Add verbal details to progress bar status updates
+        x = dahuffman.HuffmanCodec.load('codec')
+        bib = x.decode(byte_bib)
+
+        # TODO: Add verbose details to progress bar status updates
         try:
             child = tk.Tk()
             child.title('Importing')
