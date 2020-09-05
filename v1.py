@@ -145,17 +145,19 @@ class Bible:
             messagebox.showerror('Error', 'Table of Contents not found.')
 
         # Attempt to import bible dictionary as "BibDict".
-        fileName = ''.join(['.BibDict_', self.language, '.json'])
         try:
-            with open(fileName, 'r') as b:
-                d = collections.OrderedDict
-                self.BibDict = json.load(b, object_pairs_hook=d)
+            with open('dbytes', 'rb') as f:
+                b = f.read()
+                codec = dahuffman.HuffmanCodec.load('.dcodec')
+                self.BibDict = ast.literal_eval(codec.decode(b))
         except FileNotFoundError:
             # Make "BibDict" if it doesn't already exist,
             # or isn't found in the specified searchpath
             self.BibDict = self.makeBibDict(self)
-            with open(fileName, 'w') as b:
-                json.dump(self.BibDict, b, ensure_ascii=True)
+            codec = dahuffman.HuffmanCodec.load('.dcodec')
+            b = codec.encode(str(self.BibDict))
+            with open('dbytes', 'wb') as f:
+                f.write(b)
 
         try:
             # Create & Configure root
@@ -1147,20 +1149,13 @@ Please rightly divide and handle with prayer.
         return ''.join([cross, version])
 
     def makeBibDict(self):
-        diff = 0
-        for i in range(96):
-            t0 = time.time()
-            byte_bib = b''
-            with open('bytes', 'rb') as f:
-                byte_bib = f.read()
+        byte_bib = b''
+        with open('bytes', 'rb') as f:
+            byte_bib = f.read()
 
-            # TODO: Save over this codec excluding \n to save space
-            x = dahuffman.HuffmanCodec.load('codec')
-            bib = x.decode(byte_bib)
-            t1 = time.time()
-            diff += t1 - t0
-        avg = diff / 66
-        print("Average Decoding Time: ", t1-t0)
+        # TODO: Save over this codec excluding \n to save space
+        x = dahuffman.HuffmanCodec.load('.codec')
+        bib = x.decode(byte_bib)
 
         # TODO: Add verbose details to progress bar status updates
         try:
@@ -1285,8 +1280,8 @@ Please rightly divide and handle with prayer.
             child.destroy()
 
         BibDict['CONCORDANCE'] = unique_words
-        t1 = time.time()
-        print('DIFF: ', t1-t0)
+        codec = dahuffman.HuffmanCodec.from_data(str(BibDict))
+        codec.save('.dcodec')
         return BibDict
 
     def ismember(a, b):
