@@ -19,12 +19,14 @@ W-H-R-W-T-H-A-L (acronymn):
 
 whrwthal-lite is an even more lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
 
-As such, whrwthal-lite totals just under 5.3MB, or 2.5MB if low-footprint mode is on (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
+As such, whrwthal-lite totals just under 2.75MB (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
 whrwthal requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
+Additionally, whrwthal-lite features a Huffman encoded source file, such that scripture will only be visible while using the app; hypothetically, this could add a security benefit if you were to place the ".codec" file in another anonymous folder, separate from "bytes" (without the codec, the bytes file would be meaningless, the app temporarily unavailable, and your bible as far from the burn pile as possible).
+
 # WARNING
-IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). IF SOMEONE YOU KNOW REFERRED YOU TO THIS SOFTWARE, TRY TO OBTAIN A COPY FROM THEM. OTHERWISE, WHERE POSSIBLE, CONTACT ME AT gregcaceres@gmail.com FOR A SNAIL-MAIL COPY ON USB/CD. WORD YOUR EMAIL IN AN INCONSPICUOUS PHRASING, ALONG THESE LINES: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
+IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
 # Installation
 whrwthal runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check if you have Python3 already by typing
