@@ -49,6 +49,7 @@ import re
 import string
 import sys
 import time
+from threading import Thread
 import tkinter as tk
 from tkinter import colorchooser
 from tkinter import filedialog
@@ -297,13 +298,16 @@ class Bible:
                                       state='disabled')
         # average time for init: 7.429434566786795
 
-    def start(self, t=7.429434566786795)
-
+    def start(self, t=7.429434566786795):
         branch = tk.Tk()
+        branch.resizable(0,0)
         branch.title('whrwthal')
-        progress = ttk.Progressbar(child, orient='horizontal',
+
+        msg = 'Initializing...'
+        info = tk.Label(branch, text=msg, relief='flat', font=('cambria',14))
+        progress = ttk.Progressbar(branch, orient='horizontal',
                                    length=200, mode='determinate')
-        info.pack(padx=10, pady=10)
+        info.pack(padx=10, pady=5)
         progress.pack(padx=10, pady=10)
 
         i = 0
