@@ -42,7 +42,6 @@ from configparser import ConfigParser
 from dahuffman import HuffmanCodec
 import datetime as dt
 from functools import partial
-import json
 import os
 import psutil
 import random as rnd
@@ -69,6 +68,9 @@ class Bible:
         ##              ##
         ##################
         '''
+
+        thread = Thread(target=self.start, args=(self,))
+        thread.start()
 
         self.ispc = sys.platform.startswith('win')
         self.ismac = sys.platform.startswith('darwin')
@@ -294,6 +296,24 @@ class Bible:
         self.frame.Bpadding.configure(bg=self.colors['frame'][0],
                                       state='disabled')
         # average time for init: 7.429434566786795
+
+    def start(self, t=7.429434566786795)
+
+        branch = tk.Tk()
+        branch.title('whrwthal')
+        progress = ttk.Progressbar(child, orient='horizontal',
+                                   length=200, mode='determinate')
+        info.pack(padx=10, pady=10)
+        progress.pack(padx=10, pady=10)
+
+        i = 0
+        while i < t:
+            progress['value'] = i / t * 100
+            i += t / 200
+            time.sleep(t / 200)
+            branch.update()
+
+        branch.destroy()
 
     def _on_mousewheel(self, event):
         if (self.ispc or self.islinux):
