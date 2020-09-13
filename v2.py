@@ -234,11 +234,11 @@ class Bible:
         self.frame.entry = 'Search'
         self.frame.SearchBar.insert('end', self.frame.entry)
 
-        self.getIN = partial(self.getInput, self)
-        self.frame.master.bind('<Return>', self.getIN)
+        get = partial(self.getinput, self)
+        self.frame.master.bind('<Return>', get)
         self.frame.go_b = tk.Button(self.frame,
                                     text='ENTER',
-                                    command=self.getIN,
+                                    command=get,
                                     relief='raised')
         self.frame.go_b.grid(row=4, column=1, sticky='new')
 
@@ -386,6 +386,7 @@ class Bible:
 
     def createToolTip(self, widget, text):
         self.showtip(self, widget, text)
+
     '''
 
     def close_window(self, event=None):
@@ -421,23 +422,31 @@ class Bible:
         nb.add(color_tab, text='Colors')
 
         # PATH TAB:
+        m_frame = tk.Frame(path_tab)
+        m_frame.pack(fill='both', expand=1, side='top')
+
+        m_choice = tk.Entry(m_frame, relief='sunken')
+        m_choice.pack(padx=10, pady=5, fill='x', expand=1, side='left')
         main = config_obj['PATH']['main']
-        m_choice = tk.Entry(path_tab, relief='sunken')
-        m_choice.grid(row=0, column=0, columnspan=2)
-        m_choice.configure(state='normal')
         m_choice.insert('end', main)
 
-        m_browse = tk.Button(path_tab, text='Browse', relief='raised')
-        m_browse.grid(row=0, column=2)
+        m_command = partial(self.browse, m_choice)
+        m_browse = tk.Button(m_frame, text='Browse', relief='raised', command=m_command)
+        m_browse.pack(padx=10, pady=5, fill='x', expand=1, side='left')
 
+        s_frame = tk.Frame(path_tab)
+        s_frame.pack(fill='both', expand=1, side='bottom')
+
+        s_choice = tk.Entry(s_frame, relief='sunken')
+        s_choice.pack(padx=10, pady=5, fill='both', expand=1, side='left')
         save = config_obj['PATH']['save']
-        s_choice = tk.Entry(path_tab, relief='sunken')
-        s_choice.grid(row=1, column=0, columnspan=2)
-        s_choice.configure(state='normal')
         s_choice.insert('end', save)
 
-        s_browse = tk.Button(path_tab, text='Browse', relief='raised')
-        s_browse.grid(row=1, column=2)
+        s_command = partial(self.browse, s_choice)
+        s_browse = tk.Button(s_frame, text='Browse', relief='raised', command=s_command)
+        s_browse.pack(padx=10, pady=5, fill='both', expand=1, side='left')
+
+        wrap_up = ''
 
         # TEXT TAB:
         x = ''
@@ -487,6 +496,11 @@ class Bible:
         mbcb_bg.grid(row=3, column=1)
         mbcb_fg.grid(row=3, column=2)
 
+    def browse(entry):
+        new_path = filedialog.askdirectory()
+        entry.delete(0, 'end')
+        entry.insert('end', new_path)
+
     def get_color(self, tk_obj, ground='bg'):
         # Queries a color choice
         c = colorchooser.askcolor()[1]
@@ -506,7 +520,7 @@ class Bible:
     def toc_query(self):
         print(self.show_toc.get())
 
-    def getInput(self, event=None):
+    def get_input(self, event=None):
         self.frame.var.set(1)
         self.frame.entry = self.frame.SearchBar.get()
         self.headerUpdate(self.frame, self.frame.entry.upper())
@@ -753,17 +767,16 @@ class Bible:
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
-    '''
-    ####################################
-    ##                                ##
-    ## For Searching Verse References ##
-    ##                                ##
-    ####################################
-    '''
-
-    # TODO: (1) Languages
-    # (2) Trim fat code
     def VerseRef(self):
+        # TODO: (1) Languages
+        # (2) Trim fat code
+        '''
+        ####################################
+        ##                                ##
+        ## For Searching Verse References ##
+        ##                                ##
+        ####################################
+        '''
         # Initialize 'out' for concatenation.
         out = collections.OrderedDict({'verses': '', 'label': ''})
 
@@ -966,7 +979,8 @@ class Bible:
                         noVRef = '\n F' + noVRef
                     else:
                         noVRef = '\n Unf' + noVRef
-                        out = [noVRef]
+
+                    out = [noVRef]
 
         self.headerUpdate(self.frame, out['label'])
         out['verses'] = [out['verses']]
@@ -983,7 +997,7 @@ class Bible:
     ###########################
     '''
 
-    def PhraseSearch(self, toShow='None'):
+    def PhraseSearch(self):
         out = collections.OrderedDict({'phrases': [], 'label': []})
 
         Srch = r'%s' % (self.frame.entry)
@@ -1061,54 +1075,49 @@ class Bible:
 
     def preamble():
         cross = '''\n\n
-                         \\              /
-                          \\     _      /
-                               | |
-                               | |
-                          _____| |_____
-                         |_____   _____|
-                               | |
-                               | |
-                               | |
-                               | |
-                               | |
-                               | |
-                               |_|
-                       _______/   \\_______        \n\n
-                '''
+-   \\              /  +
++    \\     _      /   -
+-         | |         +
++         | |         -
+-    _____| |_____    +
++   |_____   _____|   -
+-         | |         +
++         | |         -
+-         | |         +
++         | |         -
+-         | |         +
++         | |         -
+-         |_|         +
++ _______/   \\_______ -
+'''
 
-        version = '''   ______________________
+        version = '''
+______________________
 
-                      THE KING JAMES BIBLE
-                      ______________________
+ THE KING JAMES BIBLE
+______________________
 
-                      Please rightly divide and handle with prayer. \n\n
-                  '''
+Please rightly divide and handle with prayer.
+\n\n'''
 
         AppFormat = ''' The format: \n\n When queried "Where To?", a good
-                        response would be one of the following...
+response would be one of the following...
 
-                        To find a verse-to-verse passage --
-                            "Book Chapter:Verse-Verse"
-                                EX: "Romans 5:8-10"
+To find a verse-to-verse passage --
+    "Book Chapter:Verse-Verse"
+        EX: "Romans 5:8-10"
 
-                        To find only one verse --
-                            "Book Chapter:Verse"
-                                EX: "John 3:16"
-                        To find full chapters --
-                            "Book Chapter"
-                                EX: "Psalm 119"
-                        To find full books --
-                            "Book"
-                                EX: "Philemon"\n
-                        ______________________________________________________________
-
-                        Type "Help" to display this page again.
-                        Type "About" for information about the app.
-                        Type "Options" for a list of recognized book names.
-                        Type "Phrase" to switch over to phrase searching.
-                        Type "Done" to finish searching and quit.\n
-                    '''
+To find only one verse --
+    "Book Chapter:Verse"
+        EX: "John 3:16"
+To find full chapters --
+    "Book Chapter"
+        EX: "Psalm 119"
+To find full books --
+    "Book"
+        EX: "Philemon"\n
+______________________________________________________________\n
+'''
 
         return ''.join([cross, version, AppFormat])
 
@@ -1140,14 +1149,6 @@ Please rightly divide and handle with prayer.
 \n\n'''
 
         return ''.join([cross, version])
-
-    def ismember(a, b):
-        bind = {}
-        for i, elt in enumerate(b):
-            if elt not in bind:
-                bind[elt] = i
-                return [bind.get(itm, None) for itm in a]
-
 
 if (__name__ == '__main__') and (os.path.exists('.codec')):
     Bible.__init__(Bible)
