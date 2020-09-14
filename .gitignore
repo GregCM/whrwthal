@@ -1,5 +1,6 @@
-config.ini
-.BibDict*
 __pycache__
+bytes
+.codec
+config.ini
 .pytest_cache
 .*.swp
