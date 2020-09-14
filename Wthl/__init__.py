@@ -1,12 +1,13 @@
 from Wthl import handler, io, parser, textile
 from ast import literal_eval
 from configparser import ConfigParser
-from dahuffman import HuffmanCodec
+import collections
 from functools import partial
+import json
 import os
 import sys
-from threading import Thread
 import tkinter as tk
+from tkinter import messagebox
 
 def __init__(self, configfile='config.ini'):
 
@@ -17,9 +18,6 @@ def __init__(self, configfile='config.ini'):
     ##              ##
     ##################
     '''
-
-    thread = Thread(target=handler.start, args=(self,))
-    thread.start()
 
     self.ispc = sys.platform.startswith('win')
     self.ismac = sys.platform.startswith('darwin')
@@ -87,16 +85,26 @@ def __init__(self, configfile='config.ini'):
         with open(configfile, 'w') as cfg:
             self.config_obj.write(cfg)
 
-    # Import and decode bible dictionary as "BibDict".
-    with open('bytes', 'rb') as f:
-        # comes as bytes
-        b = f.read()
+    fileName = ''.join(['.ToC_', self.language, '.json'])
+    # Path for the full bible text.
+    try:
+        with open(fileName, 'r') as TableCont:
+            [self.bkNames, self.bkAbbrv] = json.load(TableCont)
+    except FileNotFoundError:
+        messagebox.showerror('Error', 'Table of Contents not found.')
 
-    # b decoded with json delimiters as strings objects
-    codec = HuffmanCodec.load('.codec')
-    # literal_eval interprets the delimiters into type=dict
-    self.BibDict = literal_eval(codec.decode(b))
-    [self.bkNames, self.bkAbbrv] = self.BibDict['ToC']
+    # Attempt to import bible dictionary as "BibDict".
+    fileName = ''.join(['.BibDict_', self.language, '.json'])
+    try:
+        with open(fileName, 'r') as b:
+            d = collections.OrderedDict
+            self.BibDict = json.load(b, object_pairs_hook=d)
+    except FileNotFoundError:
+        # Make "BibDict" if it doesn't already exist,
+        # or isn't found in the specified searchpath
+        self.BibDict = parser.make_bibdict(self)
+        with open(fileName, 'w') as b:
+            json.dump(self.BibDict, b, ensure_ascii=True)
 
     # Create & Configure root
     self.root = tk.Tk()

@@ -1,6 +1,9 @@
 import collections
 import random as rnd
 import re
+import tkinter as tk
+from tkinter import ttk
+import string
 
 def verse(self):
     # TODO: (1) Languages
@@ -306,3 +309,118 @@ def phrase(self):
                     count += 1
 
     return out, count
+
+def make_bibdict(self):
+    bfile = self.pathPart.join([self.fileLocation, 'BIBLE_%s.txt' % (self.language)])
+    with open(bfile, 'r') as f:
+        bib = f.read()
+
+    # TODO: Add verbal details to progress bar status updates
+    child = tk.Tk()
+    child.title('Importing')
+    msg = 'Please wait while the text is compiled...'
+    info = tk.Label(child, text=msg, relief='flat')
+    progress = ttk.Progressbar(child, orient='horizontal',
+                               length=100, mode='determinate')
+    info.pack(padx=5, pady=5)
+    progress.pack(padx=5, pady=5)
+
+    progress['value'] = 1
+    child.update()
+
+    # Letters and space for Concordance compilation
+    alpha_space = string.ascii_letters + ' '
+
+    n = len(self.bkNames)
+    books = []
+    trim_books = []
+    trim_text = ''
+    for b in range(n):
+        m = re.compile(r'^(%s)' % (self.bkNames[b]))
+        if b < 65:
+            text = re.split(self.bkNames[b+1], bib)[0]
+            # Exclude titles from text.
+            bib = m.sub('', bib)
+            text = m.sub('', text)
+
+        elif b == 65:
+            text = bib
+
+        # Clear books already coverd.
+        bkWiper = ''
+        bkToWipe = text
+        bib = bib.replace(bkToWipe, bkWiper)
+
+        books.append(text)
+        trim_text += ''.join([l for l in text if l in alpha_space])
+        trim_books.append(trim_text)
+
+        progress['value'] = b / n * 100
+        child.update()
+
+    trim_bible = ''.join(trim_books)
+    # Whole Bible excluding punctuation and book titles.
+    bib_letters = ''.join([l for l in trim_bible])
+    bib_words = re.split(' ', bib_letters)
+    bib_words = [w for w in bib_words if w != '']
+    # Concordance equivalent
+    unique_words = [s for s in set(bib_words) if s not in self.bkNames]
+
+    progress['value'] = 1
+    child.update()
+
+    BibDict = collections.OrderedDict()
+    # Loops to populate the book structure.
+    for b in range(n):
+        # Chapters marked uniquely (":1 " =  c.x:v.1)
+        chapters = re.split(':1 ', books[b])[1:]
+        cLen = len(chapters)
+        chpDict = collections.OrderedDict()
+        # Loops to populate the chapter structure.
+        for c in range(cLen):
+            # Add the verse 1 marker again for verse indexing:
+            chapters[c] = ':1 ' + chapters[c]
+            # Indexes the places where verses MAY appear.
+            idx = chapters[c].find(':')
+            for x in [idx]:
+                if (chapters[c])[x+1].isnumeric():
+                    # Only the numeral indexed places are retained
+                    # (i.e. "1:2" retained, "Behold: Foo" is not).
+                    delim = str(c+1) + ':'
+                    verses = re.split(delim, chapters[c])
+            vLen = len(verses)
+            vrsDict = collections.OrderedDict()
+            # Loops to populate the verse structure.
+            for v in range(vLen):
+                if v == 0:
+                    # Removes the extra colon left in each verse 1.
+                    m = re.compile(':1 ')
+                    verses[v] = m.sub('1 ', verses[v])
+
+                # Beginning of line whitespace strip
+                m = re.compile(r'(^\s*)')
+                verses[v] = m.sub('', verses[v])
+
+                # End of line whitespace / misc. strip
+                # EX: "Amen. I" / "Amen. 1" / "Amen.  "
+                m = re.compile(r'([\s\dI]{1,}$)')
+                verses[v] = m.sub('', verses[v])
+
+                vrsKey = str(v + 1)
+                vrsDict[vrsKey] = verses[v]
+
+            # Structure field names cannot or
+            # should not start with numbers.
+            chpKey = str(c+1)
+            chpDict[chpKey] = vrsDict
+
+        bkKey = self.bkAbbrv[b]
+        BibDict[bkKey] = chpDict
+
+        progress['value'] = b / n * 100
+        child.update()
+
+    child.destroy()
+
+    BibDict['CONCORDANCE'] = unique_words
+    return BibDict
