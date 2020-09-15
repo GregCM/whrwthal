@@ -311,7 +311,7 @@ def phrase(self):
     return out, count
 
 def make_bibdict(self):
-    bfile = self.pathPart.join([self.fileLocation, 'BIBLE_%s.txt' % (self.language)])
+    bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
     with open(bfile, 'r') as f:
         bib = f.read()
 

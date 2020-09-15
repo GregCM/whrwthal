@@ -1,11 +1,13 @@
 from Wthl import handler, io, parser, textile
 from configparser import ConfigParser
 import collections
+from dahuffman import HuffmanCodec
 from functools import partial
+import os
 import psutil
 import time
 import tkinter as tk
-from tkinter import colorchooser, ttk
+from tkinter import colorchooser, ttk, messagebox
 
 def start(self, t=7.429434566786795):
     branch = tk.Tk()
@@ -35,8 +37,38 @@ def _on_mousewheel(self, event):
         event.delta /= 1
     self.canvas.yview_scroll(-1*(event.delta), 'units')
 
-def close_window(self, event=None):
+def shutdown(self, event=None):
     self.root.destroy()
+    frame = tk.Frame(tk.Tk())
+    frame.pack()
+
+    co = self.config_obj['FOOTPRINT']
+    if (co['switch']=='on') and (co['transient']=='true'):
+        r = messagebox.askyesno(title='Low Footprint', message='Would you like to disable Low Footprint Mode? You would enjoy shorter wait times, but sacrifice more disk space. See the README for details.')
+        frame.destroy()
+        if r:
+            self.config_obj['FOOTPRINT']['switch'] = 'off'
+            self.config_obj['FOOTPRINT']['transient'] = 'false'
+
+            codec = HuffmanCodec.load('.codec')
+            with open ('bytes', 'rb') as f:
+                b = f.read()
+
+            for f in ['bytes','.codec']:
+                os.remove(f)
+
+            bible = codec.decode(b)
+            with open('BIBLE.txt', 'w') as f:
+                f.write(bible)
+        else:
+            self.config_obj['FOOTPRINT']['transient'] = 'false'
+
+        with open('config.ini', 'w') as cfg:
+            self.config_obj.write(cfg)
+
+    kill()
+
+def kill():
     pn = 'main.py'
     for proc in psutil.process_iter():
         if proc.name() == pn:

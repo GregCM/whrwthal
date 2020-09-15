@@ -2,10 +2,12 @@ from Wthl import handler, io, parser, textile
 from ast import literal_eval
 from configparser import ConfigParser
 import collections
+from dahuffman import HuffmanCodec
 from functools import partial
 import json
 import os
 import sys
+#from threading import Thread
 import tkinter as tk
 from tkinter import messagebox
 
@@ -18,6 +20,9 @@ def __init__(self, configfile='config.ini'):
     ##              ##
     ##################
     '''
+
+    #thread = Thread(target=handler.start, args=(self,))
+    #thread.start()
 
     self.ispc = sys.platform.startswith('win')
     self.ismac = sys.platform.startswith('darwin')
@@ -40,10 +45,12 @@ def __init__(self, configfile='config.ini'):
         self.language = self.config_obj['LANGUAGE']['current']
         self.font = self.config_obj['FONT']['font']
         self.font_size = self.config_obj['FONT']['text size']
-        self.footprint = self.config_obj['FOOTPRINT']['weight']
         self.colors = dict(self.config_obj['COLORS'])
         for key in self.colors.keys():
             self.colors[key] = self.colors[key].split(',')
+
+        # Low Footprint Mode:
+        LFM = self.config_obj['FOOTPRINT']['switch']
 
     except KeyError:
         # This directory contains BIBLE_***.txt & the configuration file.
@@ -65,13 +72,17 @@ def __init__(self, configfile='config.ini'):
                                    'roman,calibri,courier',
                                    'size options':
                                    '9,10,11,12,13,14,15'}
-        self.config_obj['FOOTPRINT'] = {'weight': 'normal',
-                                        'options': 'normal,low'}
         self.config_obj['COLORS'] = {'frame': 'gray18,',
                                      'master': 'gray18,',
                                      'menubar': 'gray20,ghost white',
                                      'header': 'gray18,ghost white',
                                      'text_widget': 'gray26,ghost white'}
+        # Low Footprint Mode:
+        self.config_obj['FOOTPRINT'] = {'switch': 'on',
+                                        'options': 'off,on',
+                                        'transient': 'true'}
+        # Low Footprint Mode:
+        LFM = self.config_obj['FOOTPRINT']['switch']
 
         # Defaults:
         self.language = self.config_obj['LANGUAGE']['current']
@@ -85,26 +96,37 @@ def __init__(self, configfile='config.ini'):
         with open(configfile, 'w') as cfg:
             self.config_obj.write(cfg)
 
-    fileName = ''.join(['.ToC_', self.language, '.json'])
-    # Path for the full bible text.
-    try:
-        with open(fileName, 'r') as TableCont:
-            [self.bkNames, self.bkAbbrv] = json.load(TableCont)
-    except FileNotFoundError:
-        messagebox.showerror('Error', 'Table of Contents not found.')
+    if LFM=='on':
+        # First time decode of bible data
+        with open('bytes', 'rb') as f:
+            # comes as bytes
+            b = f.read()
 
-    # Attempt to import bible dictionary as "BibDict".
-    fileName = ''.join(['.BibDict_', self.language, '.json'])
-    try:
-        with open(fileName, 'r') as b:
-            d = collections.OrderedDict
-            self.BibDict = json.load(b, object_pairs_hook=d)
-    except FileNotFoundError:
-        # Make "BibDict" if it doesn't already exist,
-        # or isn't found in the specified searchpath
-        self.BibDict = parser.make_bibdict(self)
-        with open(fileName, 'w') as b:
-            json.dump(self.BibDict, b, ensure_ascii=True)
+        # b decoded with json delimiters as strings objects
+        codec = HuffmanCodec.load('.codec')
+        # literal_eval interprets the delimiters into type=dict
+        self.BibDict = literal_eval(codec.decode(b))
+        [self.bkNames, self.bkAbbrv] = self.BibDict['ToC']
+
+    else:
+        # Path for the full bible text.
+        try:
+            [self.bkNames, self.bkAbbrv] = ['','']
+        except FileNotFoundError:
+            messagebox.showerror('Error', 'Table of Contents not found.')
+
+        # Attempt to import bible dictionary as "BibDict".
+        fileName = ''.join(['.BibDict_', self.language, '.json'])
+        try:
+            with open(fileName, 'r') as b:
+                d = collections.OrderedDict
+                self.BibDict = json.load(b, object_pairs_hook=d)
+        except FileNotFoundError:
+            # Make "BibDict" if it doesn't already exist,
+            # or isn't found in the specified searchpath
+            self.BibDict = parser.make_bibdict(self)
+            with open(fileName, 'w') as b:
+                json.dump(self.BibDict, b, ensure_ascii=True)
 
     # Create & Configure root
     self.root = tk.Tk()
@@ -152,7 +174,7 @@ def __init__(self, configfile='config.ini'):
                           command=self.svas_button,
                           underline=0)
 
-    self.qt_Button = partial(handler.close_window, self)
+    self.qt_Button = partial(handler.shutdown, self)
     self.frame.master.bind('<Control-q>', self.qt_Button)
     file_menu.add_command(label='Quit',
                           accelerator='Ctrl+Q',
