@@ -53,7 +53,7 @@ def __init__(self, configfile='config.ini'):
         LFM = self.config_obj['FOOTPRINT']['switch']
 
     except KeyError:
-        # This directory contains BIBLE_***.txt & the configuration file.
+        # This directory contains the text source & the configuration file.
         # This will then be saved for next time
         # and used as the working directory.
         fd = os.getcwd()
@@ -79,7 +79,6 @@ def __init__(self, configfile='config.ini'):
                                      'text_widget': 'gray26,ghost white'}
         # Low Footprint Mode:
         self.config_obj['FOOTPRINT'] = {'switch': 'on',
-                                        'options': 'off,on',
                                         'transient': 'true'}
         # Low Footprint Mode:
         LFM = self.config_obj['FOOTPRINT']['switch']
@@ -97,6 +96,7 @@ def __init__(self, configfile='config.ini'):
             self.config_obj.write(cfg)
 
     if LFM=='on':
+        LFM = 1
         # First time decode of bible data
         with open('bytes', 'rb') as f:
             # comes as bytes
@@ -105,28 +105,18 @@ def __init__(self, configfile='config.ini'):
         # b decoded with json delimiters as strings objects
         codec = HuffmanCodec.load('.codec')
         # literal_eval interprets the delimiters into type=dict
-        self.BibDict = literal_eval(codec.decode(b))
-        [self.bkNames, self.bkAbbrv] = self.BibDict['ToC']
+        self.bible_dict = literal_eval(codec.decode(b))
+        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
 
     else:
-        # Path for the full bible text.
-        try:
-            [self.bkNames, self.bkAbbrv] = ['','']
-        except FileNotFoundError:
-            messagebox.showerror('Error', 'Table of Contents not found.')
+        LFM = 0
+        # Import bible dictionary as "bible_dict"
+        with open('.dict.json', 'r') as b:
+            d = collections.OrderedDict
+            self.bible_dict = json.load(b, object_pairs_hook=d)
 
-        # Attempt to import bible dictionary as "BibDict".
-        fileName = ''.join(['.BibDict_', self.language, '.json'])
-        try:
-            with open(fileName, 'r') as b:
-                d = collections.OrderedDict
-                self.BibDict = json.load(b, object_pairs_hook=d)
-        except FileNotFoundError:
-            # Make "BibDict" if it doesn't already exist,
-            # or isn't found in the specified searchpath
-            self.BibDict = parser.make_bibdict(self)
-            with open(fileName, 'w') as b:
-                json.dump(self.BibDict, b, ensure_ascii=True)
+        # Parse Table of Contents
+        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
 
     # Create & Configure root
     self.root = tk.Tk()
@@ -187,15 +177,22 @@ def __init__(self, configfile='config.ini'):
                              command=sett,
                              underline=0)
 
-    '''
     self.show_toc = tk.BooleanVar()
-    tocq = partial(self.toc_query, self)
+    tocq = partial(handler.toc_query, self)
     options_menu.add_checkbutton(label='Display Table of Contents',
                                  onvalue=1, offvalue=0,
                                  variable=self.show_toc,
                                  command=tocq)
-    '''
 
+    self.enable_lfm = tk.BooleanVar()
+    self.enable_lfm.set(LFM)
+    lfmq = partial(handler.lfm_query, self)
+    options_menu.add_checkbutton(label='Low Footprint Mode',
+                                 onvalue=1, offvalue=0,
+                                 variable=self.enable_lfm,
+                                 command=lfmq)
+
+    # Status Bar
     self.frame.status_bar = tk.Label(self.frame,
                                      text='Awaiting input...',
                                      relief='flat',
