@@ -1,5 +1,5 @@
 config.ini
-.BibDict*
+.dict.json
 __pycache__
 .pytest_cache
 .*.swp
