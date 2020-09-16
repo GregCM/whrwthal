@@ -1,8 +1,10 @@
 from Wthl import handler, io, parser, textile
+from ast import literal_eval
 from configparser import ConfigParser
 import collections
 from dahuffman import HuffmanCodec
 from functools import partial
+import json
 import os
 import psutil
 import time
@@ -44,6 +46,7 @@ def shutdown(self, event=None):
 
     co = self.config_obj['FOOTPRINT']
     if (co['switch']=='on') and (co['transient']=='true'):
+        # INSERT: tk evalutation on checkbox
         r = messagebox.askyesno(title='Low Footprint', message='Would you like to disable Low Footprint Mode? You would enjoy shorter wait times, but sacrifice more disk space. See the README for details.')
         frame.destroy()
         if r:
@@ -57,9 +60,9 @@ def shutdown(self, event=None):
             for f in ['bytes','.codec']:
                 os.remove(f)
 
-            bible = codec.decode(b)
-            with open('BIBLE.txt', 'w') as f:
-                f.write(bible)
+            with open('.dict.json', 'w') as f:
+                json.dump(self.bible_dict, f)
+
         else:
             self.config_obj['FOOTPRINT']['transient'] = 'false'
 
@@ -173,6 +176,44 @@ def settings(self):
     mbcb_bg.grid(row=3, column=1)
     mbcb_fg.grid(row=3, column=2)
 
+def toc_query(self):
+    frame = tk.Frame(self.root)
+    frame.grid(row=2, rowspan=10, column=8, sticky='ns')
+    label = tk.Label(frame, text='ToC')
+    if self.show_toc.get():
+        label.pack()
+    else:
+        label.pack_forget()
+
+def lfm_query(self):
+    co = self.config_obj['FOOTPRINT']
+    # INSERT: tk evalutation on checkbox instead of ^ "co"
+    if self.enable_lfm.get():
+        self.config_obj['FOOTPRINT']['switch'] = 'off'
+        self.config_obj['FOOTPRINT']['transient'] = 'false'
+
+        os.remove('.dict.json')
+
+        codec = HuffmanCodec.from_data(str(self.bible_dict))
+        b = codec.encode(str(self.bible_dict))
+        with open ('bytes', 'wb') as f:
+            f.write(b)
+            codec.save('.codec')
+
+    else:
+        self.config_obj['FOOTPRINT']['switch'] = 'off'
+        self.config_obj['FOOTPRINT']['transient'] = 'false'
+
+        for f in ['bytes','.codec']:
+            os.remove(f)
+
+        with open('.bible_dict.json', 'w') as f:
+            json.dump(self.bible_dict, f)
+
+    with open('config.ini', 'w') as cfg:
+        self.config_obj.write(cfg)
+
+
 def get_color(self, tk_obj, ground='bg'):
     # Queries a color choice
     c = colorchooser.askcolor()[1]
@@ -198,7 +239,7 @@ def get_input(self, event=None):
     # Table of contents entry check, any full or abbreviated reference
     ToC = self.bkAbbrv + self.bkNames
     ToC = [C.upper() for C in ToC]
-    unique_words = self.BibDict['CONCORDANCE']
+    unique_words = self.bible_dict['CONCORDANCE']
     # TODO: (1) Upper?
     unique_words = [w.upper() for w in unique_words]
 
@@ -243,8 +284,8 @@ def get_input(self, event=None):
     # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
     elif (a and b):
         print(2)
-        out['VR'], vcount = self.verse(self)
-        out['PS'], pcount = self.phrase(self)
+        out['VR'], vcount = parser.verse(self)
+        out['PS'], pcount = parser.phrase(self)
     # else if some entry contents reference a book, and some text
     # EX: "if we being romans" --> "... if we being romans ..."
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
@@ -258,7 +299,7 @@ def get_input(self, event=None):
         # ie "23" --> GEN 23, EXO 23 ... ACT 23
         # && "1:3" --> GEN 1:3, EXO 1:3 ... ACT 1:3
         # && "1-3" --> GEN 1:1-3, 2:1-3 ... EXO 1:1-3, 2:1-3 ... etc.
-        out, vcount = self.verse(self)
+        out, vcount = parser.verse(self)
         pass
 
     elif not(any([a, b, c])):
