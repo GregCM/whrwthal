@@ -12,6 +12,9 @@ import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
 
 def start(self, t=7.429434566786795):
+    # A simple timed progress bar out of ~7.4 seconds
+    # (The average time clocked to perform the
+    #  __init__ huffman decoding)
     branch = tk.Tk()
     branch.resizable(0,0)
     branch.title('whrwthal')
@@ -40,6 +43,8 @@ def _on_mousewheel(self, event):
     self.canvas.yview_scroll(-1*(event.delta), 'units')
 
 def shutdown(self, event=None):
+    # Exit protocol prior to the process kill at handler.kill()
+    # TODO: include protocol other than LFM query?
     self.root.destroy()
     frame = tk.Frame(tk.Tk())
     frame.pack()
@@ -47,7 +52,11 @@ def shutdown(self, event=None):
     co = self.config_obj['FOOTPRINT']
     if (co['switch']=='on') and (co['transient']=='true'):
         # INSERT: tk evalutation on checkbox
-        r = messagebox.askyesno(title='Low Footprint', message='Would you like to disable Low Footprint Mode? You would enjoy shorter wait times, but sacrifice more disk space. See the README for details.')
+        msg = ''.join(['Would you like to disable Low Footprint Mode?',
+                       '\nYou would enjoy shorter wait times, but sacrifice',
+                       'more disk space. See the README for details.'])
+        r = messagebox.askyesno(title='Low Footprint',
+                                message=msg)
         frame.destroy()
         if r:
             self.config_obj['FOOTPRINT']['switch'] = 'off'
