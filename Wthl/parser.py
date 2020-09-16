@@ -128,7 +128,7 @@ def verse(self):
                         ''')
 
     try:
-        outFind = self.BibDict[book]
+        outFind = self.bible_dict[book]
     except KeyError:
         return
     # If only book name is input, output whole book
@@ -247,7 +247,7 @@ def phrase(self):
 
     count = 0
     for bKey in self.bkAbbrv:
-        chpDict = self.BibDict[bKey]
+        chpDict = self.bible_dict[bKey]
         chpIter = chpDict.keys()
         for cKey in chpIter:
             vrsDict = chpDict[cKey]
@@ -310,9 +310,10 @@ def phrase(self):
 
     return out, count
 
+# DEPRECATED
+'''
 def make_bibdict(self):
-    bfile = self.pathPart.join([self.fileLocation, 'BIBLE.txt'])
-    with open(bfile, 'r') as f:
+    with open('BIBLE.txt', 'r') as f:
         bib = f.read()
 
     # TODO: Add verbal details to progress bar status updates
@@ -369,7 +370,7 @@ def make_bibdict(self):
     progress['value'] = 1
     child.update()
 
-    BibDict = collections.OrderedDict()
+    bible_dict = collections.OrderedDict()
     # Loops to populate the book structure.
     for b in range(n):
         # Chapters marked uniquely (":1 " =  c.x:v.1)
@@ -415,12 +416,13 @@ def make_bibdict(self):
             chpDict[chpKey] = vrsDict
 
         bkKey = self.bkAbbrv[b]
-        BibDict[bkKey] = chpDict
+        bible_dict[bkKey] = chpDict
 
         progress['value'] = b / n * 100
         child.update()
 
     child.destroy()
 
-    BibDict['CONCORDANCE'] = unique_words
-    return BibDict
+    bible_dict['CONCORDANCE'] = unique_words
+    return bible_dict
+'''
