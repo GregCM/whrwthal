@@ -7,7 +7,7 @@ from functools import partial
 import json
 import os
 import sys
-#from threading import Thread
+from threading import Thread
 import tkinter as tk
 from tkinter import messagebox
 
@@ -20,9 +20,6 @@ def __init__(self, configfile='config.ini'):
     ##              ##
     ##################
     '''
-
-    #thread = Thread(target=handler.start, args=(self,))
-    #thread.start()
 
     self.ispc = sys.platform.startswith('win')
     self.ismac = sys.platform.startswith('darwin')
@@ -101,6 +98,9 @@ def __init__(self, configfile='config.ini'):
         with open('bytes', 'rb') as f:
             # comes as bytes
             b = f.read()
+
+        thread = Thread(target=handler.start, args=(self,))
+        thread.start()
 
         # b decoded with json delimiters as strings objects
         codec = HuffmanCodec.load('.codec')
