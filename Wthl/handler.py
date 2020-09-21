@@ -123,6 +123,11 @@ def shutdown(self, event=None):
             proc.kill()
 
 
+def info(self):
+    # the "about" text from deprecated make_bibdict
+    return None
+
+
 def settings(self):
     branch = tk.Toplevel()
     branch.attributes('-topmost', 'true')
