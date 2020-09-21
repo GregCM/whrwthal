@@ -1,9 +1,8 @@
+from Wthl import textile
 import collections
 import random as rnd
 import re
-import tkinter as tk
-from tkinter import ttk
-import string
+
 
 def verse(self):
     # TODO: (1) Languages
@@ -47,16 +46,14 @@ def verse(self):
         inToC = (self.bkAbbrv[b].upper() == locAlph.upper()[0:LenAbb])
         print(self.bkAbbrv[b], inToC)
         if inToC:
-            print('IF (L774)')
             book = self.bkAbbrv[b]
-            # The following Marks for headerUpdate
+            # The following Marks for header update
             bkMark = self.bkNames[b]
             out['label'] += bkMark
             print(bkMark)
             break
         # SEE <TODO (3)> in getInput
         elif not(locAlph):
-            print('ELIF (L783)')
             book = 'all'
             bkMark = 'Parellel References'
             out['label'] += bkMark
@@ -105,27 +102,26 @@ def verse(self):
     if not location:
         next
     elif location.upper() == 'ABOUT':
-        self.textUpdate(self,
-                        '''
-                        ____________________________________________
-                        ___\n This text-based app was written by
-                         Greg Caceres\n It is free to use, access,
-                         or edit. It is open\n source, free as in
-                         beer and speech. The King\n James Bible has
-                         its publishing and usage rights\n vested in
-                         the Crown within the United Kingdom.\n
-                         Everywhere else it is in the public domain,
-                        \n and is free to use, quote, or share
-                         without\n limit, provided no changes are
-                         made to the\n content therein. For
-                         support, or if you\n have any questions
-                         about the app\'s functionality,\n the content
-                         of the word of God, or anything else\n
-                         related, feel free to contact me at\n
-                         gregcaceres@gmail.com\n
-                        ____________________________________________
-                        ___\n
-                        ''')
+        textile.update(self.text_widget,
+'''
+____________________________________________
+___\n This text-based app was written by
+ Greg Caceres\n It is free to use, access,
+ or edit. It is open\n source, free as in
+ beer and speech. The King\n James Bible has
+ its publishing and usage rights\n vested in
+ the Crown within the United Kingdom.\n
+ Everywhere else it is in the public domain,
+\n and is free to use, quote, or share
+ without\n limit, provided no changes are
+ made to the\n content therein. For
+ support, or if you\n have any questions
+ about the app\'s functionality,\n the content
+ of the word of God, or anything else\n
+ related, feel free to contact me at\n
+ gregcaceres@gmail.com\n
+____________________________________________
+___\n''')
 
     try:
         outFind = self.bible_dict[book]
@@ -219,12 +215,13 @@ def verse(self):
                     noVRef = '\n Unf' + noVRef
                     out = [noVRef]
 
-    self.headerUpdate(self.frame, out['label'])
+    textile.update(self, out['label'])
     out['verses'] = [out['verses']]
     out['label'] = [out['label']]
     # TODO: count > 1 for instances such as many chapters containing "1-3"
     count = 1
     return out, count
+
 
 def phrase(self):
     '''
@@ -310,6 +307,7 @@ def phrase(self):
 
     return out, count
 
+
 # DEPRECATED
 '''
 def make_bibdict(self):
@@ -365,7 +363,11 @@ def make_bibdict(self):
     bib_words = re.split(' ', bib_letters)
     bib_words = [w for w in bib_words if w != '']
     # Concordance equivalent
-    unique_words = [s for s in set(bib_words) if s not in self.bkNames]
+    uwl = [s for s in set(bib_words) if s not in self.bkNames]
+    # Alphabetic order
+    uwl.sort()
+    # Immutable index + value pairs
+    unique_words = tuple(uwl)
 
     progress['value'] = 1
     child.update()
