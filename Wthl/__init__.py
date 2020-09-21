@@ -92,32 +92,6 @@ def __init__(self, configfile='config.ini'):
         with open(configfile, 'w') as cfg:
             self.config_obj.write(cfg)
 
-    if LFM == 'on':
-        LFM = 1
-        # First time decode of bible data
-        with open('bytes', 'rb') as f:
-            # comes as bytes
-            b = f.read()
-
-        thread = Thread(target=handler.start, args=(self,))
-        thread.start()
-
-        # b decoded with json delimiters as strings objects
-        codec = HuffmanCodec.load('.codec')
-        # literal_eval interprets the delimiters into type=dict
-        self.bible_dict = literal_eval(codec.decode(b))
-        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
-
-    else:
-        LFM = 0
-        # Import bible dictionary as "bible_dict"
-        with open('.dict.json', 'r') as b:
-            d = collections.OrderedDict
-            self.bible_dict = json.load(b, object_pairs_hook=d)
-
-        # Parse Table of Contents
-        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
-
     # Create & Configure root
     self.root = tk.Tk()
     tk.Grid.rowconfigure(self.root, 0, weight=1)
@@ -273,3 +247,29 @@ def __init__(self, configfile='config.ini'):
                                      fg=self.colors['text_widget'][1])
     self.frame.Bpadding.configure(bg=self.colors['frame'][0],
                                   state='disabled')
+
+    if LFM == 'on':
+        LFM = 1
+        # First time decode of bible data
+        with open('bytes', 'rb') as f:
+            # comes as bytes
+            b = f.read()
+
+        thread = Thread(target=handler.start, args=(self,))
+        thread.start()
+
+        # b decoded with json delimiters as strings objects
+        codec = HuffmanCodec.load('.codec')
+        # literal_eval interprets the delimiters into type=dict
+        self.bible_dict = literal_eval(codec.decode(b))
+        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
+
+    else:
+        LFM = 0
+        # Import bible dictionary as "bible_dict"
+        with open('.dict.json', 'r') as b:
+            d = collections.OrderedDict
+            self.bible_dict = json.load(b, object_pairs_hook=d)
+
+        # Parse Table of Contents
+        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
