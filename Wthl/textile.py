@@ -27,6 +27,7 @@ Please rightly divide and handle with prayer.
 
     return ''.join([cross, version])
 
+
 def preamble():
     cross = '''\n\n
 -   \\              /  +
@@ -75,6 +76,7 @@ ______________________________________________________________\n
 
     return ''.join([cross, version, AppFormat])
 
+
 def update(self, text, just='left'):
     cls(self.frame)
     t = self.frame.text_widget
@@ -84,6 +86,7 @@ def update(self, text, just='left'):
     t.tag_add('just', '1.0', 'end')
     t.tag_config('just', justify=just)
     t.configure(state='disabled')
+
 
 def cls(self):
     self.text_widget.configure(state='normal')
