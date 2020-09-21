@@ -1,4 +1,4 @@
-from Wthl import handler, io, parser, textile
+from Wthl import handler, io, textile
 from ast import literal_eval
 from configparser import ConfigParser
 import collections
@@ -9,7 +9,7 @@ import os
 import sys
 from threading import Thread
 import tkinter as tk
-from tkinter import messagebox
+
 
 def __init__(self, configfile='config.ini'):
 
@@ -92,7 +92,7 @@ def __init__(self, configfile='config.ini'):
         with open(configfile, 'w') as cfg:
             self.config_obj.write(cfg)
 
-    if LFM=='on':
+    if LFM == 'on':
         LFM = 1
         # First time decode of bible data
         with open('bytes', 'rb') as f:
@@ -239,7 +239,7 @@ def __init__(self, configfile='config.ini'):
                                 sticky='nsew')
 
     # Welcome message!
-    textile.update(self, textile.preamble(), 'center')
+    textile.update(self, textile.preamble())
 
     '''
     TOOL-TIPS
