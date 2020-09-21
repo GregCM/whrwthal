@@ -1,9 +1,9 @@
-from Wthl import handler, io, parser, textile
-from ast import literal_eval
+from Wthl import io, parser, textile
 from configparser import ConfigParser
 import collections
 from dahuffman import HuffmanCodec
 from functools import partial
+import re
 import json
 import os
 import psutil
@@ -11,16 +11,56 @@ import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
 
+
+class MouseHover(tk.Menu):
+
+    def __init__(self, parent, text, command=None):
+        self._com = command
+        tk.Menu.__init__(self, parent, tearoff=0)
+        if not isinstance(text, str):
+            raise TypeError('Non-string type: ' + text.__class__.__name__)
+
+        toktext = re.split('\n', text)
+        for t in toktext:
+            self.add_command(label=t)
+
+        self._displayed = False
+        self.master.bind("<Enter>", self._on_enter)
+        self.master.bind("<Leave>", self._on_leave)
+
+    def __del__(self):
+        self.master.unbind("<Enter>")
+        self.master.unbind("<Leave>")
+
+    def _on_enter(self, event):
+        if not self._displayed:
+            self._displayed = True
+            self.post(event.x_root, event.y_root)
+        if self._com is not None:
+            self.master.unbind_all("<Return>")
+            self.master.bind_all("<Return>", self.Click)
+
+    def _on_leave(self, event):
+        if self._displayed:
+            self._displayed = False
+            self.unpost()
+        if self._com is not None:
+            self.unbind_all("<Return>")
+
+    def click(self, event):
+        self._com()
+
+
 def start(self, t=7.429434566786795):
     # A simple timed progress bar out of ~7.4 seconds
     # (The average time clocked to perform the
     #  __init__ huffman decoding)
     branch = tk.Tk()
-    branch.resizable(0,0)
+    branch.resizable(0, 0)
     branch.title('whrwthal')
 
     msg = 'Initializing...'
-    info = tk.Label(branch, text=msg, relief='flat', font=('cambria',14))
+    info = tk.Label(branch, text=msg, relief='flat', font=('cambria', 14))
     progress = ttk.Progressbar(branch, orient='horizontal',
                                length=200, mode='determinate')
     info.pack(padx=10, pady=5)
@@ -35,6 +75,7 @@ def start(self, t=7.429434566786795):
 
     branch.destroy()
 
+
 def _on_mousewheel(self, event):
     if (self.ispc or self.islinux):
         event.delta /= 120
@@ -42,49 +83,45 @@ def _on_mousewheel(self, event):
         event.delta /= 1
     self.canvas.yview_scroll(-1*(event.delta), 'units')
 
+
 def shutdown(self, event=None):
     # Exit protocol prior to the process kill at handler.kill()
     # TODO: include protocol other than LFM query?
-    self.root.destroy()
-    frame = tk.Frame(tk.Tk())
-    frame.pack()
 
     co = self.config_obj['FOOTPRINT']
-    if (co['switch']=='on') and (co['transient']=='true'):
+    if (co['switch'] == 'on') and (co['transient'] == 'true'):
         # INSERT: tk evalutation on checkbox
         msg = ''.join(['Would you like to disable Low Footprint Mode?',
                        '\nYou would enjoy shorter wait times, but sacrifice',
                        'more disk space. See the README for details.'])
+
         r = messagebox.askyesno(title='Low Footprint',
                                 message=msg)
-        frame.destroy()
+
         if r:
+            # LFM disabled, and will not be queried again,
+            # except as a Checkbox under the Options menu
             self.config_obj['FOOTPRINT']['switch'] = 'off'
             self.config_obj['FOOTPRINT']['transient'] = 'false'
 
-            codec = HuffmanCodec.load('.codec')
-            with open ('bytes', 'rb') as f:
-                b = f.read()
-
-            for f in ['bytes','.codec']:
-                os.remove(f)
-
+            os.remove('bytes')
             with open('.dict.json', 'w') as f:
                 json.dump(self.bible_dict, f)
 
         else:
+            # LFM remains on and shutdown won't query again
+            self.config_obj['FOOTPRINT']['switch'] = 'on'
             self.config_obj['FOOTPRINT']['transient'] = 'false'
 
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
-    kill()
-
-def kill():
+    self.root.destroy()
     pn = 'main.py'
     for proc in psutil.process_iter():
         if proc.name() == pn:
             proc.kill()
+
 
 def settings(self):
     branch = tk.Toplevel()
@@ -113,29 +150,40 @@ def settings(self):
     nb.add(color_tab, text='Colors')
 
     # PATH TAB:
+    # main path
     m_frame = tk.Frame(path_tab)
     m_frame.pack(fill='both', expand=1, side='top')
 
-    m_choice = tk.Entry(m_frame, relief='sunken')
-    m_choice.pack(padx=10, pady=5, fill='x', expand=1, side='left')
-    m_choice.insert('end', config_obj['PATH']['main'])
+    m_label = tk.Label(m_frame, text='Main Path', relief='flat')
+    m_label.grid(row=0, column=0, padx=6, sticky='sw')
 
-    m_command = partial(io.browse, self, m_choice, 'main')
+    m_entry = tk.Entry(m_frame, relief='sunken', font=('courier', 10))
+    m_entry.grid(row=1, column=0, columnspan=4, padx=5, ipadx=50,  sticky='w')
+    m_entry.insert('end', config_obj['PATH']['main'])
+    # TODO: bug-fix for enter-leave-enter-leave-etc... loop under mouse
+    # self.m_hover = MouseHover(m_entry, m_entry.get())
+
+    m_command = partial(io.browse, self, m_entry, 'main')
     m_browse = tk.Button(m_frame, text='Browse',
-                         relief='raised', command=m_command)
-    m_browse.pack(padx=10, pady=5, fill='x', expand=1, side='left')
+                         relief='groove', command=m_command)
+    m_browse.grid(row=1, column=4, padx=5, sticky='w')
 
+    # save path
     s_frame = tk.Frame(path_tab)
-    s_frame.pack(fill='both', expand=1, side='bottom')
+    s_frame.pack(fill='both', expand=1, side='top')
 
-    s_choice = tk.Entry(s_frame, relief='sunken')
-    s_choice.pack(padx=10, pady=5, fill='both', expand=1, side='left')
-    s_choice.insert('end', config_obj['PATH']['save'])
+    s_label = tk.Label(s_frame, text='Save Path', relief='flat')
+    s_label.grid(row=2, column=0, padx=5, sticky='sw')
 
-    s_command = partial(io.browse, self, s_choice, 'save')
+    s_entry = tk.Entry(s_frame, relief='sunken', font=('courier', 10))
+    s_entry.grid(row=3, column=0, columnspan=3, padx=5, ipadx=50, sticky='w')
+    s_entry.insert('end', config_obj['PATH']['save'])
+    # self.s_hover = MouseHover(s_entry, s_entry.get())
+
+    s_command = partial(io.browse, self, s_entry, 'save')
     s_browse = tk.Button(s_frame, text='Browse',
-                         relief='raised', command=s_command)
-    s_browse.pack(padx=10, pady=5, fill='both', expand=1, side='left')
+                         relief='groove', command=s_command)
+    s_browse.grid(row=3, column=4, padx=5, sticky='w')
 
     # TEXT TAB:
     x = ''
@@ -185,38 +233,45 @@ def settings(self):
     mbcb_bg.grid(row=3, column=1)
     mbcb_fg.grid(row=3, column=2)
 
+
 def toc_query(self):
-    frame = tk.Frame(self.root)
-    frame.grid(row=2, rowspan=10, column=8, sticky='ns')
-    label = tk.Label(frame, text='ToC')
-    if self.show_toc.get():
-        label.pack()
-    else:
-        label.pack_forget()
+    frame = tk.Frame(self.frame)
+    frame.grid(row=2, rowspan=8, column=8, sticky='ns')
+    i, j = 0, 0
+    for book in self.bkNames:
+        label = tk.Label(frame, text=book)
+        if self.show_toc.get():
+            label.grid(row=i, column=j)
+        else:
+            label.grid_forget(row=i, column=j)
+
+        if i == 33:
+            i, j = 0, 1
+        else:
+            i += 1
+
 
 def lfm_query(self):
-    co = self.config_obj['FOOTPRINT']
     # INSERT: tk evalutation on checkbox instead of ^ "co"
     if self.enable_lfm.get():
-        self.config_obj['FOOTPRINT']['switch'] = 'off'
+        self.config_obj['FOOTPRINT']['switch'] = 'on'
         self.config_obj['FOOTPRINT']['transient'] = 'false'
 
-        os.remove('.dict.json')
+        with open('.dict.json') as f:
+            bible_dict = f.read()
 
-        codec = HuffmanCodec.from_data(str(self.bible_dict))
-        b = codec.encode(str(self.bible_dict))
-        with open ('bytes', 'wb') as f:
+        os.remove('.dict.json')
+        codec = HuffmanCodec.from_data(bible_dict)
+        b = codec.encode(bible_dict)
+        with open('bytes', 'wb') as f:
             f.write(b)
-            codec.save('.codec')
 
     else:
         self.config_obj['FOOTPRINT']['switch'] = 'off'
         self.config_obj['FOOTPRINT']['transient'] = 'false'
 
-        for f in ['bytes','.codec']:
-            os.remove(f)
-
-        with open('.bible_dict.json', 'w') as f:
+        os.remove('bytes')
+        with open('.dict.json', 'w') as f:
             json.dump(self.bible_dict, f)
 
     with open('config.ini', 'w') as cfg:
@@ -288,7 +343,7 @@ def get_input(self, event=None):
     vcount = pcount = 0
     if (a and not(b)) or (a and c):
         print(1)
-        out['VR'], vcount = self.verse(self)
+        out['VR'], vcount = parser.verse(self)
     # else if certain entry contents reference a book and a word in text
     # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
     elif (a and b):
@@ -332,16 +387,20 @@ def get_input(self, event=None):
     list_update(self, out)
     self.frame.go_b.wait_variable(self.frame.var)
 
+
 def select(self, event=None):
     focus(self.frame.SearchBar)
     self.frame.SearchBar.select_range(0, 'end')
     self.frame.SearchBar.icursor('end')
 
+
 def focus(self, event=None):
     self.focus_set()
 
+
 def gui_update(self, status):
     self.configure(text=status)
+
 
 def list_update(self, d, mode='w'):
     try:
@@ -406,4 +465,3 @@ def list_update(self, d, mode='w'):
     self.canvas.bind('<Enter>', self._bound_mouse_to_scrollbar)
     self.canvas.bind('<Leave>', self._unbound_mouse_to_scrollbar)
     '''
-
