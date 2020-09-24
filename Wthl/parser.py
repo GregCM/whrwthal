@@ -1,7 +1,10 @@
-from Wthl import textile
+import Wthl
 import collections
+import os
+import json
 import random as rnd
 import re
+import string
 
 
 def verse(self):
@@ -102,7 +105,7 @@ def verse(self):
     if not location:
         next
     elif location.upper() == 'ABOUT':
-        textile.update(self.text_widget,
+        Wthl.textile.update(self.text_widget,
 '''
 ____________________________________________
 ___\n This text-based app was written by
@@ -215,7 +218,7 @@ ___\n''')
                     noVRef = '\n Unf' + noVRef
                     out = [noVRef]
 
-    textile.update(self, out['label'])
+    Wthl.textile.update(self, out['label'])
     out['verses'] = [out['verses']]
     out['label'] = [out['label']]
     # TODO: count > 1 for instances such as many chapters containing "1-3"
@@ -308,36 +311,53 @@ def phrase(self):
     return out, count
 
 
-# DEPRECATED
-'''
-def make_bibdict(self):
-    with open('BIBLE.txt', 'r') as f:
+def make_json(self=Wthl, filename=''):
+    with open('src.txt', 'r') as f:
         bib = f.read()
 
-    # TODO: Add verbal details to progress bar status updates
-    child = tk.Tk()
-    child.title('Importing')
-    msg = 'Please wait while the text is compiled...'
-    info = tk.Label(child, text=msg, relief='flat')
-    progress = ttk.Progressbar(child, orient='horizontal',
-                               length=100, mode='determinate')
-    info.pack(padx=5, pady=5)
-    progress.pack(padx=5, pady=5)
+    self.bkNames = ['GENESIS', 'EXODUS','LEVITICUS','NUMBERS','DEUTERONOMY',
+                    'JOSHUA', 'JUDGES','RUTH','I SAMUEL','II SAMUEL',
+                    'I KINGS', 'II KINGS', 'I CHRONICLES','II CHRONICLES',
+                    'EZRA', 'NEHEMIAH', 'ESTHER','JOB','PSALMS','PROVERBS',
+                    'ECCELSIASTES', 'SONG OF SONGS','ISAIAH','JEREMIAH',
+                    'LAMENTATIONS', 'EZEKIEL','DANIEL','HOSEA','JOEL','AMOS',
+                    'OBADIAH', 'JONAH','MICAH','NAHUM','HABAKKUK','ZEPHANIAH',
+                    'HAGGAI', 'ZECHARIAH','MALACHI','MATTHEW','MARK','LUKE',
+                    'JOHN', 'ACTS','ROMANS','I CORNITHIANS','II CORNITHIANS',
+                    'GALATIANS', 'EPHESIANS','PHILIPPIANS','COLOSSIANS',
+                    'I THESSALONIANS', 'II THESSALONIANS','I TIMOTHY',
+                    'II TIMOTHY', 'TITUS','PHILEMON','HEBREWS','JAMES',
+                    'I PETER', 'II PETER','I JOHN','II JOHN','III JOHN','JUDE',
+                    'REVELATION']
+    self.bkAbbrv = ['GEN', 'EXO','LEV','NUM','DEUT',
+                    'JOSH', 'JUD','RU','I SA','II SA',
+                    'I KI', 'II KI', 'I CHRON','II CHRON',
+                    'EZR', 'NEH', 'EST','JOB','PSA','PRO',
+                    'ECC', 'SONG','ISA','JER',
+                    'LAM', 'EZE','DAN','HOS','JOE','AMO',
+                    'OBAD', 'JON','MIC','NAH','HAB','ZEP',
+                    'HAG', 'ZEC','MAL','MATT','MAR','LUK',
+                    'JOH', 'ACT','ROM','I COR','II COR',
+                    'GAL', 'EPH','PHIL','COL',
+                    'I THESS', 'II THESS','I TIM',
+                    'II TIM', 'TIT','PHM','HEB','JAM',
+                    'I PE', 'II PE','I JO','II JO','III JO','JU',
+                    'REV']
 
-    progress['value'] = 1
-    child.update()
+    bible_dict = collections.OrderedDict()
+    bible_dict['ToC'] = [self.bkNames, self.bkAbbrv]
 
     # Letters and space for Concordance compilation
     alpha_space = string.ascii_letters + ' '
 
-    n = len(self.bkNames)
+    n = len(self.bkAbbrv)
     books = []
     trim_books = []
     trim_text = ''
     for b in range(n):
-        m = re.compile(r'^(%s)' % (self.bkNames[b]))
+        m = re.compile(r'^(%s)' % (self.bkAbbrv[b]))
         if b < 65:
-            text = re.split(self.bkNames[b+1], bib)[0]
+            text = re.split(self.bkAbbrv[b+1], bib)[0]
             # Exclude titles from text.
             bib = m.sub('', bib)
             text = m.sub('', text)
@@ -354,25 +374,18 @@ def make_bibdict(self):
         trim_text += ''.join([l for l in text if l in alpha_space])
         trim_books.append(trim_text)
 
-        progress['value'] = b / n * 100
-        child.update()
-
     trim_bible = ''.join(trim_books)
     # Whole Bible excluding punctuation and book titles.
     bib_letters = ''.join([l for l in trim_bible])
     bib_words = re.split(' ', bib_letters)
     bib_words = [w for w in bib_words if w != '']
-    # Concordance equivalent
-    uwl = [s for s in set(bib_words) if s not in self.bkNames]
-    # Alphabetic order
+    # Unique Word List --> Concordance
+    uwl = [s for s in set(bib_words) if s not in self.bkAbbrv]
+    # Alphabetize
     uwl.sort()
     # Immutable index + value pairs
     unique_words = tuple(uwl)
 
-    progress['value'] = 1
-    child.update()
-
-    bible_dict = collections.OrderedDict()
     # Loops to populate the book structure.
     for b in range(n):
         # Chapters marked uniquely (":1 " =  c.x:v.1)
@@ -420,11 +433,40 @@ def make_bibdict(self):
         bkKey = self.bkAbbrv[b]
         bible_dict[bkKey] = chpDict
 
-        progress['value'] = b / n * 100
-        child.update()
-
-    child.destroy()
-
     bible_dict['CONCORDANCE'] = unique_words
+    if os.path.exists(filename):
+        wd = os.getcwd()
+        os.chdir(filename)
+        with open('src.json', 'w') as f:
+            json.dump(bible_dict, f)
+        os.chdir(wd)
+
     return bible_dict
-'''
+
+
+# Consider adding url request to whrwthal-text raw source
+# TODO: Ensure make_json compatibility && add parser.make_* to Wthl methods
+def make_text(self=Wthl, filename=''):
+    # Text Sourcing -- Alternative at https://github.com/.../...
+    with open('src.json') as f:
+        d = json.load(f)
+
+    text = ''
+    # keys i,j,k
+    for k in d.keys():
+        if (k != 'CONCORDANCE') and (k != 'ToC'):
+            for j in d[k].keys():
+                for i in d[k][j].keys():
+                    if (j == '1') and (i == '1'):
+                        text += '{} {}:{}'.format(k, j, d[k][j][i])
+                    else:
+                        text += ' {}:{}'.format(j, d[k][j][i])
+
+    if os.path.exists(filename):
+        wd = os.getcwd()
+        os.chdir(filename)
+        with open('src.txt', 'w') as f:
+            f.write(text)
+        os.chdir(wd)
+
+    return text
