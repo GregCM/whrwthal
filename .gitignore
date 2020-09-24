@@ -3,4 +3,5 @@ config.ini
 .dict.json
 __pycache__
 .pytest_cache
+src.*
 .*.swp
