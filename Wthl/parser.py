@@ -1,4 +1,3 @@
-import Wthl
 import collections
 import os
 import json
@@ -94,7 +93,7 @@ def verse(self):
 
             severalVrs = False
             # If there is a dash, there are several verses.
-            if ('-' in loc) or (',' in loc):
+            if ('-' in loc) or (', ' in loc):
                 severalVrs = True
                 vrsRef = re.split(char, vrsRef)
                 firstVerse = vrsRef[0]
@@ -105,26 +104,39 @@ def verse(self):
     if not location:
         next
     elif location.upper() == 'ABOUT':
-        Wthl.textile.update(self.text_widget,
-'''
-____________________________________________
-___\n This text-based app was written by
- Greg Caceres\n It is free to use, access,
- or edit. It is open\n source, free as in
- beer and speech. The King\n James Bible has
- its publishing and usage rights\n vested in
- the Crown within the United Kingdom.\n
- Everywhere else it is in the public domain,
-\n and is free to use, quote, or share
- without\n limit, provided no changes are
- made to the\n content therein. For
- support, or if you\n have any questions
- about the app\'s functionality,\n the content
- of the word of God, or anything else\n
- related, feel free to contact me at\n
- gregcaceres@gmail.com\n
-____________________________________________
-___\n''')
+        pass
+        # self.textile.update(self.text_widget,
+        #                    '\n'.join(['____________________________________',
+        #                               'This app was written by Greg Caceres',
+        #                               'It is free to use, access, oredit',
+        #                               '',
+        #                               '',
+        #                               '',
+        #                               '',
+        #                               '',
+        #                               ''
+        #                               '',
+        #                               '',
+        #                               '',]))
+        #    '''
+        #    ____________________________________________
+        #    ___\n This text-based app was written by
+        #     Greg Caceres\n It is free to use, access,
+        #     or edit. It is open\n source, free as in
+        #     beer and speech. The King\n James Bible has
+        #     its publishing and usage rights\n vested in
+        #     the Crown within the United Kingdom.\n
+        #     Everywhere else it is in the public domain,
+        #    \n and is free to use, quote, or share
+        #     without\n limit, provided no changes are
+        #     made to the\n content therein. For
+        #     support, or if you\n have any questions
+        #     about the app\'s functionality,\n the content
+        #     of the word of God, or anything else\n
+        #     related, feel free to contact me at\n
+        #     gregcaceres@gmail.com\n
+        #    ____________________________________________
+        #    ___\n''')
 
     try:
         outFind = self.bible_dict[book]
@@ -218,7 +230,7 @@ ___\n''')
                     noVRef = '\n Unf' + noVRef
                     out = [noVRef]
 
-    Wthl.textile.update(self, out['label'])
+    self.textile.update(self, out['label'])
     out['verses'] = [out['verses']]
     out['label'] = [out['label']]
     # TODO: count > 1 for instances such as many chapters containing "1-3"
@@ -311,37 +323,37 @@ def phrase(self):
     return out, count
 
 
-def make_json(self=Wthl, filename=''):
+def make_json(self, filename=''):
     with open('src.txt', 'r') as f:
         bib = f.read()
 
-    self.bkNames = ['GENESIS', 'EXODUS','LEVITICUS','NUMBERS','DEUTERONOMY',
-                    'JOSHUA', 'JUDGES','RUTH','I SAMUEL','II SAMUEL',
-                    'I KINGS', 'II KINGS', 'I CHRONICLES','II CHRONICLES',
-                    'EZRA', 'NEHEMIAH', 'ESTHER','JOB','PSALMS','PROVERBS',
-                    'ECCELSIASTES', 'SONG OF SONGS','ISAIAH','JEREMIAH',
-                    'LAMENTATIONS', 'EZEKIEL','DANIEL','HOSEA','JOEL','AMOS',
-                    'OBADIAH', 'JONAH','MICAH','NAHUM','HABAKKUK','ZEPHANIAH',
-                    'HAGGAI', 'ZECHARIAH','MALACHI','MATTHEW','MARK','LUKE',
-                    'JOHN', 'ACTS','ROMANS','I CORNITHIANS','II CORNITHIANS',
-                    'GALATIANS', 'EPHESIANS','PHILIPPIANS','COLOSSIANS',
-                    'I THESSALONIANS', 'II THESSALONIANS','I TIMOTHY',
-                    'II TIMOTHY', 'TITUS','PHILEMON','HEBREWS','JAMES',
-                    'I PETER', 'II PETER','I JOHN','II JOHN','III JOHN','JUDE',
-                    'REVELATION']
-    self.bkAbbrv = ['GEN', 'EXO','LEV','NUM','DEUT',
-                    'JOSH', 'JUD','RU','I SA','II SA',
-                    'I KI', 'II KI', 'I CHRON','II CHRON',
-                    'EZR', 'NEH', 'EST','JOB','PSA','PRO',
-                    'ECC', 'SONG','ISA','JER',
-                    'LAM', 'EZE','DAN','HOS','JOE','AMO',
-                    'OBAD', 'JON','MIC','NAH','HAB','ZEP',
-                    'HAG', 'ZEC','MAL','MATT','MAR','LUK',
-                    'JOH', 'ACT','ROM','I COR','II COR',
-                    'GAL', 'EPH','PHIL','COL',
-                    'I THESS', 'II THESS','I TIM',
-                    'II TIM', 'TIT','PHM','HEB','JAM',
-                    'I PE', 'II PE','I JO','II JO','III JO','JU',
+    self.bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
+                    'JOSHUA', 'JUDGES', 'RUTH', 'I SAMUEL', 'II SAMUEL',
+                    'I KINGS', 'II KINGS', 'I CHRONICLES', 'II CHRONICLES',
+                    'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
+                    'ECCELSIASTES', 'SONG OF SONGS', 'ISAIAH', 'JEREMIAH',
+                    'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
+                    'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
+                    'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
+                    'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'I CORNITHIANS',
+                    'II CORNITHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
+                    'COLOSSIANS', 'I THESSALONIANS', 'II THESSALONIANS',
+                    'I TIMOTHY', 'II TIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
+                    'JAMES', 'I PETER', 'II PETER', 'I JOHN', 'II JOHN',
+                    'III JOHN', 'JUDE', 'REVELATION']
+    self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
+                    'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
+                    'I KI', 'II KI', 'I CHRON', 'II CHRON',
+                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
+                    'ECC', 'SONG', 'ISA', 'JER',
+                    'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
+                    'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
+                    'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
+                    'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
+                    'GAL', 'EPH', 'PHIL', 'COL',
+                    'I THESS', 'II THESS', 'I TIM',
+                    'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
+                    'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
                     'REV']
 
     bible_dict = collections.OrderedDict()
@@ -371,14 +383,14 @@ def make_json(self=Wthl, filename=''):
         bib = bib.replace(bkToWipe, bkWiper)
 
         books.append(text)
-        trim_text += ''.join([l for l in text if l in alpha_space])
+        trim_text += ''.join([char for char in text if char in alpha_space])
         trim_books.append(trim_text)
 
     trim_bible = ''.join(trim_books)
     # Whole Bible excluding punctuation and book titles.
-    bib_letters = ''.join([l for l in trim_bible])
+    bib_letters = ''.join([char for char in trim_bible])
     bib_words = re.split(' ', bib_letters)
-    bib_words = [w for w in bib_words if w != '']
+    bib_words = [word for word in bib_words if word != '']
     # Unique Word List --> Concordance
     uwl = [s for s in set(bib_words) if s not in self.bkAbbrv]
     # Alphabetize
@@ -446,7 +458,7 @@ def make_json(self=Wthl, filename=''):
 
 # Consider adding url request to whrwthal-text raw source
 # TODO: Ensure make_json compatibility && add parser.make_* to Wthl methods
-def make_text(self=Wthl, filename=''):
+def make_text(self, filename=''):
     # Text Sourcing -- Alternative at https://github.com/.../...
     with open('src.json') as f:
         d = json.load(f)

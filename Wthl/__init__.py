@@ -1,4 +1,3 @@
-from Wthl import handler, io, textile
 from ast import literal_eval
 from configparser import ConfigParser
 import collections
@@ -25,7 +24,8 @@ def __init__(self, configfile='config.ini'):
     self.ismac = sys.platform.startswith('darwin')
     self.islinux = sys.platform.startswith('linux')
     # FIXME: MACOSX ERROR
-    # xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at:
+    # xcrun: error: invalid active developer path
+    # (/Library/Developer/CommandLineTools), missing xcrun at:
     # /Library/Developer/CommandLineTools/usr/bin/xcrun
 
     if self.ispc:
@@ -124,21 +124,21 @@ def __init__(self, configfile='config.ini'):
     self.menubar.add_cascade(label='Help', menu=help_menu, underline=0)
 
     # File menu choices:
-    self.sv_button = partial(io.save, self)
+    self.sv_button = partial(self.io.save, self)
     self.frame.master.bind('<Control-s>', self.sv_button)
     file_menu.add_command(label='Save',
                           accelerator='Ctrl+S',
                           command=self.sv_button,
                           underline=0)
 
-    self.svas_button = partial(io.saveas, self)
+    self.svas_button = partial(self.io.saveas, self)
     self.frame.master.bind('<Control-Shift-S>', self.svas_button)
     file_menu.add_command(label='SaveAs',
                           accelerator='Ctrl+Shift+S',
                           command=self.svas_button,
                           underline=0)
 
-    self.qt_Button = partial(handler.shutdown, self)
+    self.qt_Button = partial(self.handler.shutdown, self)
     self.frame.master.bind('<Control-q>', self.qt_Button)
     file_menu.add_command(label='Quit',
                           accelerator='Ctrl+Q',
@@ -146,13 +146,13 @@ def __init__(self, configfile='config.ini'):
                           underline=0)
 
     # Options menu choices:
-    sett = partial(handler.settings, self)
+    sett = partial(self.handler.settings, self)
     options_menu.add_command(label='Settings',
                              command=sett,
                              underline=0)
 
     self.show_toc = tk.BooleanVar()
-    tocq = partial(handler.toc_query, self)
+    tocq = partial(self.handler.toc_query, self)
     options_menu.add_checkbutton(label='Display Table of Contents',
                                  onvalue=1, offvalue=0,
                                  variable=self.show_toc,
@@ -160,7 +160,7 @@ def __init__(self, configfile='config.ini'):
 
     self.enable_lfm = tk.BooleanVar()
     self.enable_lfm.set(LFM)
-    lfmq = partial(handler.lfm_query, self)
+    lfmq = partial(self.handler.lfm_query, self)
     options_menu.add_checkbutton(label='Low Footprint Mode',
                                  onvalue=1, offvalue=0,
                                  variable=self.enable_lfm,
@@ -179,14 +179,14 @@ def __init__(self, configfile='config.ini'):
     self.frame.var = tk.IntVar()
     self.frame.SearchBar = tk.Entry(self.frame)
     self.frame.SearchBar.grid(row=3, column=1, sticky='ew')
-    slSB = partial(handler.select, self)
+    slSB = partial(self.handler.select, self)
     self.frame.master.bind('<Control-l>', slSB)
 
     # For any entry field, ensures one time only call.
     self.frame.entry = 'Search'
     self.frame.SearchBar.insert('end', self.frame.entry)
 
-    get = partial(handler.get_input, self)
+    get = partial(self.handler.get_input, self)
     self.frame.master.bind('<Return>', get)
     self.frame.go_b = tk.Button(self.frame,
                                 text='ENTER',
@@ -213,7 +213,7 @@ def __init__(self, configfile='config.ini'):
                                 sticky='nsew')
 
     # Welcome message!
-    textile.update(self, textile.preamble())
+    self.textile.update(self, self.textile.preamble())
 
     '''
     TOOL-TIPS
@@ -255,7 +255,7 @@ def __init__(self, configfile='config.ini'):
             # comes as bytes
             b = f.read()
 
-        thread = Thread(target=handler.start, args=(self,))
+        thread = Thread(target=self.handler.start, args=(self,))
         thread.start()
 
         # b decoded with json delimiters as strings objects

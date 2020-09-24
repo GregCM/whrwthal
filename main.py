@@ -37,6 +37,7 @@ _______________________________________________
 
 import Wthl
 
+# By convention, any method call of "self" will be self=Wthl
 Wthl.__init__(Wthl)
 gsize = Wthl.frame.grid_size()
 for row in range(gsize[0]):

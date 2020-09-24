@@ -1,4 +1,3 @@
-from Wthl import io, parser, textile
 from configparser import ConfigParser
 import collections
 from dahuffman import HuffmanCodec
@@ -168,7 +167,7 @@ def settings(self):
     # TODO: bug-fix for enter-leave-enter-leave-etc... loop under mouse
     # self.m_hover = MouseHover(m_entry, m_entry.get())
 
-    m_command = partial(io.browse, self, m_entry, 'main')
+    m_command = partial(self.io.browse, self, m_entry, 'main')
     m_browse = tk.Button(m_frame, text='Browse',
                          relief='groove', command=m_command)
     m_browse.grid(row=1, column=4, padx=5, sticky='w')
@@ -185,7 +184,7 @@ def settings(self):
     s_entry.insert('end', config_obj['PATH']['save'])
     # self.s_hover = MouseHover(s_entry, s_entry.get())
 
-    s_command = partial(io.browse, self, s_entry, 'save')
+    s_command = partial(self.io.browse, self, s_entry, 'save')
     s_browse = tk.Button(s_frame, text='Browse',
                          relief='groove', command=s_command)
     s_browse.grid(row=3, column=4, padx=5, sticky='w')
@@ -262,6 +261,7 @@ def lfm_query(self):
         self.config_obj['FOOTPRINT']['switch'] = 'on'
         self.config_obj['FOOTPRINT']['transient'] = 'false'
 
+        # TODO: migrate all IO content to io.py
         with open('.dict.json') as f:
             bible_dict = f.read()
 
@@ -314,7 +314,7 @@ def get_input(self, event=None):
     freq = collections.Counter(unique_words)
     with open('frequencies', 'w') as f:
         f.write(str(freq.most_common()))
-    #while freq.most_common()[0][1] > 
+    # while freq.most_common()[0][1] >
 
     if self.frame.entry is not None:
         upper = self.frame.entry.upper()
@@ -352,18 +352,18 @@ def get_input(self, event=None):
     vcount = pcount = 0
     if (a and not(b)) or (a and c):
         print(1)
-        out['VR'], vcount = parser.verse(self)
+        out['VR'], vcount = self.parser.verse(self)
     # else if certain entry contents reference a book and a word in text
     # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
     elif (a and b):
         print(2)
-        out['VR'], vcount = parser.verse(self)
-        out['PS'], pcount = parser.phrase(self)
+        out['VR'], vcount = self.parser.verse(self)
+        out['PS'], pcount = self.parser.phrase(self)
     # else if some entry contents reference a book, and some text
     # EX: "if we being romans" --> "... if we being romans ..."
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
         print(3)
-        out['PS'], pcount = parser.phrase(self)
+        out['PS'], pcount = self.parser.phrase(self)
     # else if entry contents only reference a number combo
     # EX: "23", "3:23", "119:8-9"
     elif (c and not(any([a, b]))):
@@ -372,7 +372,7 @@ def get_input(self, event=None):
         # ie "23" --> GEN 23, EXO 23 ... ACT 23
         # && "1:3" --> GEN 1:3, EXO 1:3 ... ACT 1:3
         # && "1-3" --> GEN 1:1-3, 2:1-3 ... EXO 1:1-3, 2:1-3 ... etc.
-        out, vcount = parser.verse(self)
+        out, vcount = self.parser.verse(self)
         pass
 
     elif not(any([a, b, c])):
@@ -425,7 +425,7 @@ def list_update(self, d, mode='w'):
         c = self.canvas
 
     if mode == 'w':
-        textile.cls(self.frame)
+        self.textile.cls(self.frame)
     elif mode == 'a':
         pass
 
@@ -445,7 +445,7 @@ def list_update(self, d, mode='w'):
         label = d[key]['label']
         x = [k for k in d[key].keys() if k != 'label'][0]
         for i in range(len(d[key][x])):
-            b_press.append(partial(textile.update, self, d[key][x][i]))
+            b_press.append(partial(self.textile.update, self, d[key][x][i]))
             self.list_button.append(tk.Button(c, text=label[i],
                                               width=w, height=h,
                                               command=b_press[-1]))
