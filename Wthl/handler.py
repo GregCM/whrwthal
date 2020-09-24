@@ -311,6 +311,10 @@ def get_input(self, event=None):
     unique_words = self.bible_dict['CONCORDANCE']
     # TODO: (1) Upper?
     unique_words = [w.upper() for w in unique_words]
+    freq = collections.Counter(unique_words)
+    with open('frequencies', 'w') as f:
+        f.write(str(freq.most_common()))
+    #while freq.most_common()[0][1] > 
 
     if self.frame.entry is not None:
         upper = self.frame.entry.upper()
