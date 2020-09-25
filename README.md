@@ -47,7 +47,7 @@ where *installdir* is the folder where you want **whrwhtal**, and all its config
 
 If this returns ``Python 3.5.X`` then you're all set. ``Python 2.X`` users will need to upgrade, as will ``Python 3.X.Y`` (for X < 5). You will need to include "pip" and "tkinter" in your Python install to use **whrwhtal**.
 
-Keep in mind this will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the second link:
+Keep in mind Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the second link:
 
 Python:
 - https://docs.python.org/3/using/windows.html (general instructions and embeddable)
