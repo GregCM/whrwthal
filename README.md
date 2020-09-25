@@ -41,7 +41,7 @@ If you live in a country that doesn't burn books, go crazy, download **TWO** cop
 
 where *installdir* is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page.
 
-**whrwhtal** is built on pure Python, and runs on Windows, MacOS, and Linux. If you have Python already, you'll be able to use **whrwthal** right away, no further install needed! If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
+**whrwhtal** is built only on Python, and runs on Windows, MacOS, and Linux. If you have Python already, skip ahead to **PIP** to complete your install and you'll be able to use **whrwthal** right away! If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
 ``python --version``
 
@@ -49,7 +49,7 @@ If this returns ``Python 3.5.X`` then you're all set. ``Python 2.X`` users will 
 
 Keep in mind Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
 
-Python
+### Python ###
 - https://www.python.org/downloads/latest (quick and easy, forget about it)
 - https://docs.python.org/3/using/windows.html (general instructions and embeddable)
 
@@ -60,9 +60,10 @@ Python
         - https://tkdocs.com/tutorial/install.html
         - https://www.activestate.com/products/tcl/downloads/
 
-Once you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user`` (internet required).
+### PIP ###
+If you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user`` (internet required). At this point, you're all done, ready to read!
 
-A Sidenote: Embedding Python
+### A Sidenote: Embedding Python ###
 If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB). Some reasons you may want to do this:
 - You don't own a computer, but have access to computers at public or other workspaces (one would embedd python with the app on thumb drive to plug-n-play)
 - You want to give an exact [no-nonsense] copy to someone(s) who doesn't own a computer, but has access to computers
