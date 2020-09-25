@@ -54,6 +54,8 @@ https://tkdocs.com/tutorial/install.html,
 
 To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python to your folder of choice and run whrwthal in the same folder (still totaling under 25MB).
 
+Once you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user``
+
 # First-Use
 On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``main.py`` [Windows], or ``./main.py`` [Linux/MacOS].
 
