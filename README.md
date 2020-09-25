@@ -26,51 +26,48 @@ whrwthal requires no internet connection, and therefore presents no threat to us
 # WARNING
 IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
-# Installation
-whrwthal runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check if you have Python3 already by typing
+# Dependencies & Installation
+whrwthal lives here, so all you need to download is
+
+``git clone https://github.com/GregCM/whrwthal *installdir*``
+
+where *installdir* is the folder where you want whrwthal, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page.
+
+whrwthal is built on pure Python, and runs on Windows, MacOS, and Linux. If you have Python already, you'll be able to use whrwthal right away, no further install needed! If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
 ``python --version``
 
-into your command prompt. If you see
+If this returns ``Python 3.X.X`` then you're all set. Python 2.X users will need to upgrade. To get Python3, see the install support at https://www.python.org/downloads/windows/
 
-``Python 3.X.X``
+You will need to include "pip" and "tkinter" in your Python install to use whrwthal. For the easiest method, choose "web-based installer".
 
-returned, you're good to go. Python 2.X users will need to upgrade. To get Python, see the install support at
+Keep in mind this will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use whrwthal on several machines (or share it so recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter".
 
-https://www.python.org/downloads/windows/
-
-You will need to include "pip" and "tkinter" in your install to use whrwthal.v1. For the easiest method, choose "web-based installer".
-
-Keep in mind this will take up about 60MB of space on your machine, which is a drop in the bucket compared to putting the same on a thumb drive. The best thing to do where internet is reliable is install python to your computer instead of your thumb drive, in order to maximize space on the drive. If internet is unreliable, see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter".
-
+Embedded Python:
 https://docs.python.org/3/using/windows.html,
 
+PIP:
 https://pip.pypa.io/en/stable/installing/,
 
+Tkinter:
 https://tkdocs.com/tutorial/install.html,
 
-To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python to your folder of choice and run whrwthal.v0 in the same folder (still totaling just under 25MB).
+To circumvent these extra steps, and enjoy an overall much more lightweight experience, simply download embedded Python to your folder of choice and run whrwthal in the same folder (still totaling under 25MB).
 
 # First-Use
-On Windows, open the command prompt and type
+On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``main.py`` [Windows], or ``./main.py`` [Linux/MacOS].
 
-"cd *installdir*"
-
-where *installdir* is the folder where you downloaded this repository. Now, you can run "v1.py" in the command prompt; whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use whrwthal. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file v1.py
-
-On Mac or Linux, open a terminal and proceed the same way. Instead of running "v1.py", however, you'll type
-
-"./v1.py"
+whrwthal will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use whrwthal. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "main.py"
 
 You can change the default settings stored during this one-time setup at any time through the Options menu; this includes Language, Colors, Directories, and more.
 
-Linux users can create a desktop application referencing whrwthal by writing to a desktop file. Most likely, the best place for this is
+Linux users can create a desktop application referencing whrwthal by writing to a desktop file. Most likely, the best place for this is in
 
-~/.local/share/applications/
+``~/.local/share/applications/``
 
-Once you cd to this directory, make a file called "whrwthal.desktop" populated by the following:
+Once you ``cd`` to this directory, make a file called "whrwthal.desktop" populated by the following:
 
-
+``
 [DESKTOP ENTRY]
 Version=1.0
 Encoding=UTF-8
@@ -82,7 +79,7 @@ Path=*installdir*
 Terminal=false
 Type=Application
 Categories=Educational;Application;
-
+``
 
 An icon will now appear in your applications menu to easily access whrwthal!
 
@@ -132,6 +129,6 @@ Others -- ...
 
 Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing app to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (as mentioned above, they are so confirmed to the best of my ability, not guaranteed in their quality or under any warranty whatsoever). If, under your personal circumstances, you find it better to use these simple Text files instead of whrwthal, you may find them at
 
-https://github.com/GregCM/whrwthal/tree/texts
+``https://github.com/GregCM/whrwthal/tree/texts``
 
 You may download any or all of them, and please distribute them liberally. As aforementioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
