@@ -27,7 +27,7 @@ whrwthal requires no internet connection, and therefore presents no threat to us
 IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS SOFTWARE FROM GITHUB IF YOU BELIEVE YOU ARE CURRENTLY UNDER GOVERNMENT OR OTHER SURVEILLANCE (otherwise, feel free!). If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
 # Dependencies & Installation
-whrwthal lives here, so all you need to download is
+whrwthal lives here, so all you need in order to download it is
 
 ``git clone https://github.com/GregCM/whrwthal *installdir*``
 
@@ -67,19 +67,17 @@ Linux users can create a desktop application referencing whrwthal by writing to 
 
 Once you ``cd`` to this directory, make a file called "whrwthal.desktop" populated by the following:
 
-``
-[DESKTOP ENTRY]
-Version=1.0
-Encoding=UTF-8
-Name=whrwthal
-Comment=Offline Bible referencing
-Exec=*installdir*/v1.py
-Icon=*installdir*/icon.ico
-Path=*installdir*
-Terminal=false
-Type=Application
-Categories=Educational;Application;
-``
+    [DESKTOP ENTRY]
+    Version=1.0
+    Encoding=UTF-8
+    Name=whrwthal
+    Comment=Offline Bible referencing
+    Exec=*installdir*/v1.py
+    Icon=*installdir*/icon.ico
+    Path=*installdir*
+    Terminal=false
+    Type=Application
+    Categories=Educational;Application;
 
 An icon will now appear in your applications menu to easily access whrwthal!
 
