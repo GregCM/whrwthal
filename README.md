@@ -2,20 +2,20 @@
 Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is whrwthal better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://Xiphos.org/)? Read on:
 
 # What is it?
-whrwthal (adverb):
+whrwthal (adverb), as in:
 
- As in "Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word." - Psalm 119:9
+> Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word. - Psalm 119:9
 
 W-H-R-W-T-H-A-L (acronymn):
 
-  Whrwthal
-  Helps
-  Rake
-  Wverses
-  That're
-  Hallowed
-  And
-  Laudable
+  >Whrwthal
+  >Helps
+  >Rake
+  >Wverses
+  >That're
+  >Hallowed
+  >And
+  >Laudable
 
 whrwthal is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See https://www.opendoorsusa.org/christian-persecution/world-watch-list/, https://flashdrivesforfreedom.org/
 
