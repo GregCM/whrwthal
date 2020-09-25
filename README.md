@@ -1,7 +1,7 @@
-# whrwhtal
+# whrwhtal #
 Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is **whrwhtal** better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://Xiphos.org/)? Read on!
 
-# What is it?
+## What is it? ##
 whrwhtal (adverb), as in:
 
 > Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word. - Psalm 119:9
@@ -26,15 +26,15 @@ As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is ena
 
 **whrwhtal** requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
-# WARNING
+## WARNING ##
 **If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
-# Anti-Warning
+## Anti-Warning ##
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies. Being coy about things you should be bold about is less Christ- and more -ism.
 
 > For I am not ashamed of the gospel of Christ: - Romans 1:16
 
-# Dependencies & Installation
+## Dependencies & Installation ##
 **whrwhtal** lives here, so all you need in order to download it is
 
 ``git clone https://github.com/GregCM/whrwhtal *installdir*``
@@ -71,7 +71,7 @@ If you do decide to download embedded Python, place it in your folder of choice 
 - You're afraid of commitment, and embedding python with the app will make deleting it altogether much easier
 - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
-# First-Use
+## First-Use ##
 On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``main.py`` [Windows], or ``./main.py`` [Linux/MacOS].
 
 **whrwhtal** will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "main.py"
@@ -98,7 +98,7 @@ Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" pop
 
 An icon will now appear in your applications menu to easily access **whrwhtal**!
 
-# TODO
+## TODO ##
 
 In future releases, expect to see:
 
@@ -134,7 +134,7 @@ In future releases, expect to see:
 
 - PGP cryptographic protections
 
-# Resources
+## Resources ##
 
 For study tools to use in Christ-averse regions, see the following for print in your personal library. Please note, I haven't proof read these materials to check for doctrinal truth / accuracy, as I don't speak any of these languages. All the same, I don't believe I should be such a gatekeeper anyhow. I leave it up to you as a user to determine within your own conscience and in the privacy of your own reading of scriptures and prayerful heart towards God, whether these things are true. See Acts 17:10-11, consider the Bereans!
 
@@ -152,7 +152,7 @@ Biblical translations in a variety of tongues are utilized to provide this graph
 
 You may download any or all of them, and please distribute them liberally. As aforementioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
 
-# FAQ and Psuedo-Lies
+## FAQ and Psuedo-Lies ##
 
 - Windows Install size > 25MB?
     - Okay, technically not lighter than the competition when you run in Windows, but at least it's only 9MB sitting in the thumb drive. Python has the advantage of being native where C isn't for example, but the same is true other way around. Why use Windows anyway?
