@@ -29,11 +29,11 @@ IF YOU LIVE IN A PERSECUTED OR CLOSED-COUNTRY, PLEASE READ: DO NOT DOWNLOAD THIS
 # Installation
 whrwthal runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check if you have Python3 already by typing
 
-"python --version"
+``python --version``
 
 into your command prompt. If you see
 
-"Python 3.X.X"
+``Python 3.X.X``
 
 returned, you're good to go. Python 2.X users will need to upgrade. To get Python, see the install support at
 
