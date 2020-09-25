@@ -72,7 +72,7 @@ Once you ``cd`` to this directory, make a file called "whrwthal.desktop" populat
     Encoding=UTF-8
     Name=whrwthal
     Comment=Offline Bible referencing
-    Exec=*installdir*/v1.py
+    Exec=*installdir*/main.py
     Icon=*installdir*/icon.ico
     Path=*installdir*
     Terminal=false
