@@ -260,28 +260,12 @@ def lfm_query(self):
     if self.enable_lfm.get():
         self.config_obj['FOOTPRINT']['switch'] = 'on'
         self.config_obj['FOOTPRINT']['transient'] = 'false'
-
-        # TODO: migrate all IO content to io.py
-        with open('.dict.json') as f:
-            bible_dict = f.read()
-
-        os.remove('.dict.json')
-        codec = HuffmanCodec.from_data(bible_dict)
-        b = codec.encode(bible_dict)
-        with open('bytes', 'wb') as f:
-            f.write(b)
+        self.io.encode_file(self)
 
     else:
         self.config_obj['FOOTPRINT']['switch'] = 'off'
         self.config_obj['FOOTPRINT']['transient'] = 'false'
-
-        os.remove('bytes')
-        with open('.dict.json', 'w') as f:
-            json.dump(self.bible_dict, f)
-
-    with open('config.ini', 'w') as cfg:
-        self.config_obj.write(cfg)
-
+        self.io.decode_file(self)
 
 def get_color(self, tk_obj, ground='bg'):
     # Queries a color choice

@@ -61,3 +61,25 @@ def browse(self, entry, cfg_key):
     self.config_obj['PATH'][cfg_key] = new_path
     with open('config.ini', 'w') as cfg:
         self.config_obj.write(cfg)
+
+
+def encode_file(self):
+    with open('.dict.json') as f:
+        bible_dict = f.read()
+
+    os.remove('.dict.json')
+    codec = HuffmanCodec.from_data(bible_dict)
+    b = codec.encode(bible_dict)
+    with open('bytes', 'wb') as f:
+        f.write(b)
+
+    with open('config.ini', 'w') as cfg:
+        self.config_obj.write(cfg)
+
+def decode_file(self):
+    os.remove('bytes')
+    with open('.dict.json', 'w') as f:
+        json.dump(self.bible_dict, f)
+
+    with open('config.ini', 'w') as cfg:
+        self.config_obj.write(cfg)
