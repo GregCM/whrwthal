@@ -1,3 +1,20 @@
+'''
+_______________________________________________
+
+The Biblical translations used herein are all
+in the public domain, and free to use, quote,
+or share without limit, provided no changes
+are made to the content therein.
+
+For general support, or if you have any
+questions about the app's functionality,
+the content of the word of God, or
+anything else related, contact at
+
+gregcaceres@gmail.com
+_______________________________________________
+'''
+
 import collections
 import os
 import json
