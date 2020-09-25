@@ -62,7 +62,7 @@ Tkinter:
 
 Once you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user`` (internet required).
 
-    # A Sidenote: Embedding Python
+## A Sidenote: Embedding Python
     If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB). Some reasons you may want to do this:
     - You don't own a computer, but have access to computers at public or other workspaces (one would embedd python with the app on thumb drive to plug-n-play)
     - You want to give an exact [no-nonsense] copy to someone(s) who doesn't own a computer, but has access to computers
