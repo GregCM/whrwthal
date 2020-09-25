@@ -49,6 +49,7 @@ If this returns ``Python 3.5.X`` then you're all set. ``Python 2.X`` users will 
 
 Keep in mind Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
 
+Python
 - https://www.python.org/downloads/latest (quick and easy, forget about it)
 - https://docs.python.org/3/using/windows.html (general instructions and embeddable)
 
