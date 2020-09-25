@@ -27,7 +27,7 @@ As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is ena
 **whrwhtal** requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
 # WARNING
-**If you live in a persecutred or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
+**If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
 # Anti-Warning
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies. Being coy about things you should be bold about is less Christ- and more -ism.
@@ -62,12 +62,20 @@ Tkinter:
 
 Once you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user`` (internet required).
 
+<<<<<<< HEAD
+=======
+A Sidenote: Embedding Python
+>>>>>>> a64ea0f970633eeb00b467325e5039822cd00440
 If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB). Some reasons you may want to do this:
 - You don't own a computer, but have access to computers at public or other workspaces (one would embedd python with the app on thumb drive to plug-n-play)
 - You want to give an exact [no-nonsense] copy to someone(s) who doesn't own a computer, but has access to computers
 - You want to demonstrate **whrwthal** to friends, team, or congregation (or other on-the-go scenarios)
+<<<<<<< HEAD
 - You're afraid of commitment, and embedding python with the app will make deleting it altogether much easier
 
+=======
+- You're afraid of commitment, and embedding python will make deleting it altogether much easier
+>>>>>>> a64ea0f970633eeb00b467325e5039822cd00440
 
 # First-Use
 On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``main.py`` [Windows], or ``./main.py`` [Linux/MacOS].
