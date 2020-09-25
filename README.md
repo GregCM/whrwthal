@@ -45,11 +45,9 @@ where *installdir* is the folder where you want **whrwhtal**, and all its config
 
 ``python --version``
 
-If this returns ``Python 3.X.X`` then you're all set. Python 2.X users will need to upgrade. To get Python3, see the install support at https://www.python.org/downloads/windows/
+If this returns ``Python 3.X.X`` then you're all set. Python 2.X users will need to upgrade. You will need to include "pip" and "tkinter" in your Python install to use **whrwhtal**.
 
-You will need to include "pip" and "tkinter" in your Python install to use **whrwhtal**. For the easiest method, choose "web-based installer".
-
-Keep in mind this will take up about 60MB of space on your machine (not your thumb drive). The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the second link:
+Keep in mind this will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the second link:
 
 Python:
 - https://docs.python.org/3/using/windows.html (general instructions and embeddable)
@@ -62,9 +60,14 @@ Tkinter:
 - https://tkdocs.com/tutorial/install.html
 - https://www.activestate.com/products/tcl/downloads/
 
-If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB)
-
 Once you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user`` (internet required).
+
+    # A Sidenote: Embedding Python
+    If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB). Some reasons you may want to do this:
+    - You don't own a computer, but have access to computers at public or other workspaces (one would embedd python with the app on thumb drive to plug-n-play)
+    - You want to give an exact [no-nonsense] copy to someone(s) who doesn't own a computer, but has access to computers
+    - You want to demonstrate **whrwthal** to friends, team, or congregation (or other on-the-go scenarios)
+    - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
 # First-Use
 On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``main.py`` [Windows], or ``./main.py`` [Linux/MacOS].
@@ -111,7 +114,7 @@ In future releases, expect to see:
     
     - Chinese (CKJV)
 
-    (See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
+(See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
 
 - Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
 
@@ -144,3 +147,11 @@ Biblical translations in a variety of tongues are utilized to provide this graph
 ``https://github.com/GregCM/whrwhtal/tree/texts``
 
 You may download any or all of them, and please distribute them liberally. As aforementioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
+
+# FAQ and Psuedo-Lies
+
+- Windows Install size > 25MB?
+    - Okay, technically not lighter than the competition when you run in Windows, but at least it's only 9MB sitting in the thumb drive. Python has the advantage of being native where C isn't for example, but the same is true other way around. Why use Windows anyway?
+
+- Why use Windows anyway?
+    - Great question, this FAQ section is really shaping up.
