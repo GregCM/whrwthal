@@ -13,29 +13,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
-_______________________________________________
-
-This app was written by Greg Caceres.
-It is free to use, access, or edit. It is open
-source, free as in beer and as in speech.
-Comprehensive license pending.
-
-The Biblical translations used herein are all
-in the public domain, and free to use, quote,
-or share without limit, provided no changes
-are made to the content therein.
-
-For general support, or if you have any
-questions about the app's functionality,
-the content of the word of God, or
-anything else related, contact at
-
-gregcaceres@gmail.com
-_______________________________________________
-
 '''
 
 import Wthl
+
+# TODO: Implement PGP crytographic protection for all but ``main.py``,
+# require passphrase on First-Use, don't require again as long as data
+# is in namespace
 
 # By convention, any method call of "self" will be self=Wthl
 Wthl.__init__(Wthl)
