@@ -135,7 +135,7 @@ In future releases, expect to see:
 
 - [ ] Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
 
-- [ ] A limitation on searching overloaded words like "the" or "I", to prevent slow downs and crashes
+- [X] A limitation on searching overloaded words like "the" or "I", to prevent slow downs and crashes
 
 - [ ] Searched word highlighting to replace the current capitalization
 
