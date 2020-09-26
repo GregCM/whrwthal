@@ -29,6 +29,20 @@ As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is ena
 ## WARNING ##
 **If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
+### Security-Gaps -Flaws & -Considerations ###
+I plan to anonymize source code variables and comments as much as I can. This will help if some very curious person with an untrained-eye takes a peak, but anyone who knows what they're looking at (be it the general format of scripture or python) will figure things out pretty quick.
+- Consider that this README document is the only other revealing item in the repository. Act accordingly, keeping an eye towards redistribution if you have the heart for it.
+
+Obfuscation will *help* protect against those people who know what they're doing; encryption will do somewhat the same, but will enable good people who know what they're doing and end up with your copy + password to improve or modify the program.
+- For legal reasons, I don't do either in advance of distributing **whrwthal**, and likewise (if you plan to redistribute **whrwthal**) I encourage you to only engage in encryption of the entirety of your *installdir*, if you're concerned about securtiy.
+
+Memory leak is a concern in Python namespaces, because even in low-footprint mode (where the text is unreadable without the accompanying codec) Python decodes the text within an interpreter session and holds it in memory while the program is running. It's difficult to locate these various storage points within computer memory, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPU's have this issue, though they are in the process of upgrading to meet AMD's current security measures. In all, those things are out of my control, and I only have the following recommendations:
+- Get better, more secure, hardware
+- Don't use at work or some other networked machine that is liable to have a CPU observer pointed at it
+- Don't let anyone know you're the one using this software (ie if you're logged in with personal information anywhere, don't read your bible)
+- Be [reasonably] paranoid!
+    - Again, if you're at home with a private computer and have no reason to believe "the man" is going to bust down your door and comb through your computer, live a little, read your bible
+
 ## Anti-Warning ##
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies. Being coy about things you should be bold about is less Christ- and more -ism.
 
