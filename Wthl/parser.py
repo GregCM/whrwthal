@@ -333,8 +333,15 @@ def phrase(self):
                     out['phrases'].append(vrsAlph)
                     out['label'].append('%s\n%s' % (ref, iterspan))
                     count += 1
+                    # Serves as speed / crash prevention, as well as general
+                    # utility: no one wants to see a 62,000-Count word list.
+                    # Everything greater than 2564 gets tossed
+                    err = None
+                    if (count > 2564):
+                        err = MemoryError 
+                        return out, count, err
 
-    return out, count
+    return out, count, err
 
 
 def make_json(self, filename=''):
@@ -472,10 +479,13 @@ def make_json(self, filename=''):
 
 # Consider adding url request to whrwthal-text raw source
 # TODO: Ensure make_json compatibility && add parser.make_* to Wthl methods
-def make_text(self, filename=''):
+def make_text(self, d=None, filename=''):
     # Text Sourcing -- Alternative at https://github.com/.../...
-    with open('src.json') as f:
-        d = json.load(f)
+    if d:
+        pass
+    else:
+        with open('src.json') as f:
+            d = json.load(f)
 
     text = ''
     # keys i,j,k

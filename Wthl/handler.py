@@ -293,12 +293,9 @@ def get_input(self, event=None):
     ToC = self.bkAbbrv + self.bkNames
     ToC = [C.upper() for C in ToC]
     unique_words = self.bible_dict['CONCORDANCE']
+
     # TODO: (1) Upper?
     unique_words = [w.upper() for w in unique_words]
-    freq = collections.Counter(unique_words)
-    with open('frequencies', 'w') as f:
-        f.write(str(freq.most_common()))
-    # while freq.most_common()[0][1] >
 
     if self.frame.entry is not None:
         upper = self.frame.entry.upper()
@@ -334,6 +331,7 @@ def get_input(self, event=None):
     # EX: "Rom 12:1"
     out = collections.OrderedDict()
     vcount = pcount = 0
+    no_err = True
     if (a and not(b)) or (a and c):
         print(1)
         out['VR'], vcount = self.parser.verse(self)
@@ -341,13 +339,13 @@ def get_input(self, event=None):
     # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
     elif (a and b):
         print(2)
-        out['VR'], vcount = self.parser.verse(self)
-        out['PS'], pcount = self.parser.phrase(self)
+        out['VR'], vcount, verr = self.parser.verse(self)
+        out['PS'], pcount, perr = self.parser.phrase(self)
     # else if some entry contents reference a book, and some text
     # EX: "if we being romans" --> "... if we being romans ..."
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
         print(3)
-        out['PS'], pcount = self.parser.phrase(self)
+        out['PS'], pcount, perr = self.parser.phrase(self)
     # else if entry contents only reference a number combo
     # EX: "23", "3:23", "119:8-9"
     elif (c and not(any([a, b]))):
@@ -356,28 +354,36 @@ def get_input(self, event=None):
         # ie "23" --> GEN 23, EXO 23 ... ACT 23
         # && "1:3" --> GEN 1:3, EXO 1:3 ... ACT 1:3
         # && "1-3" --> GEN 1:1-3, 2:1-3 ... EXO 1:1-3, 2:1-3 ... etc.
-        out, vcount = self.parser.verse(self)
-        pass
+        out, vcount, verr = self.parser.verse(self)
+
+    # Handling errors
+    if perr is MemoryError:
+        print(5)
+        msg = '\n'.join(['There are too many results for "{}",',
+                         'please be more specific.'])
+        messagebox.showwarning('Overloaded Word', msg.format(self.frame.entry))
 
     elif not(any([a, b, c])):
         out = {}
-        print(5)
+        print(6)
         messagebox.showerror('Error',
-                             '"%s" not found.' % (self.frame.entry))
+                             '"{}" not found.'.format(self.frame.entry))
+    else:
+        count = vcount + pcount
+        if count == 1:
+            gui_update(self.frame.status_bar,
+                       '{} RESULT MATCHING \"{}\"'.format(
+                       count, self.frame.entry))
+        elif count > 1:
+            gui_update(self.frame.status_bar,
+                       '{} RESULTS MATCHING \"{}\"'.format(
+                       count, self.frame.entry))
 
-    count = vcount + pcount
-    if count == 0:
-        gui_update(self.frame.status_bar, '{} RESULTS MATCHING \"{}\"'.format(
-                   count, self.frame.entry))
-    elif count == 1:
-        gui_update(self.frame.status_bar, '{} RESULT MATCHING \"{}\"'.format(
-                   count, self.frame.entry))
-    elif count > 1:
-        gui_update(self.frame.status_bar, '{} RESULTS MATCHING \"{}\"'.format(
-                   count, self.frame.entry))
+        # A patchy fix that amounts to awful dumb practice
+        list_update(self, out)
+        # Will fix...
+        list_update(self, out)
 
-    list_update(self, out)
-    list_update(self, out)
     self.frame.go_b.wait_variable(self.frame.var)
 
 

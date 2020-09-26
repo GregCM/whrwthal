@@ -16,6 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import Wthl
+from Wthl import handler, io, parser, textile
 
 # TODO: Implement PGP crytographic protection for all but ``main.py``,
 # require passphrase on First-Use, don't require again as long as data
