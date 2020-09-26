@@ -31,7 +31,7 @@ As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is ena
 
 ### Security-Gaps -Flaws & -Considerations ###
 I plan to anonymize source code variables and comments as much as I can. This will help if some very curious person with an untrained-eye takes a peak, but anyone who knows what they're looking at (be it the general format of scripture or python) will figure things out pretty quick.
-- Consider that this README document is the only other revealing item in the repository. Act accordingly, keeping an eye towards redistribution if you have the heart for it.
+- Consider that this README document is the only other revealing item in the repository. Act accordingly, keeping an eye towards redistribution if you have the heart for it (see LICENSE for your responsibilities should you choose to redistribute)
 
 Obfuscation will *help* protect against those people who know what they're doing; encryption will do somewhat the same, but will enable good people who know what they're doing and end up with your copy + password to improve or modify the program.
 - For legal reasons, I don't do either in advance of distributing **whrwthal**, and likewise (if you plan to redistribute **whrwthal**) I encourage you to only engage in encryption of the entirety of your *installdir*, if you're concerned about securtiy.
@@ -116,37 +116,37 @@ An icon will now appear in your applications menu to easily access **whrwhtal**!
 
 In future releases, expect to see:
 
-[ ] More translations in a variety of tongues, in the public domain and reliable in their source and lineage, akin to the KJV. Examples include:
+- [ ] More translations in a variety of tongues, in the public domain and reliable in their source and lineage, akin to the KJV. Examples include:
 
-    [ ] French (OST)
+    - [ ] French (OST)
 
-    [X] German (LUT)
+    - [X] German (LUT)
 
-    [X] Hebrew (LC)
+    - [X] Hebrew (LC)
 
-    [ ] Greek (TR)
+    - [ ] Greek (TR)
 
-    [ ] Russian (RUSV)
+    - [ ] Russian (RUSV)
     
-    [ ] Chinese (CKJV)
+    - [ ] Chinese (CKJV)
 
 (See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
 
-[ ] Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
+- [ ] Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
 
-[ ] A limitation on searching overloaded words like "the" or "I", to prevent slow downs and crashes
+- [ ] A limitation on searching overloaded words like "the" or "I", to prevent slow downs and crashes
 
-[ ] Searched word highlighting to replace the current capitalization
+- [ ] Searched word highlighting to replace the current capitalization
 
-[ ] In-Text-Box buttons under each word, for quick searching, as well as custom cross references
+- [ ] In-Text-Box buttons under each word, for quick searching, as well as custom cross references
 
-[ ] Bug-fix for search result buttons that incorrectly display the verse preview (ie "... word of GOD..." when it should be "... word of GOD.", etc.)
+- [ ] Bug-fix for search result buttons that incorrectly display the verse preview (ie "... word of GOD..." when it should be "... word of GOD.", etc.)
 
-[ ] Calendar synced "Daily Readings" to serve as a structured study tool (retrieved from BLB sites)
+- [ ] Calendar synced "Daily Readings" to serve as a structured study tool (retrieved from BLB sites)
 
-[ ] Better tkinter / pip embedding (possible compression methods) to make install non-hellish for Windows users
+- [ ] Better tkinter / pip embedding (possible compression methods) to make install non-hellish for Windows users
 
-[ ] PGP cryptographic protections
+- [ ] PGP cryptographic protections
 
 ## Resources ##
 
