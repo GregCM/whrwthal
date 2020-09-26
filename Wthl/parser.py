@@ -3,8 +3,7 @@ _______________________________________________
 
 The Biblical translations used herein are all
 in the public domain, and free to use, quote,
-or share without limit, provided no changes
-are made to the content therein.
+or share without limit.
 
 For general support, or if you have any
 questions about the app's functionality,
@@ -24,8 +23,6 @@ import string
 
 
 def verse(self):
-    # TODO: (1) Languages
-    # (2) Trim fat code
     '''
     ####################################
     ##                                ##
