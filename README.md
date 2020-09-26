@@ -116,6 +116,7 @@ An icon will now appear in your applications menu to easily access **whrwhtal**!
 
 In future releases, expect to see:
 
+- [ ] Time optimizations (numba)
 - [ ] More translations in a variety of tongues, in the public domain and reliable in their source and lineage, akin to the KJV. Examples include:
 
     - [ ] French (OST)
