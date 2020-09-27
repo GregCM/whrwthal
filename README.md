@@ -8,21 +8,14 @@ whrwhtal (adverb), as in:
 
 W-H-R-W-T-H-A-L (acronymn):
 
-  >Whrwthal
-
-  >Helps
-
-  >Rake
-
-  >Wverses
-
-  >That're
-
-  >Hallowed
-
-  >And
-
-  >Laudable
+  Whrwthal
+  Helps
+  Rake
+  Wverses
+  That're
+  Hallowed
+  And
+  Laudable
 
 **whrwhtal** is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See the following:
 
