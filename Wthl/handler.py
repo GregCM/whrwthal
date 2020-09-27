@@ -284,6 +284,22 @@ def get_color(self, tk_obj, ground='bg'):
         self.config_obj.write(cfg)
 
 
+def adv_opts(frame, r, c, s):
+    # A toggle grid/ungrid for extra options under Search Bar
+    try:
+        print('try')
+        frame.grid_forget()
+    except tk.TclError():
+        print('except')
+        frame.grid(row=r, column=c, sticky=s)
+
+
+def regex():
+    # A method to place regular expression syntax around the Search Bar
+    # and enable the use of it in handler.get_in()
+    return None
+
+
 def get_input(self, event=None):
     self.frame.var.set(1)
     self.frame.entry = self.frame.SearchBar.get()

@@ -186,20 +186,22 @@ def __init__(self, configfile='config.ini'):
     # Dropdown search options
     # FIXME: finish toggle button and frame placement / padding... then more opts
     self.frame.drop_frame = tk.Frame(self.frame, relief='sunken')
-    dfgrid = partial(self.frame.drop_frame.grid,
-                     row=5, column=1, sticky='ew')
+    ao_gridify = partial(self.handler.adv_opts, frame=self.frame.drop_frame,
+                         row=5, column=1, sticky='ew')
     self.frame.drop_button = tk.Button(self.frame,
                                        relief='flat',
-                                       text=' ᐯ ',
-                                       command=dfgrid)
+                                       text='Advanded Options ▼',
+                                       command=ao_gridify)
     self.frame.drop_button.grid(row=4, column=1, sticky='ew')
 
-    self.frame.regex_check = ttk.Checkbutton(self.frame.drop_frame)
+    # Regular Expression Input:
+    s = 'Use regular expressions'
+    self.use_re = tk.BooleanVar()
+    self.frame.regex_check = ttk.Checkbutton(self.frame.drop_frame,
+                                             text=s,
+                                             onvalue=1, offvalue=0,
+                                             command=self.handler.regex)
     self.frame.regex_check.pack(side='left', fill='both')
-    s = 'Use regular expressions (advanced)'
-    self.frame.regex_label = ttk.Label(self.frame.drop_frame,
-                                       text=s)
-    self.frame.regex_label.pack(side='left', fill='x')
 
     # For any entry field, ensures one time only call.
     self.frame.entry = 'Search'
@@ -232,7 +234,7 @@ def __init__(self, configfile='config.ini'):
                                 sticky='nsew')
 
     # Welcome message!
-    self.textile.update(self, self.textile.preamble())
+    self.textile.update(self, self.textile.mini_preamble(), just='center')
 
     '''
     TOOL-TIPS
@@ -266,6 +268,12 @@ def __init__(self, configfile='config.ini'):
                                      fg=self.colors['text_widget'][1])
     self.frame.Bpadding.configure(bg=self.colors['frame'][0],
                                   state='disabled')
+    '''
+    self.frame.drop_button.configure(bg=self.colors['header'][0],
+                                    fg=self.colors['header'][1])
+    self.frame.drop_frame.configure(bg=self.colors['header'][0],
+                                    fg=self.colors['header'][1])
+    '''
 
     if LFM == 'on':
         LFM = 1
