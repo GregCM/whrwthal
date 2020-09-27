@@ -8,6 +8,7 @@ import os
 import sys
 from threading import Thread
 import tkinter as tk
+from tkinter import ttk
 
 
 def __init__(self, configfile='config.ini'):
@@ -181,6 +182,24 @@ def __init__(self, configfile='config.ini'):
     self.frame.SearchBar.grid(row=3, column=1, sticky='ew')
     slSB = partial(self.handler.select, self)
     self.frame.master.bind('<Control-l>', slSB)
+
+    # Dropdown search options
+    # FIXME: finish toggle button and frame placement / padding... then more opts
+    self.frame.drop_frame = tk.Frame(self.frame, relief='sunken')
+    dfgrid = partial(self.frame.drop_frame.grid,
+                     row=5, column=1, sticky='ew')
+    self.frame.drop_button = tk.Button(self.frame,
+                                       relief='flat',
+                                       text=' ᐯ ',
+                                       command=dfgrid)
+    self.frame.drop_button.grid(row=4, column=1, sticky='ew')
+
+    self.frame.regex_check = ttk.Checkbutton(self.frame.drop_frame)
+    self.frame.regex_check.pack(side='left', fill='both')
+    s = 'Use regular expressions (advanced)'
+    self.frame.regex_label = ttk.Label(self.frame.drop_frame,
+                                       text=s)
+    self.frame.regex_label.pack(side='left', fill='x')
 
     # For any entry field, ensures one time only call.
     self.frame.entry = 'Search'
