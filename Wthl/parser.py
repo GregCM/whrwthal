@@ -263,13 +263,20 @@ def phrase(self):
 
     out = collections.OrderedDict({'phrases': [], 'label': []})
 
-    Srch = r'%s' % (self.frame.entry)
+    Srch = self.frame.entry
     # addOns = ''
 
-    # Case insensitive search anywhere within a word.
-    # EX: Srch = "tempt" -->
-    # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
-    m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
+    # FIXME: handler.get_in::ERR_CODE=6
+    if self.use_re.get():
+        # Whatever regular expression the user specifies!
+        m = re.compile(r'%s' % (Srch))
+        print('regular expression specified')
+    else:
+        # Case insensitive search anywhere within a word.
+        # EX: Srch = "tempt" -->
+        # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
+        print('Standard: case insensitive')
+        m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
 
     count = 0
     for bKey in self.bkAbbrv:
