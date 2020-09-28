@@ -270,13 +270,13 @@ def phrase(self):
     if self.use_re.get():
         # Whatever regular expression the user specifies!
         m = re.compile(r'%s' % (Srch))
-        print('regular expression specified')
+        print('regular expression specified: ', m)
     else:
         # Case insensitive search anywhere within a word.
         # EX: Srch = "tempt" -->
         # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
         print('Standard: case insensitive')
-        m = re.compile(r'(?i)(\w*%s\w*)' % (Srch))
+        m = re.compile(r'(\w*%s\w*)' % (Srch), re.IGNORECASE)
 
     count = 0
     for bKey in self.bkAbbrv:
@@ -293,56 +293,73 @@ def phrase(self):
                     vFound = lines
                     for item in m.finditer(vFound):
                         g = item.group(1)
-                        n = re.compile(r'(?i)%s' % (g))
-                        vFound = n.sub(g.upper(), vFound)
+                        vFound = m.sub(g.upper(), vFound)
+                        # \S instead of \w to include
+                        # punctuation at fringes of words
 
-                    # \S instead of \w to include
-                    # punctuation at fringes of words
-                    o = re.compile(r'(?i)^\S*%s\S* \S* \S*' % (g))
-                    p = re.compile(r'(?i)\S* \S*%s\S* \S*' % (g))
-                    q = re.compile(r'(?i)\S* \S* \S*%s\S*$' % (g))
-                    iterspan = ''
+                        # pattern appears at Start Of Line
+                        o = re.compile(r'^\S*%s\S* \S* \S*' % (g.upper()))
+                        so = o.search(vFound)
+                        # pattern appears in Middle Of Line
+                        p = re.compile(r'\S* \S*%s\S* \S*' % (g.upper()))
+                        sp = p.search(vFound)
+                        # pattern appears at End Of Line
+                        q = re.compile(r'\S* \S* \S*%s\S*$' % (g.upper()))
+                        sq = q.search(vFound)
 
-                    ocond = o.search(vFound)
-                    pcond = p.search(vFound)
-                    qcond = q.search(vFound)
-                    if ocond:
-                        # print('o')
-                        for item in o.finditer(vFound):
-                            s = item.start()
-                            e = item.end()
-                            iterspan += '%s...' % (vFound[s:e])
+                        iterspan = ''
+                        if so:
+                            # print('o')
+                            for item in o.finditer(vFound):
+                                s = item.start()
+                                e = item.end()
+                                iterspan += '%s...' % (vFound[s:e])
 
-                    if pcond:
-                        # print('p')
-                        for item in p.finditer(vFound):
-                            s = item.start()
-                            e = item.end()
-                            iterspan += '... %s...' % (vFound[s:e])
+                        if sp:
+                            # print('p')
+                            for item in p.finditer(vFound):
+                                s = item.start()
+                                e = item.end()
+                                iterspan += '... %s...' % (vFound[s:e])
 
-                    if qcond:
-                        # print('q')
-                        for item in q.finditer(vFound):
-                            s = item.start()
-                            e = item.end()
-                            iterspan += '... %s' % (vFound[s:e])
+                        if sq:
+                            # print('q')
+                            for item in q.finditer(vFound):
+                                s = item.start()
+                                e = item.end()
+                                iterspan += '... %s' % (vFound[s:e])
 
-                    vrsAlph, vrsNumb = '', ''
-                    for char in vFound:
-                        if char.isdigit():
-                            vrsNumb += char
-                        else:
-                            vrsAlph += char
+                        vrsAlph, vrsNumb = '', ''
+                        for char in vFound:
+                            if char.isdigit():
+                                vrsNumb += char
+                            else:
+                                vrsAlph += char
 
-                    ref = ''.join([' ', bKey,
-                                   ' ', cKey,
-                                   ':', vrsNumb])
-                    out['phrases'].append(vrsAlph)
-                    out['label'].append('%s\n%s' % (ref, iterspan))
-                    count += 1
+                        ref = ''.join([' ', bKey,
+                                       ' ', cKey,
+                                       ':', vrsNumb])
+                        # FIXME: I inserted the below Try && If blocks and
+                        # now the out-list is part ordered part not
+                        # (OR maybe it was always that way... MUST EXPERIMENT)
+                        try:
+                            ol = out['label'][-1]
+                        except IndexError:
+                            # occurs on first iteration, and I'm extremely laz
+                            ol = ''
+                        # Handling repeated verses:
+                        if ol == '%s\n%s' % (ref, iterspan):
+                            # Having found a repeated verse label,
+                            # delete the previous... we want the final
+                            # iteration, but we can't know when it happens
+                            out['label'].pop(-1)
+                            out['phrases'].pop(-1)
+                        out['phrases'].append(vrsAlph)
+                        out['label'].append('%s\n%s' % (ref, iterspan))
+                        count += 1
                     # Serves as speed / crash prevention, as well as general
                     # utility: no one wants to see a 62,000-Count word list.
-                    # Everything greater than 2564 gets tossed
+                    # Every list with length greater than 2564 gets tossed
                     err = None
                     if (count > 2564):
                         err = MemoryError 

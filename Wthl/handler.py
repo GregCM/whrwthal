@@ -359,6 +359,7 @@ def get_input(self, event=None):
     # EX: "Rom 12:1"
     out = collections.OrderedDict()
     vcount = pcount = 0
+    # Soon to be redundant: SEE parser.phrase (lines -5:-1)
     perr, verr = None, None
     if o:
         print(0)
@@ -390,14 +391,14 @@ def get_input(self, event=None):
 
     # Handling errors
     if perr is MemoryError:
-        print('--> 5')
+        print('error --> 5')
         msg = '\n'.join(['There are too many results for "{}",',
                          'please be more specific.'])
         messagebox.showwarning('Overloaded Word', msg.format(self.frame.entry))
 
-    elif not(any([a, b, c])):
+    elif not(any([o, a, b, c])):
         out = {}
-        print('--> 6')
+        print('error --> 6')
         messagebox.showerror('Error',
                              '"{}" not found.'.format(self.frame.entry))
     else:
