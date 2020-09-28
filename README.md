@@ -24,29 +24,7 @@ W-H-R-W-T-H-A-L (acronymn):
 
 As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
-**whrwhtal** requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
-
-## WARNING ##
-**If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
-
-### Security-Gaps -Flaws & -Considerations ###
-I plan to anonymize source code variables and comments as much as I can. This will help if some very curious person with an untrained-eye takes a peak, but anyone who knows what they're looking at (be it the general format of scripture or python) will figure things out pretty quick.
-- Consider that this README document is the only other revealing item in the repository. Act accordingly, keeping an eye towards redistribution if you have the heart for it (see LICENSE for your responsibilities should you choose to redistribute)
-
-Obfuscation will *help* protect against those people who know what they're doing; encryption will do somewhat the same, but will enable good people who know what they're doing and end up with your copy + password to improve or modify the program.
-- For legal reasons, I don't do either in advance of distributing **whrwthal**, and likewise (if you plan to redistribute **whrwthal**) I encourage you to only engage in encryption of the entirety of your *installdir*, if you're concerned about securtiy.
-
-Memory leak is a concern in Python namespaces, because even in low-footprint mode (where the text is unreadable without the accompanying codec) Python decodes the text within an interpreter session and holds it in memory while the program is running. It's difficult to locate these various storage points within computer memory, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPU's have this issue, though they are in the process of upgrading to meet AMD's current security measures. In all, those things are out of my control, and I only have the following recommendations:
-- Get better, more secure, hardware
-- Don't use at work or some other networked machine that is liable to have a CPU observer pointed at it
-- Don't let anyone know you're the one using this software (ie if you're logged in with personal information anywhere, don't read your bible)
-- Be [reasonably] paranoid!
-    - Again, if you're at home with a private computer and have no reason to believe "the man" is going to bust down your door and comb through your computer, live a little, read your bible
-
-## Anti-Warning ##
-If you live in a country that doesn't burn books, go crazy, download **TWO** copies. Being coy about things you should be bold about is less Christ- and more -ism.
-
-> For I am not ashamed of the gospel of Christ: - Romans 1:16
+Using **whrwhtal** requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
 
 ## Dependencies & Installation ##
 **whrwhtal** lives here, so all you need in order to download it is
@@ -55,7 +33,7 @@ If you live in a country that doesn't burn books, go crazy, download **TWO** cop
 
 where *installdir* is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page.
 
-**whrwhtal** is built only on Python, and runs on Windows, MacOS, and Linux. If you have Python already, skip ahead to **PIP** to complete your install and you'll be able to use **whrwthal** right away! If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
+**whrwhtal** is built only on Python, and runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
 ``python --version``
 
@@ -64,7 +42,7 @@ If this returns at least ``Python 3.5.X`` then skip to **Finishing Install: PIP*
 
 > Control Panel > All Control Panel Items > System > Advanced System Settings > Environment Variables
 
-Keep in mind Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
+Keep in mind fresh-installing Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
 
 ### Python ###
 - https://www.python.org/downloads/latest (quick and easy, forget about it)
@@ -77,12 +55,12 @@ Check that you have "pip" and "tkinter" included in your Python install as follo
 
 If this returns ``pip X.Y.Z`` and a sample tkinter window, respectively, you're set (again). If one or both are missing, see below:
 
-    - PIP
-        - https://pip.pypa.io/en/stable/installing/
+- PIP
+    - https://pip.pypa.io/en/stable/installing/
 
-    - Tkinter
-        - https://tkdocs.com/tutorial/install.html
-        - https://www.activestate.com/products/tcl/downloads/
+- Tkinter
+    - https://tkdocs.com/tutorial/install.html
+    - https://www.activestate.com/products/tcl/downloads/
 
 #### A Sidenote: Embedding Python ####
 If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB). Some reasons you may want to do this:
@@ -120,6 +98,28 @@ Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" pop
     Categories=Educational;Application;
 
 An icon will now appear in your applications menu to easily access **whrwhtal**!
+
+## WARNING ##
+**If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
+
+### Security-Gaps -Flaws & -Considerations ###
+I plan to anonymize source code variables and comments as much as I can. This will help if some very curious person with an untrained-eye takes a peak, but anyone who knows what they're looking at (be it the general format of scripture or python) will figure things out pretty quick.
+- Consider that this README document is the only other revealing item in the repository. Act accordingly, keeping an eye towards redistribution if you have the heart for it (see LICENSE for your responsibilities should you choose to redistribute)
+
+Obfuscation will *help* protect against those people who know what they're doing; encryption will do somewhat the same, but will enable good people who know what they're doing and end up with your copy + password to improve or modify the program.
+- For legal reasons, I don't do either in advance of distributing **whrwthal**, and likewise (if you plan to redistribute **whrwthal**) I encourage you to only engage in encryption of the entirety of your *installdir*, if you're concerned about securtiy.
+
+Memory leak is a concern in Python namespaces, because even in low-footprint mode (where the text is unreadable without the accompanying codec) Python decodes the text within an interpreter session and holds it in memory while the program is running. It's difficult to locate these various storage points within computer memory, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPU's have this issue, though they are in the process of upgrading to meet AMD's current security measures. In all, those things are out of my control, and I only have the following recommendations:
+- Get better, more secure, hardware
+- Don't use at work or some other networked machine that is liable to have a CPU observer pointed at it
+- Don't let anyone know you're the one using this software (ie if you're logged in with personal information anywhere, don't read your bible)
+- Be [reasonably] paranoid!
+    - Again, if you're at home with a private computer and have no reason to believe "the man" is going to bust down your door and comb through your computer, live a little, read your bible
+
+## Anti-Warning ##
+If you live in a country that doesn't burn books, go crazy, download **TWO** copies.
+
+> For I am not ashamed of the gospel of Christ: - Romans 1:16
 
 ## TODO ##
 
