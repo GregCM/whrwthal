@@ -1,5 +1,6 @@
 bytes
 config.ini
+dahuffman/
 .dict.json
 __pycache__
 .pytest_cache
