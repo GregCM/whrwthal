@@ -1,4 +1,4 @@
-def miniPreamble(self):
+def mini_preamble():
     cross = '''\n\n
 -   \\              /  +
 +    \\     _      /   -

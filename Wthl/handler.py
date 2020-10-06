@@ -284,6 +284,33 @@ def get_color(self, tk_obj, ground='bg'):
         self.config_obj.write(cfg)
 
 
+def adv_opts(self, frame, r, c, s):
+    # A toggle grid/ungrid for extra options under Search Bar
+    if frame.winfo_ismapped():
+        frame.grid_remove()
+    elif not(frame.winfo_ismapped()):
+        frame.grid(row=r, column=c, sticky=s)
+
+
+def regex(self):
+    # A method to place regular expression syntax around the Search Bar
+    # and enable the use of it in handler.get_in()
+    if self.use_re.get():
+        self.frame.leading = tk.Label(self.frame, text='r\'')
+        self.frame.leading.grid(row=3, column=0, sticky='e')
+        self.frame.leading.configure(bg=self.colors['header'][0],
+                                     fg=self.colors['header'][1])
+        self.frame.trailing = tk.Label(self.frame, text='\'')
+        self.frame.trailing.grid(row=3, column=2, sticky='w')
+        self.frame.trailing.configure(bg=self.colors['header'][0],
+                                      fg=self.colors['header'][1])
+    else:
+        self.frame.leading.grid_remove()
+        self.frame.trailing.grid_remove()
+
+    # Consider regex preference housing in "config.ini"
+
+
 def get_input(self, event=None):
     self.frame.var.set(1)
     self.frame.entry = self.frame.SearchBar.get()
@@ -321,6 +348,7 @@ def get_input(self, event=None):
 
         numeric_entries = []
 
+    o = self.use_re.get()
     a = any(ToC_entries)
     b = any(conc_entries)
     c = any(numeric_entries)
@@ -331,8 +359,13 @@ def get_input(self, event=None):
     # EX: "Rom 12:1"
     out = collections.OrderedDict()
     vcount = pcount = 0
-    no_err = True
-    if (a and not(b)) or (a and c):
+    # Soon to be redundant: SEE parser.phrase (lines -5:-1)
+    perr, verr = None, None
+    if o:
+        print(0)
+        # User specified regular expression search (phrases only)
+        out['PS'], pcount, perr = self.parser.phrase(self)
+    elif (a and not(b)) or (a and c):
         print(1)
         out['VR'], vcount = self.parser.verse(self)
     # else if certain entry contents reference a book and a word in text
@@ -358,14 +391,14 @@ def get_input(self, event=None):
 
     # Handling errors
     if perr is MemoryError:
-        print(5)
+        print('error --> 5')
         msg = '\n'.join(['There are too many results for "{}",',
                          'please be more specific.'])
         messagebox.showwarning('Overloaded Word', msg.format(self.frame.entry))
 
-    elif not(any([a, b, c])):
+    elif not(any([o, a, b, c])):
         out = {}
-        print(6)
+        print('error --> 6')
         messagebox.showerror('Error',
                              '"{}" not found.'.format(self.frame.entry))
     else:
@@ -449,13 +482,13 @@ def list_update(self, d, mode='w'):
             self.list_button[-1].update()
             butt_height += h
 
-    c.grid(row=5, column=1, rowspan=8, columnspan=1, sticky='nsew')
+    c.grid(row=6, column=1, rowspan=8, columnspan=1, sticky='nsew')
     c.update()
 
     self.sbar = ttk.Scrollbar(self.frame,
                               orient='vertical',
                               command=self.canvas.yview)
-    self.sbar.grid(row=5, column=0,
+    self.sbar.grid(row=6, column=0,
                    rowspan=8, sticky='nes')
     self.sbar.update()
 

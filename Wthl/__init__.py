@@ -8,6 +8,7 @@ import os
 import sys
 from threading import Thread
 import tkinter as tk
+from tkinter import ttk
 
 
 def __init__(self, configfile='config.ini'):
@@ -48,6 +49,10 @@ def __init__(self, configfile='config.ini'):
 
         # Low Footprint Mode:
         LFM = self.config_obj['FOOTPRINT']['switch']
+        if LFM == 'on':
+            LFM = 1
+        elif LFM == 'off':
+            LFM = 0
 
     except KeyError:
         # This directory contains the text source & the configuration file.
@@ -77,8 +82,11 @@ def __init__(self, configfile='config.ini'):
         # Low Footprint Mode:
         self.config_obj['FOOTPRINT'] = {'switch': 'on',
                                         'transient': 'true'}
-        # Low Footprint Mode:
         LFM = self.config_obj['FOOTPRINT']['switch']
+        if LFM == 'on':
+            LFM = 1
+        elif LFM == 'off':
+            LFM = 0
 
         # Defaults:
         self.language = self.config_obj['LANGUAGE']['current']
@@ -175,12 +183,40 @@ def __init__(self, configfile='config.ini'):
     self.frame.status_bar.grid(row=2, column=1, sticky='s')
 
     # Search Bar placement
+    #self.frame.SearchFrame = tk.Frame(self.frame)
+    #self.frame.SearchFrame.grid(row=3, column=1, sticky='ew')
+
     self.qvar = tk.IntVar()
     self.frame.var = tk.IntVar()
     self.frame.SearchBar = tk.Entry(self.frame)
+    # Gridified in SearchFrame (alongside potential lead/trail regex)
     self.frame.SearchBar.grid(row=3, column=1, sticky='ew')
     slSB = partial(self.handler.select, self)
     self.frame.master.bind('<Control-l>', slSB)
+
+    # Dropdown search options
+    # FIXME: finish toggle button and frame placement / padding...
+    # ... then more opts
+    self.frame.drop_frame = tk.Frame(self.frame, relief='flat')
+    ao_gridify = partial(self.handler.adv_opts, self,
+                         frame=self.frame.drop_frame,
+                         r=5, c=1, s='new')
+    self.frame.drop_button = tk.Button(self.frame,
+                                       relief='flat',
+                                       text='Advanded Options ▼',
+                                       command=ao_gridify)
+    self.frame.drop_button.grid(row=4, column=1, sticky='ew')
+
+    # Regular Expression Input:
+    s = 'Use regular expressions'
+    self.use_re = tk.BooleanVar()
+    reg_pref = partial(self.handler.regex, self)
+    self.frame.regex_check = tk.Checkbutton(self.frame.drop_frame,
+                                            text=s,
+                                            onvalue=1, offvalue=0,
+                                            variable=self.use_re,
+                                            command=reg_pref)
+    self.frame.regex_check.pack(side='top', fill='both')
 
     # For any entry field, ensures one time only call.
     self.frame.entry = 'Search'
@@ -213,7 +249,7 @@ def __init__(self, configfile='config.ini'):
                                 sticky='nsew')
 
     # Welcome message!
-    self.textile.update(self, self.textile.preamble())
+    self.textile.update(self, self.textile.mini_preamble(), just='center')
 
     '''
     TOOL-TIPS
@@ -226,28 +262,38 @@ def __init__(self, configfile='config.ini'):
     self.frame.Bpadding.grid(row=14, column=0,
                              columnspan=14, sticky='ew')
 
+    # COLORS:
     self.frame.configure(bg=self.colors['frame'][0])
     self.frame.master.configure(bg=self.colors['master'][0])
     self.menubar.config(bg=self.colors['menubar'][0],
                         fg=self.colors['menubar'][1],
                         relief='flat')
-    self.frame.header.configure(bg=self.colors['header'][0],
-                                fg=self.colors['header'][1],
-                                font=(self.font,
-                                      self.config_obj[
-                                              'FONT'][
-                                                  'title size']))
-    self.frame.status_bar.configure(bg=self.colors['header'][0],
-                                    fg=self.colors['header'][1],
-                                    font=(self.font,
-                                          self.config_obj[
-                                              'FONT'][
-                                                  'text size']))
-    self.frame.text_widget.configure(bg=self.colors['text_widget'][0],
-                                     fg=self.colors['text_widget'][1])
-    self.frame.Bpadding.configure(bg=self.colors['frame'][0],
-                                  state='disabled')
+    f = self.frame
+    # Alias for line readability
+    f.header.configure(bg=self.colors['header'][0],
+                       fg=self.colors['header'][1],
+                       font=(self.font,
+                             self.config_obj[
+                                 'FONT'][
+                                     'title size']))
+    f.status_bar.configure(bg=self.colors['header'][0],
+                           fg=self.colors['header'][1],
+                           font=(self.font,
+                                 self.config_obj[
+                                     'FONT'][
+                                         'text size']))
+    f.text_widget.configure(bg=self.colors['text_widget'][0],
+                            fg=self.colors['text_widget'][1])
+    f.Bpadding.configure(bg=self.colors['frame'][0],
+                         state='disabled')
+    f.drop_button.configure(bg=self.colors['header'][0],
+                            fg=self.colors['header'][1])
+    f.drop_frame.configure(bg=self.colors['header'][0])
+    f.regex_check.configure(bg=self.colors['header'][0],
+                            fg=self.colors['header'][1])
+    #f.SearchFrame.configure(bg=self.colors['header'][0])
 
+    # LOW FOOTPRINT MODE
     if LFM == 'on':
         LFM = 1
         # First time decode of bible data
