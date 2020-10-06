@@ -160,6 +160,8 @@ In future releases, expect to see:
 
 - [ ] Frequency charts
 
+- [ ] Eliminate requirements and need for pip with a Pure Python implementation
+
 ## Resources ##
 
 For study tools to use in Christ-averse regions, see the following for print in your personal library. Please note, I haven't proof read these materials to check for doctrinal truth / accuracy, as I don't speak any of these languages. All the same, I don't believe I should be such a gatekeeper anyhow. I leave it up to you as a user to determine within your own conscience and in the privacy of your own reading of scriptures and prayerful heart towards God, whether these things are true. See Acts 17:10-11, consider the Bereans!
