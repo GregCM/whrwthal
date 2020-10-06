@@ -1,0 +1,3 @@
+[submodule "dahuffman"]
+	path = dahuffman
+	url = https://github.com/soxofaan/dahuffman.git
