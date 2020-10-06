@@ -1,21 +1,10 @@
 # whrwhtal #
-Offline bible referencing for bible minded folk! Including terminal and/or UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is **whrwhtal** better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://Xiphos.org/)? Read on!
+Offline bible referencing for bible minded folk! Including UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is **whrwhtal** better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://Xiphos.org/)? Read on!
 
 ## What is it? ##
 whrwhtal (adverb), as in:
 
 > Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word. - Psalm 119:9
-
-W-H-R-W-T-H-A-L (acronymn):
-
-    Whrwthal
-    Helps
-    Rake
-    Wverses
-    That're
-    Hallowed
-    And
-    Laudable
 
 **whrwhtal** is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See the following:
 
@@ -24,14 +13,14 @@ W-H-R-W-T-H-A-L (acronymn):
 
 As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
-Using **whrwhtal** requires no internet connection, and therefore presents no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional input beyond initial installation.
+Using **whrwhtal** requires no internet connection, and therefore presents little or no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional inputs beyond initial installation.
 
 ## Dependencies & Installation ##
 **whrwhtal** lives here, so all you need in order to download it is
 
 ``git clone https://github.com/GregCM/whrwhtal *installdir*``
 
-where *installdir* is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page.
+where *installdir* is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to *installdir*.
 
 **whrwhtal** is built only on Python, and runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
@@ -116,6 +105,12 @@ Memory leak is a concern in Python namespaces, because even in low-footprint mod
 - Be [reasonably] paranoid!
     - Again, if you're at home with a private computer and have no reason to believe "the man" is going to bust down your door and comb through your computer, live a little, read your bible
 
+If you're concern is security and privacy, I cannot recommend highly enough that you
+1. Migrate to Linux or other FOSS operating system
+    - Free and Open-Source Software is rigorously reviewed by the user community to help guard against security flaws due to negligence of the designer or, worse yet, malicious intent by the proprietary powers that be (ie keylogging, memory access / wachmen, over-network code execution or even remote operation of your computer); companies like Microsoft and Apple OR companies that put out propriety software that resides on your Microsoft or Apple computer. This has happened, happens, and will happen, in part because of the invisible proprietary code impervious to peer review. Leave behind your proprietary crutches if security is your concern!
+2. Choose TAILS as that operating system
+    - The first concern that will be raised by proprietary software advocates about free and open-source software is the lack of rigorous code creation; the idea is that security measures are best implemented when the developers are getting paid to implement them. That point is moot with TAILS. See their philosophy, dedication, and impact at https://tails.boum.org/
+
 ## Anti-Warning ##
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies.
 
@@ -142,7 +137,12 @@ In future releases, expect to see:
 
 (See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
 
-- [ ] Regular expression checkbox options on a per-search basis, plus directly typing in regular expressions for advanced users
+- [ ] Regular expressions
+    - [X] Ability to directly type in regular expressions for advanced users (superhumans)
+
+    - [ ] Pre-defined regex Checkboxes for intermediate users (real humans who don't speak robot)
+
+- [ ] A title / header == the verse displayed by user's search selection from list
 
 - [X] A limitation on searching overloaded words like "the" or "I", to prevent slow downs and crashes
 
