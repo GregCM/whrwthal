@@ -105,6 +105,12 @@ Memory leak is a concern in Python namespaces, because even in low-footprint mod
 - Be [reasonably] paranoid!
     - Again, if you're at home with a private computer and have no reason to believe "the man" is going to bust down your door and comb through your computer, live a little, read your bible
 
+If you're concern is security and privacy, I cannot recommend highly enough that you
+1. Migrate to Linux or other FOSS operating system
+    - Free and Open-Source Software is rigorously reviewed by the user community to help guard against security flaws due to negligence of the designer or, worse yet, malicious intent by the proprietary powers that be (ie keylogging, memory access / wachmen, over-network code execution or even remote operation of your computer); companies like Microsoft and Apple OR companies that put out propriety software that resides on your Microsoft or Apple computer. This has happened, happens, and will happen, in part because of the invisible proprietary code impervious to peer review. Leave behind your proprietary crutches if security is your concern!
+2. Choose TAILS as that operating system
+    - The first concern that will be raised by proprietary software advocates about free and open-source software is the lack of rigorous code creation; the idea is that security measures are best implemented when the developers are getting paid to implement them. That point is moot with TAILS. See their philosophy, dedication, and impact at https://tails.boum.org/
+
 ## Anti-Warning ##
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies.
 
