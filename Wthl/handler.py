@@ -1,6 +1,6 @@
 from configparser import ConfigParser
 import collections
-from dahuffman import HuffmanCodec
+from dahuffman.huffmancodec import HuffmanCodec
 from functools import partial
 import re
 import json
