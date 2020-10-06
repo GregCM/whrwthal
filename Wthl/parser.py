@@ -33,6 +33,7 @@ def verse(self):
     # Initialize 'out' for concatenation.
     out = collections.OrderedDict({'verses': '', 'label': ''})
 
+    err = None
     location = self.frame.entry
     loc = []
     locAlph = ''
@@ -249,7 +250,7 @@ def verse(self):
     out['label'] = [out['label']]
     # TODO: count > 1 for instances such as many chapters containing "1-3"
     count = 1
-    return out, count
+    return out, count, err
 
 
 def phrase(self):
@@ -278,6 +279,7 @@ def phrase(self):
         print('Standard: case insensitive')
         m = re.compile(r'(\w*%s\w*)' % (Srch), re.IGNORECASE)
 
+    err = None
     count = 0
     for bKey in self.bkAbbrv:
         chpDict = self.bible_dict[bKey]
@@ -360,7 +362,6 @@ def phrase(self):
                     # Serves as speed / crash prevention, as well as general
                     # utility: no one wants to see a 62,000-Count word list.
                     # Every list with length greater than 2564 gets tossed
-                    err = None
                     if (count > 2564):
                         err = MemoryError 
                         return out, count, err
