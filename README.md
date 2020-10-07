@@ -1,28 +1,25 @@
 # whrwhtal #
-Offline bible referencing for bible minded folk! Including UI display, verse and/or phrase lookup, perl-like regular expressions for advanced searches to accelerate bible learning past that of tip top etymological scholars. Why is **whrwhtal** better than other systems (honorable mentions: https://www.BlueLetterBible.org/, SWORD Project & https://Xiphos.org/)? Read on!
+Offline bible referencing for bible minded folk! Including UI display, verse and phrase lookup, and regular expressions to help accelerate bible learning past that top scholars. Why is **whrwhtal** better than other systems (honorable mentions: [crosswire](https://crosswire.org/) [BLB](https://www.BlueLetterBible.org/), [Xiphos](https://Xiphos.org/))? Read on!
 
 ## What is it? ##
 whrwhtal (adverb), as in:
 
 > Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word. - Psalm 119:9
 
-**whrwhtal** is a lightweight and easy to use cross-platform application, compared to current alternatives. It was inspired by the need for access to rapidly distributable scriptures without fear of persecution in closed-countries. See the following:
+**whrwhtal** is a cross-platform lightweight application, compared to current alternatives. It is meant to be dirt simple, and unassuming. It was inspired by the need for access to [rapidly distributable](https://flashdrivesforfreedom.org/) scriptures without fear of [persecution in closed-countries](https://www.opendoorsusa.org/christian-persecution/world-watch-list/).
 
-- https://www.opendoorsusa.org/christian-persecution/world-watch-list/
-- https://flashdrivesforfreedom.org/
+As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows at 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
-As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
-
-Using **whrwhtal** requires no internet connection, and therefore presents little or no threat to use on your own personal computer, laptop, or even plugged in at a public access computer such as a library. It communicates with no outside program, and requires no additional inputs beyond initial installation.
+Using **whrwhtal** requires no internet connection, and therefore presents little threat on your own personal computer, or even plugged in at a public access computer or library. It communicates with no outside program, and requires no additional inputs beyond initial installation.
 
 ## Dependencies & Installation ##
 **whrwhtal** lives here, so all you need in order to download it is
 
-``git clone https://github.com/GregCM/whrwhtal *installdir*``
+``git clone https://github.com/GregCM/whrwhtal installdir``
 
 where *installdir* is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to *installdir*.
 
-**whrwhtal** is built only on Python, and runs on Windows, MacOS, and Linux. If you are running on MicroSoft Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
+**whrwhtal** is pure python, and runs on Windows, MacOS, and Linux. If you are running on Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
 ``python --version``
 
@@ -37,6 +34,7 @@ Keep in mind fresh-installing Python will take up about 60MB of space on your ma
 - https://www.python.org/downloads/latest (quick and easy, forget about it)
 - https://docs.python.org/3/using/windows.html (general instructions and embeddable)
 
+### Tkinter ###
 Check that you have "tkinter" included in your Python install as follows:
 
     python -m tkinter
@@ -55,11 +53,9 @@ If you do decide to download embedded Python, place it in your folder of choice 
 ## First-Use ##
 On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``thrto.py`` [Windows], or ``./thrto.py`` [Linux/MacOS].
 
-**whrwhtal** will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "thrto.py"
+**whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut to the file "thrto.py". This is trivial in Windows; make sure it's set to run in the correct directory, and include the icon file if you like. MacOS shortcuts are a foreign and veiled mystery to me.
 
-You can change the default settings stored during this one-time setup at any time through the Options menu; this includes Language, Colors, Directories, and more.
-
-Linux users can create a desktop application referencing **whrwhtal** by writing to a desktop file. Most likely, the best place for this is in
+Desktop enviornment Linux users can create a desktop application referencing **whrwhtal** by writing to a desktop file (others, I recommend dmenu). Most likely, the best place for this is in
 
 ``~/.local/share/applications/``
 
@@ -79,17 +75,22 @@ Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" pop
 
 An icon will now appear in your applications menu to easily access **whrwhtal**!
 
+You can change the default settings stored during your first setup at any time through the Options menu; this includes Language, Colors, Directories, and more. Alternatively, directly alter "config.ini".
+
 ## WARNING ##
-**If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital, be safe. If someone you know referred you to this software, try to obtain a copy from them. Otherwise, where possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB/CD. I suggest you word your email in an inconspicuous phrasing, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
+**If you live in a persecuted or close-country, PLEASE READ: DO NOT DOWNLOAD this software from github if you believe you are currently under government or other surveillance** (otherwise, feel free!). Consider that some online content is censored, some is surveilled; knowing the difference and different ways to fly under the radar is vital. If someone you know referred you to this software, obtain a copy from them. Otherwise, if possible, contact me at gregcaceres@gmail.com for a snail-mail copy on USB. I suggest you word your email inconspicuously, along these lines: "Hello, I recieved your promotional letter. I'm not interested, and I'd like you to please take me off your mailing list. The associated address is 1234 Example Street, Missionary City, God's Country."
 
 ### Security-Gaps -Flaws & -Considerations ###
-I plan to anonymize source code variables and comments as much as I can. This will help if some very curious person with an untrained-eye takes a peak, but anyone who knows what they're looking at (be it the general format of scripture or python) will figure things out pretty quick.
-- Consider that this README document is the only other revealing item in the repository. Act accordingly, keeping an eye towards redistribution if you have the heart for it (see LICENSE for your responsibilities should you choose to redistribute)
+Obfuscate your code or encrypt you install directory.
+- For legal reasons, I don't do either in advance of distributing
+- If you plan to redistribute, you should only encrypt your copy, not the shared one (see [license](./LICENSE))
 
-Obfuscation will *help* protect against those people who know what they're doing; encryption will do somewhat the same, but will enable good people who know what they're doing and end up with your copy + password to improve or modify the program.
-- For legal reasons, I don't do either in advance of distributing **whrwthal**, and likewise (if you plan to redistribute **whrwthal**) I encourage you to only engage in encryption of the entirety of your *installdir*, if you're concerned about securtiy.
-
-Memory leak is a concern in Python namespaces, because even in low-footprint mode (where the text is unreadable without the accompanying codec) Python decodes the text within an interpreter session and holds it in memory while the program is running. It's difficult to locate these various storage points within computer memory, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPU's have this issue, though they are in the process of upgrading to meet AMD's current security measures. In all, those things are out of my control, and I only have the following recommendations:
+Memory leak is a concern with Python, because Python decodes the text within an interpreter session and stores it in memory while the program is running. It's difficult to locate these storage points, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPU's have this issue, though they are in the process of upgrading. In all, those things are out of my control, and I only have the following recommendations:
+- Consider [Sandboxing](https://en.wikipedia.org/wiki/Sandbox_(computer_security) "Wiki: Sandbox security") solutions 
+    - [Firejail](https://github.com/netblue30/firejail)
+    - [Bubblewrap](https://github.com/containers/bubblewrap)
+    - [Containers](https://wiki.archlinux.org/index.php/Linux_Containers)
+    - [VMs](https://wiki.archlinux.org/index.php/VirtualBox)
 - Get better, more secure, hardware
 - Don't use at work or some other networked machine that is liable to have a CPU observer pointed at it
 - Don't let anyone know you're the one using this software (ie if you're logged in with personal information anywhere, don't read your bible)
@@ -111,31 +112,16 @@ If you live in a country that doesn't burn books, go crazy, download **TWO** cop
 
 In future releases, expect to see:
 
-- [ ] Time optimizations (numba)
-- [ ] More translations in a variety of tongues, in the public domain and reliable in their source and lineage, akin to the KJV. Examples include:
-
-    - [ ] French (OST)
-
-    - [X] German (LUT)
-
-    - [X] Hebrew (LC)
-
-    - [ ] Greek (TR)
-
-    - [ ] Russian (RUSV)
-    
-    - [ ] Chinese (CKJV)
-
-(See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
-
 - [ ] Regular expressions
     - [X] Ability to directly type in regular expressions for advanced users (superhumans)
 
-    - [ ] Pre-defined regex Checkboxes for intermediate users (real humans who don't speak robot)
-
-- [ ] A title / header == the verse displayed by user's search selection from list
+    - [ ] Pre-defined regex Checkboxes for real humans who don't speak robot
 
 - [X] A limitation on searching overloaded words like "the" or "I", to prevent slow downs and crashes
+
+- [X] Eliminate requirements and need for pip with a Pure Python implementation
+
+- [ ] A title / header == the verse displayed by user's search selection from list
 
 - [ ] Searched word highlighting to replace the current capitalization
 
@@ -151,21 +137,37 @@ In future releases, expect to see:
 
 - [ ] Frequency charts
 
-- [X] Eliminate requirements and need for pip with a Pure Python implementation
+- [ ] More translations in a variety of tongues, in the public domain and reliable in their source and lineage. Examples include:
+
+    - [ ] French (OST)
+
+    - [X] German (LUT)
+
+    - [X] Hebrew (LC)
+
+    - [ ] Greek (TR)
+
+    - [ ] Russian (RUSV)
+    
+    - [ ] Chinese (CKJV)
+
+(See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
 
 ## Resources ##
 
-For study tools to use in Christ-averse regions, see the following for print in your personal library. Please note, I haven't proof read these materials to check for doctrinal truth / accuracy, as I don't speak any of these languages. All the same, I don't believe I should be such a gatekeeper anyhow. I leave it up to you as a user to determine within your own conscience and in the privacy of your own reading of scriptures and prayerful heart towards God, whether these things are true. See Acts 17:10-11, consider the Bereans!
+For study tools to use in Christ-averse regions, see the following for print in your personal library. I haven't proof read these materials for doctrinal truth or accuracy; I don't speak any of these languages. In any case, I don't believe I should be gatekeeper. I leave it up to you to determine within your own conscience, Whether these things are true. See Acts 17:10-11, consider the Bereans!
 
-- Arabic -- https://www.thegrace.com/
+- [Arabic](https://www.thegrace.com/)
 
-- Chinese -- *todo*
+- [Chinese](*pending*)
 
-- Korean -- *todo*
+- [Korean](*pending*)
 
-- Others -- *todo*
+- [Others](*pending*)
 
-Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing app to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (as mentioned above, they are so confirmed to the best of my ability, not guaranteed in their quality or under any warranty whatsoever). If, under your personal circumstances, you find it better to use these simple Text files instead of **whrwhtal**, you may find them at
+## Bible Texts ##
+
+Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to use these simple Text files instead of **whrwhtal**, you may find them at
 
 ``https://github.com/GregCM/whrwhtal/tree/texts``
 
