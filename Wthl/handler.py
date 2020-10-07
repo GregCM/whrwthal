@@ -5,7 +5,7 @@ from functools import partial
 import re
 import json
 import os
-import psutil
+import sys
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
@@ -116,10 +116,13 @@ def shutdown(self, event=None):
             self.config_obj.write(cfg)
 
     self.root.destroy()
+    sys.exit()
+    '''
     pn = 'main.py'
     for proc in psutil.process_iter():
         if proc.name() == pn:
             proc.kill()
+    '''
 
 
 def info(self):
