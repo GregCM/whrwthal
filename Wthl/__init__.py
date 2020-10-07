@@ -294,7 +294,6 @@ def __init__(self, configfile='config.ini'):
     #f.SearchFrame.configure(bg=self.colors['header'][0])
 
     # LOW FOOTPRINT MODE
-    print(LFM)
     if LFM:
         # First time decode of bible data
         with open('bytes', 'rb') as f:
