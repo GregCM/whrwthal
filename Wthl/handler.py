@@ -5,6 +5,7 @@ from functools import partial
 import re
 import json
 import os
+import signal
 import sys
 import time
 import tkinter as tk
@@ -115,14 +116,11 @@ def shutdown(self, event=None):
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
+    # End Tk environment
     self.root.destroy()
-    sys.exit()
-    '''
-    pn = 'main.py'
-    for proc in psutil.process_iter():
-        if proc.name() == pn:
-            proc.kill()
-    '''
+    # Kill by Process ID and exit with a vengence
+    pid = os.getpid()
+    os.kill(pid, signal.SIGTERM)
 
 
 def info(self):
