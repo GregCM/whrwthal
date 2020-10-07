@@ -53,9 +53,9 @@ If you do decide to download embedded Python, place it in your folder of choice 
 - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
 ## First-Use ##
-On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``whrwth.py`` [Windows], or ``./whrwth.py`` [Linux/MacOS].
+On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``thrto.py`` [Windows], or ``./thrto.py`` [Linux/MacOS].
 
-**whrwhtal** will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "whrwth.py"
+**whrwhtal** will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "thrto.py"
 
 You can change the default settings stored during this one-time setup at any time through the Options menu; this includes Language, Colors, Directories, and more.
 
@@ -70,7 +70,7 @@ Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" pop
     Encoding=UTF-8
     Name=**whrwhtal**
     Comment=Offline Bible referencing
-    Exec=*installdir*/whrwth.py
+    Exec=*installdir*/thrto.py
     Icon=*installdir*/icon.ico
     Path=*installdir*
     Terminal=false
