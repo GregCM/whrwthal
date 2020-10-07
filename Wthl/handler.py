@@ -368,7 +368,7 @@ def get_input(self, event=None):
         out['PS'], pcount, perr = self.parser.phrase(self)
     elif (a and not(b)) or (a and c):
         print(1)
-        out['VR'], vcount = self.parser.verse(self)
+        out['VR'], vcount, verr = self.parser.verse(self)
     # else if certain entry contents reference a book and a word in text
     # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
     elif (a and b):

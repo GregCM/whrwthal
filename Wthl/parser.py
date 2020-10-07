@@ -31,20 +31,17 @@ def verse(self):
     ####################################
     '''
     # Initialize 'out' for concatenation.
-    out = collections.OrderedDict({'verses': '', 'label': ''})
+    out = collections.OrderedDict({'verses': [], 'label': ''})
 
     err = None
     location = self.frame.entry
     loc = []
-    locAlph = ''
-    locNumb = ''
-    for char in location:
-        # Saves the alphabetic part of location
-        if char.isalpha() or char.isspace():
-            locAlph += char
-        # Saves the numeric part of location
-        else:
-            locNumb += char
+
+    # Saves the alphabetic part of location
+    locAlph = ''.join([char for char in location if (char.isalpha() or char.isspace())])
+    # Saves the numeric part of location
+    locNumb = ''.join([char for char in location if
+                            (not(char.isalpha()) and not(char.isspace()))])
 
     loc.append(locAlph)
     # Combine the alphabetic and numeric parts to loc
@@ -61,19 +58,17 @@ def verse(self):
         # for abbreviations of books.
         LenAbb = len(self.bkAbbrv[b])
         inToC = (self.bkAbbrv[b].upper() == locAlph.upper()[0:LenAbb])
-        print(self.bkAbbrv[b], inToC)
         if inToC:
             book = self.bkAbbrv[b]
             # The following Marks for header update
             bkMark = self.bkNames[b]
-            out['label'] += bkMark
-            print(bkMark)
+            out['label'] = bkMark
             break
         # SEE <TODO (3)> in getInput
         elif not(locAlph):
             book = 'all'
             bkMark = 'Parellel References'
-            out['label'] += bkMark
+            out['label'] = bkMark
             self.close_window(self)
             break
         # Proceed to next book. If no match is
@@ -102,56 +97,22 @@ def verse(self):
         lV = 0
         # If there is a colon, there is a verse ref.
         if ':' in loc:
-            loc = re.split(char, loc)
+            loc = re.split(':', loc)
             chpRef = loc[0]
             vrsRef = loc[1]
 
             severalVrs = False
             # If there is a dash, there are several verses.
+            if ('-' in loc):
+                vrsRef = re.split('-', vrsRef)
+            elif (', ' in loc):
+                vrsRef = re.split(', ', vrsRef)
             if ('-' in loc) or (', ' in loc):
                 severalVrs = True
-                vrsRef = re.split(char, vrsRef)
                 firstVerse = vrsRef[0]
                 lastVerse = vrsRef[1]
                 fV = int(firstVerse)
                 lV = int(lastVerse)
-
-    if not location:
-        next
-    elif location.upper() == 'ABOUT':
-        pass
-        # self.textile.update(self.text_widget,
-        #                    '\n'.join(['____________________________________',
-        #                               'This app was written by Greg Caceres',
-        #                               'It is free to use, access, oredit',
-        #                               '',
-        #                               '',
-        #                               '',
-        #                               '',
-        #                               '',
-        #                               ''
-        #                               '',
-        #                               '',
-        #                               '',]))
-        #    '''
-        #    ____________________________________________
-        #    ___\n This text-based app was written by
-        #     Greg Caceres\n It is free to use, access,
-        #     or edit. It is open\n source, free as in
-        #     beer and speech. The King\n James Bible has
-        #     its publishing and usage rights\n vested in
-        #     the Crown within the United Kingdom.\n
-        #     Everywhere else it is in the public domain,
-        #    \n and is free to use, quote, or share
-        #     without\n limit, provided no changes are
-        #     made to the\n content therein. For
-        #     support, or if you\n have any questions
-        #     about the app\'s functionality,\n the content
-        #     of the word of God, or anything else\n
-        #     related, feel free to contact me at\n
-        #     gregcaceres@gmail.com\n
-        #    ____________________________________________
-        #    ___\n''')
 
     try:
         outFind = self.bible_dict[book]
@@ -161,23 +122,19 @@ def verse(self):
     if chpRef == '0':
         cKeyList = range(len(outFind.keys()))
         # Hone in on a chapter for the verse loop sake:
-        out['verses'] = '\n %s' % (out['label'])
+        out['verses'].append('\n %s' % out['label'])
         for cKey in cKeyList:
             cKey = str(cKey+1)
             # LOOP through verses keys
             # and concatenate each verse-field's string.
             cFind = outFind[cKey]
             vKeyList = range(len(cFind.keys()))
-            for vKey in vKeyList:
-                vKey = str(vKey+1)
-                if vKey == '1':
-                    cPrint = '\n\n Chapter %s\n\n' % (cKey)
-                else:
-                    cPrint = '\n'
 
-                # Verses acquired!
-                out['verses'] += (cPrint + cFind[vKey])
-
+            # Verses acquired!
+            cf = '\n'.join([cFind[str(vKey + 1)]
+                            for v in vKeyList if v == '1'])
+            out['verses'].append('\n\n Chapter %(cKey)s\n%(cf)s' % locals())
+                                 
     else:
         cKey = chpRef
         out['label'] = ' %s' % (cKey)
@@ -195,57 +152,54 @@ def verse(self):
                           % (bkMark, cMax))
             fortunate = rnd.randint(0, 1)
             if fortunate:
-                noCRef = '\n F' + noCRef
+                noCRef = '\n F%s' % (noCRef)
             else:
-                noCRef = '\n Unf' + noCRef
+                noCRef = '\n Unf%s' % (noCRef)
 
         # If only chapter is input, output whole chapter
         if vrsRef == '0':
-            out['label'] = bkMark + cKey
+            out['label'] = '%(bkMark)s%(cKey)s' % locals()
             vKeyList = range(len(cFind.keys()))
-            out['verses'] = '\n %s' % (out['label'])
+            out['verses'].append('\n %s' % (out['label']))
             # LOOP through these verses, and
             # concatenate each verse-field's string.
-            for vKey in vKeyList:
-                vKey = str(vKey+1)
-                out['verses'] += '\n' + cFind[vKey]
+            out['verses'].append('\n'.join([cFind[str(vKey + 1)]
+                                           for vKey in vKeyList]))
 
         # Range of verses
         elif severalVrs:
             vMax = len(cFind.keys())
-            for verseNum in range(fV, lV):
-                vKey = str(verseNum)
-                try:
-                    # Verses acquired!
-                    out['verses'] += '\n%s' % (cFind[vKey])
-                    vEnd = lV
+            try:
+                out['verses'].append('\n'.join([cFind[str(vKey)] for vKey in range(fV, lV)]))
+                vEnd = lV
+            except KeyError:
                 # Verse number larger than max number of verses in chapter
+                vEnd = vMax
+                out['verses'].append('\n'.join([cFind[str(vEnd)] for vKey in range(fV, vMax)]))
                 # --> print only to chapter's end and cast change to label
-                except KeyError:
-                    vEnd = vMax
-                    out['verses'] += '\n%s' % (cFind[vEnd])
-
-            out['label'] += ':%s-%s' % (str(fV), str(vEnd-1))
+            finally:
+                out['label'] = ''.join([out['label'], ':%i-%i' % (fV, vEnd - 1)])
 
         # Just one verse
         else:
             vKey = vrsRef
-            out['label'] += ':%s' % (vKey)
+            out['label'] = ''.join([out['label'], ':%s' % (vKey)])
             try:
                 # Verse acquired!
-                out['verses'] += '\n%s' % (cFind[vKey])
+                out['verses'].append(cFind[vKey])
             except KeyError:
                 vMax = len(cFind.keys())
                 noVRef = ('ortunetly, %s %s only has %i verses'
                           % (bkMark, chpRef, vMax))
                 fortunate = rnd.randint(0, 1)
                 if fortunate:
-                    noVRef = '\n F' + noVRef
+                    noVRef = '\n F' % (noVRef)
                 else:
-                    noVRef = '\n Unf' + noVRef
+                    noVRef = '\n Unf' % (noVRef)
                     out = [noVRef]
 
     self.textile.update(self, out['label'])
+    # list-ify because of bad downstream coding... on my TODO
     out['verses'] = [out['verses']]
     out['label'] = [out['label']]
     # TODO: count > 1 for instances such as many chapters containing "1-3"
