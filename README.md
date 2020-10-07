@@ -98,7 +98,7 @@ Memory leak is a concern in Python namespaces, because even in low-footprint mod
 
 If you're concern is security and privacy, I cannot recommend highly enough that you
 1. Migrate to Linux or other FOSS operating system
-    - Free and Open-Source Software is rigorously reviewed by the user community to help guard against security flaws due to negligence of the designer or, worse yet, malicious intent by the proprietary powers that be (ie keylogging, memory access / wachmen, over-network code execution or even remote operation of your computer); companies like Microsoft and Apple OR companies that put out propriety software that resides on your Microsoft or Apple computer. This has happened, happens, and will happen, in part because of the invisible proprietary code impervious to peer review. Leave behind your proprietary crutches if security is your concern!
+    - Free and Open-Source Software is rigorously reviewed by the user community to help guard against security flaws due to negligence of the designer or, worse yet, malicious intent by the proprietary powers that be (ie keylogging, memory access / watchmen, over-network code execution or even remote operation of your computer); companies like Microsoft and Apple OR companies that put out propriety software that resides on your Microsoft or Apple computer. This has happened, happens, and will happen, in part because of the invisible proprietary code impervious to peer review. Leave behind your proprietary crutches if security is your concern!
 2. Choose TAILS as that operating system
     - The first concern that will be raised by proprietary software advocates about free and open-source software is the lack of rigorous code creation; the idea is that security measures are best implemented when the developers are getting paid to implement them. That point is moot with TAILS. See their philosophy, dedication, and impact at https://tails.boum.org/
 
@@ -174,7 +174,7 @@ You may download any or all of them, and please distribute them liberally. As af
 ## FAQ and Psuedo-Lies ##
 
 - Windows Install size > 25MB?
-    - Okay, technically not lighter than the competition when you run in Windows, but at least it's only 9MB sitting in the thumb drive. Python has the advantage of being native where C isn't for example, but the same is true other way around. Why use Windows anyway?
+    - Okay, technically not lighter than the competition when you run in Windows, but at least it's only 9MB sitting in the thumb drive. . Why use Windows anyway?
 
 - Why use Windows anyway?
     - Great question, this FAQ section is really shaping up.

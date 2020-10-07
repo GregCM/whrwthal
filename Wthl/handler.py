@@ -91,9 +91,9 @@ def shutdown(self, event=None):
     co = self.config_obj['FOOTPRINT']
     if (co['switch'] == 'on') and (co['transient'] == 'true'):
         # INSERT: tk evalutation on checkbox
-        msg = ''.join(['Would you like to disable Low Footprint Mode?',
-                       '\nYou would enjoy shorter wait times, but sacrifice',
-                       'more disk space. See the README for details.'])
+        msg = '\n'.join(['Would you like to disable Low Footprint Mode?',
+                         'You would enjoy shorter wait times,',
+                         'but sacrifice more disk space.'])
 
         r = messagebox.askyesno(title='Low Footprint',
                                 message=msg)
