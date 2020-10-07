@@ -1,7 +1,7 @@
 from ast import literal_eval
 from configparser import ConfigParser
 import collections
-from dahuffman import HuffmanCodec
+from dahuffman.huffmancodec import HuffmanCodec
 from functools import partial
 import json
 import os
@@ -294,8 +294,8 @@ def __init__(self, configfile='config.ini'):
     #f.SearchFrame.configure(bg=self.colors['header'][0])
 
     # LOW FOOTPRINT MODE
-    if LFM == 'on':
-        LFM = 1
+    print(LFM)
+    if LFM:
         # First time decode of bible data
         with open('bytes', 'rb') as f:
             # comes as bytes
@@ -311,7 +311,6 @@ def __init__(self, configfile='config.ini'):
         [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
 
     else:
-        LFM = 0
         # Import bible dictionary as "bible_dict"
         with open('.dict.json', 'r') as b:
             d = collections.OrderedDict

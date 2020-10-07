@@ -1,11 +1,12 @@
 from configparser import ConfigParser
 import collections
-from dahuffman import HuffmanCodec
+from dahuffman.huffmancodec import HuffmanCodec
 from functools import partial
 import re
 import json
 import os
-import psutil
+import signal
+import sys
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
@@ -115,11 +116,11 @@ def shutdown(self, event=None):
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
 
+    # End Tk environment
     self.root.destroy()
-    pn = 'main.py'
-    for proc in psutil.process_iter():
-        if proc.name() == pn:
-            proc.kill()
+    # Kill by Process ID and exit with a vengence
+    pid = os.getpid()
+    os.kill(pid, signal.SIGTERM)
 
 
 def info(self):
