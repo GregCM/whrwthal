@@ -263,35 +263,25 @@ def phrase(self):
                         q = re.compile(r'\S* \S* \S*%s\S*$' % (g.upper()))
                         sq = q.search(vFound)
 
-                        iterspan = ''
                         if so:
                             # print('o')
-                            for item in o.finditer(vFound):
-                                s = item.start()
-                                e = item.end()
-                                iterspan += '%s...' % (vFound[s:e])
-
-                        if sp:
+                            iterspan = '%s...' % (
+                                       ''.join([vFound[i.start():i.end()]
+                                                for i in o.finditer(vFound)]))
+                        elif sp:
                             # print('p')
-                            for item in p.finditer(vFound):
-                                s = item.start()
-                                e = item.end()
-                                iterspan += '... %s...' % (vFound[s:e])
-
-                        if sq:
+                            iterspan = '...%s...' % (
+                                       ''.join([vFound[i.start():i.end()]
+                                                for i in p.finditer(vFound)]))
+                        elif sq:
                             # print('q')
-                            for item in q.finditer(vFound):
-                                s = item.start()
-                                e = item.end()
-                                iterspan += '... %s' % (vFound[s:e])
+                            iterspan = '...%s...' % (
+                                       ''.join([vFound[i.start():i.end()]
+                                                for i in q.finditer(vFound)]))
 
-                        vrsAlph, vrsNumb = '', ''
-                        for char in vFound:
-                            if char.isdigit():
-                                vrsNumb += char
-                            else:
-                                vrsAlph += char
-
+                        vrsNumb = ''.join([c for c in vFound if c.isdigit()])
+                        vrsAlph = ''.join([c for c in vFound
+                                           if not(c.isdigit())])
                         ref = ''.join([' ', bKey,
                                        ' ', cKey,
                                        ':', vrsNumb])
@@ -304,14 +294,14 @@ def phrase(self):
                             # occurs on first iteration, and I'm extremely laz
                             ol = ''
                         # Handling repeated verses:
-                        if ol == '%s\n%s' % (ref, iterspan):
+                        if (ol == '%(ref)s\n%(iterspan)s' % locals()):
                             # Having found a repeated verse label,
                             # delete the previous... we want the final
                             # iteration, but we can't know when it happens
                             out['label'].pop(-1)
                             out['phrases'].pop(-1)
                         out['phrases'].append(vrsAlph)
-                        out['label'].append('%s\n%s' % (ref, iterspan))
+                        out['label'].append('%(ref)s\n%(iterspan)s' % locals())
                         count += 1
                     # Serves as speed / crash prevention, as well as general
                     # utility: no one wants to see a 62,000-Count word list.
