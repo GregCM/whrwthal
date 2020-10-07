@@ -26,45 +26,36 @@ where *installdir* is the folder where you want **whrwhtal**, and all its config
 
 ``python --version``
 
-If this returns at least ``Python 3.5.X`` then skip to **Finishing Install: PIP**.
+If this returns at least ``Python 3.5.X`` then skip ahead to **First-Use**.
 ``Python 2.X`` users will need to upgrade; ``Python 3.4.X`` users will also need to upgrade, with the extra caveat that your default Python3 environment will need to be changed from 3.X.Y to 3.5.X as follows in folder sequence:
 
 > Control Panel > All Control Panel Items > System > Advanced System Settings > Environment Variables
 
-Keep in mind fresh-installing Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "pip" and "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
+Keep in mind fresh-installing Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
 
 ### Python ###
 - https://www.python.org/downloads/latest (quick and easy, forget about it)
 - https://docs.python.org/3/using/windows.html (general instructions and embeddable)
 
-Check that you have "pip" and "tkinter" included in your Python install as follows:.
+Check that you have "tkinter" included in your Python install as follows:
 
-    python -m pip --version
     python -m tkinter
 
-If this returns ``pip X.Y.Z`` and a sample tkinter window, respectively, you're set (again). If one or both are missing, see below:
-
-- PIP
-    - https://pip.pypa.io/en/stable/installing/
-
-- Tkinter
+If this returns a sample tkinter window, you're set (again). If it's missing, see below:
     - https://tkdocs.com/tutorial/install.html
     - https://www.activestate.com/products/tcl/downloads/
 
 #### A Sidenote: Embedding Python ####
-If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python, pip, and Tkinter will all be embedded there; consider this will total about 50MB). Some reasons you may want to do this:
+If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python and Tkinter will both be embedded there; consider this will require more space that whrwthal on its own). Some reasons you may want to do this:
 - You don't own a computer, but have access to computers at public or other workspaces (one would embedd python with the app on thumb drive to plug-n-play)
 - You want to give an exact [no-nonsense] copy to someone(s) who doesn't own a computer, but has access to computers
 - You want to demonstrate **whrwthal** to friends, team, or congregation (or other on-the-go scenarios)
 - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
-### Finishing Install: PIP ###
-If you have PIP, install dependencies from *installdir* with ``pip install -r requirements.txt --user`` (internet required). At this point, you're all done, ready to read!
-
 ## First-Use ##
-On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``main.py`` [Windows], or ``./main.py`` [Linux/MacOS].
+On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``whrwth.py`` [Windows], or ``./whrwth.py`` [Linux/MacOS].
 
-**whrwhtal** will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "main.py"
+**whrwhtal** will need to run a one-time setup and parse the text, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. Otherwise, from first setup on you can proceed the same way through the command prompt, or more simply create a shortcut to the file "whrwth.py"
 
 You can change the default settings stored during this one-time setup at any time through the Options menu; this includes Language, Colors, Directories, and more.
 
@@ -79,7 +70,7 @@ Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" pop
     Encoding=UTF-8
     Name=**whrwhtal**
     Comment=Offline Bible referencing
-    Exec=*installdir*/main.py
+    Exec=*installdir*/whrwth.py
     Icon=*installdir*/icon.ico
     Path=*installdir*
     Terminal=false
@@ -154,13 +145,13 @@ In future releases, expect to see:
 
 - [ ] Calendar synced "Daily Readings" to serve as a structured study tool (retrieved from BLB sites)
 
-- [ ] Better tkinter / pip embedding (possible compression methods) to make install non-hellish for Windows users
+- [ ] Better tkinter / python embedding (possible compression methods) to make install non-hellish for Windows users
 
 - [ ] PGP cryptographic protections
 
 - [ ] Frequency charts
 
-- [ ] Eliminate requirements and need for pip with a Pure Python implementation
+- [X] Eliminate requirements and need for pip with a Pure Python implementation
 
 ## Resources ##
 
