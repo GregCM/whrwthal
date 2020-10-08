@@ -446,7 +446,7 @@ def make_json(self, filename=''):
 # Consider adding url request to whrwthal-text raw source
 # TODO: Ensure make_json compatibility && add parser.make_* to Wthl methods
 def make_text(self, d=None, filename=''):
-    # Text Sourcing -- Alternative at https://github.com/.../...
+    # Text Sourcing -- Alternative at https://github.com/GregCM/whrwthal/tree/texts
     if d:
         pass
     else:
