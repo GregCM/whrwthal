@@ -15,9 +15,9 @@ Using **whrwhtal** requires no internet connection, and therefore presents littl
 ## Dependencies & Installation ##
 **whrwhtal** lives here, so all you need in order to download it is
 
-``git clone https://github.com/GregCM/whrwhtal installdir``
+    git clone https://github.com/GregCM/whrwhtal ./whrwthal/
 
-where *installdir* is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to *installdir*.
+where ``./whrwthal/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to ``./whrwthal/``.
 
 **whrwhtal** is pure python, and runs on Windows, MacOS, and Linux. If you are running on Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
@@ -28,11 +28,10 @@ If this returns at least ``Python 3.5.X`` then skip ahead to **First-Use**.
 
 > Control Panel > All Control Panel Items > System > Advanced System Settings > Environment Variables
 
-Keep in mind fresh-installing Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
-
 ### Python ###
-- https://www.python.org/downloads/latest (quick and easy, forget about it)
-- https://docs.python.org/3/using/windows.html (general instructions and embeddable)
+Keep in mind fresh-installing Python will take up about 60MB of space on your machine. The best thing to do where internet is reliable is install Python to your computer instead of your thumb drive, in order to maximize space on the thumb drive. If internet is unreliable and you want the ability to use **whrwhtal** on several machines (or share it so your recipients can use-as-is), see the install support pages below for embeddable versions of Python, with additional steps needed to include "tkinter". To circumvent these extra steps, and in general hit the ground running, simply install the latest from the first link:
+- [quick and easy](https://www.python.org/downloads/latest), forget about it
+- [detailed instructions](https://docs.python.org/3/using/windows.html) and embeddable
 
 ### Tkinter ###
 Check that you have "tkinter" included in your Python install as follows:
@@ -51,7 +50,7 @@ If you do decide to download embedded Python, place it in your folder of choice 
 - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
 ## First-Use ##
-On any OS, execute ``cd *installdir*`` in your terminal / command prompt. Now, you can run ``thrto.py`` [Windows], or ``./thrto.py`` [Linux/MacOS].
+On any OS, execute ``cd whrwthal`` in your terminal / command prompt. Now, you can run ``thrto.py`` [Windows], or ``./thrto.py`` [Linux/MacOS].
 
 **whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut to the file "thrto.py". This is trivial in Windows; make sure it's set to run in the correct directory, and include the icon file if you like. MacOS shortcuts are a foreign and veiled mystery to me.
 
@@ -64,11 +63,11 @@ Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" pop
     [DESKTOP ENTRY]
     Version=1.0
     Encoding=UTF-8
-    Name=**whrwhtal**
+    Name=Whrwhtal
     Comment=Offline Bible referencing
-    Exec=*installdir*/thrto.py
-    Icon=*installdir*/icon.ico
-    Path=*installdir*
+    Exec=whrwthal/thrto.py
+    Icon=whrwthal/icon.ico
+    Path=whrwthal/
     Terminal=false
     Type=Application
     Categories=Educational;Application;
@@ -85,7 +84,7 @@ Obfuscate your code or encrypt you install directory.
 - For legal reasons, I don't do either in advance of distributing
 - If you plan to redistribute, you should only encrypt your copy, not the shared one (see [license](./LICENSE))
 
-Memory leak is a concern with Python, because Python decodes the text within an interpreter session and stores it in memory while the program is running. It's difficult to locate these storage points, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPU's have this issue, though they are in the process of upgrading. In all, those things are out of my control, and I only have the following recommendations:
+Memory leak is a concern with Python, because Python decodes the text within an interpreter session and stores it in memory while the program is running. It's difficult to locate these storage points, and although memory is reallocated once your session is closed, some hardware is known to leak throughout. I know Intel CPUs have this issue, though they are in the process of upgrading. In all, those things are out of my control, and I only have the following recommendations:
 - Consider [Sandboxing](https://en.wikipedia.org/wiki/Sandbox_(computer_security) "Wiki: Sandbox security") solutions 
     - [Firejail](https://github.com/netblue30/firejail)
     - [Bubblewrap](https://github.com/containers/bubblewrap)
@@ -151,7 +150,7 @@ In future releases, expect to see:
     
     - [ ] Chinese (CKJV)
 
-(See further candidates for use in this app here -- http://textus-receptus.com/wiki/List_of_languages)
+See further candidates for use in this app [here](http://textus-receptus.com/wiki/List_of_languages)
 
 ## Resources ##
 
@@ -167,11 +166,9 @@ For study tools to use in Christ-averse regions, see the following for print in 
 
 ## Bible Texts ##
 
-Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to use these simple Text files instead of **whrwhtal**, you may find them at
+Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to use these simple Text files instead of **whrwhtal**, you may find them [here](https://github.com/GregCM/whrwhtal/tree/texts)
 
-``https://github.com/GregCM/whrwhtal/tree/texts``
-
-You may download any or all of them, and please distribute them liberally. As aforementioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
+You may download any or all of them, and please distribute them liberally. As mentioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
 
 ## FAQ and Psuedo-Lies ##
 
