@@ -6,7 +6,7 @@ whrwhtal (adverb), as in:
 
 > Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word. - Psalm 119:9
 
-**whrwhtal** is a cross-platform lightweight application, compared to current alternatives. It is meant to be dirt simple, and unassuming. It was inspired by the need for access to [rapidly distributable](https://flashdrivesforfreedom.org/) scriptures without fear of [persecution in closed-countries](https://www.opendoorsusa.org/christian-persecution/world-watch-list/).
+**whrwhtal** is a cross-platform lightweight application, compared to current alternatives. It is meant to be dirt simple and unassuming. It was inspired by the need for access to [rapidly distributable](https://flashdrivesforfreedom.org/) scriptures without fear of [persecution in closed-countries](https://www.opendoorsusa.org/christian-persecution/world-watch-list/).
 
 As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows at 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
