@@ -373,16 +373,14 @@ def make_json(self, filename=''):
         bib = bib.replace(bkToWipe, bkWiper)
 
         books.append(text)
-        trim_text += ''.join([char for char in text if char in alpha_space])
-        trim_books.append(trim_text)
-
-    trim_bible = ''.join(trim_books)
+        trim_bible.append(''.join([char for char in text
+                                  if char in alpha_space]))
     # Whole Bible excluding punctuation and book titles.
     bib_letters = ''.join([char for char in trim_bible])
-    bib_words = re.split(' ', bib_letters)
-    bib_words = [word for word in bib_words if word != '']
     # Unique Word List --> Concordance
-    uwl = [s for s in set(bib_words) if s not in self.bkAbbrv]
+    uwl = [s for s in set(re.split(bib_letters)) if s not in self.bkAbbrv]
+    # No space
+    uwl.remove('')
     # Alphabetize
     uwl.sort()
     # Immutable index + value pairs
@@ -426,7 +424,6 @@ def make_json(self, filename=''):
 
                 vrsKey = str(v + 1)
                 vrsDict[vrsKey] = verses[v]
-
             # Structure field names cannot or
             # should not start with numbers.
             chpKey = str(c+1)
@@ -461,11 +458,11 @@ def make_text(self, d=None, filename=''):
     for k in d.keys():
         if (k != 'CONCORDANCE') and (k != 'ToC'):
             for j in d[k].keys():
-                for i in d[k][j].keys():
-                    if (j == '1') and (i == '1'):
-                        text += '{} {}:{}'.format(k, j, d[k][j][i])
-                    else:
-                        text += ' {}:{}'.format(j, d[k][j][i])
+            dkji = ''.join(['{} {}:'.format(k, j, d[k][j][i]) for i, j in d[k].keys(), d[k][j].keys() if j == '1'])
+                if j == '1':
+                    text = ''.join(['{} {}:{}'.format(k, j, d[k][j][i]) for i in d[k][j].keys() if i == '1'])
+                else:
+                    text = ''.join([' {}:{}'.format(j, d[k][j][i]) for i in d[k][j].keys()])
 
     if os.path.exists(filename):
         wd = os.getcwd()
