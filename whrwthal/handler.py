@@ -1,3 +1,7 @@
+'''
+whrwthal is an offline bible referencing module.
+Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
+'''
 from configparser import ConfigParser
 import collections
 from dahuffman.huffmancodec import HuffmanCodec
