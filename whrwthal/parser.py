@@ -459,12 +459,12 @@ def make_text(self, d=None, filename=''):
     # keys i,j,k
     for k in d.keys():
         if (k != 'CONCORDANCE') and (k != 'ToC'):
-            for j in d[k].keys():
-            dkji = ''.join(['{} {}:'.format(k, j, d[k][j][i]) for i, j in d[k].keys(), d[k][j].keys() if j == '1'])
-                if j == '1':
-                    text = ''.join(['{} {}:{}'.format(k, j, d[k][j][i]) for i in d[k][j].keys() if i == '1'])
-                else:
-                    text = ''.join([' {}:{}'.format(j, d[k][j][i]) for i in d[k][j].keys()])
+            # for j in d[k].keys():
+            dkji = ''.join(['{} {}:'.format(k, j, d[k][j][i]) for i, j in (d[k].keys(), d[k][j].keys()) if j == '1'])
+            if j == '1':
+                text = ''.join(['{} {}:{}'.format(k, j, d[k][j][i]) for i in d[k][j].keys() if i == '1'])
+            else:
+                text = ''.join([' {}:{}'.format(j, d[k][j][i]) for i in d[k][j].keys()])
 
     if os.path.exists(filename):
         wd = os.getcwd()
