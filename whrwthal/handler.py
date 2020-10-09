@@ -110,7 +110,7 @@ def shutdown(self, event=None):
             self.config_obj['FOOTPRINT']['transient'] = 'false'
 
             os.remove('bytes')
-            with open('.dict.json', 'w') as f:
+            with open('src.json', 'w') as f:
                 json.dump(self.bible_dict, f)
 
         else:

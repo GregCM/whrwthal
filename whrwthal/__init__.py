@@ -317,7 +317,7 @@ def __init__(self, configfile='config.ini'):
 
     else:
         # Import bible dictionary as "bible_dict"
-        with open('.dict.json', 'r') as b:
+        with open('src.json', 'r') as b:
             d = collections.OrderedDict
             self.bible_dict = json.load(b, object_pairs_hook=d)
 
