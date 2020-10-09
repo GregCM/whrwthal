@@ -15,18 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
-import Wthl
-from Wthl import handler, io, parser, textile
+import whrwthal
+from whrwthal import handler, io, parser, textile
 
 # TODO: Implement PGP crytographic protection for all but ``main.py``,
 # require passphrase on First-Use, don't require again as long as data
 # is in namespace
 
-# By convention, any method call of "self" will be self=Wthl
-Wthl.__init__(Wthl)
-gsize = Wthl.frame.grid_size()
+# By convention, any method call of "self" will be self=whrwthal
+whrwthal.__init__(whrwthal)
+gsize = whrwthal.frame.grid_size()
 for row in range(gsize[0]):
-    Wthl.tk.Grid.rowconfigure(Wthl.frame, row, weight=1)
+    whrwthal.tk.Grid.rowconfigure(whrwthal.frame, row, weight=1)
     for col in range(gsize[1]):
-        Wthl.tk.Grid.columnconfigure(Wthl.frame, col, weight=1)
-main = Wthl.tk.mainloop()
+        whrwthal.tk.Grid.columnconfigure(whrwthal.frame, col, weight=1)
+main = whrwthal.tk.mainloop()
