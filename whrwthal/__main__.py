@@ -1,29 +1,29 @@
 #!/usr/bin/python3
 
 '''
+This file is a part of whrwthal.
 whrwthal is an offline bible referencing module.
 Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 
-This program is free software: you can redistribute it and/or modify
+whrwthal is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+whrwthal is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import whrwthal
 from whrwthal import handler, io, parser, textile
 
-# TODO: Implement PGP crytographic protection for all but ``main.py``,
-# require passphrase on First-Use, don't require again as long as data
-# is in namespace
+# TODO: Implement PGP crytographic protection...
+# require passphrase on First-Use
 
 # By convention, any method call of "self" will be self=whrwthal
 whrwthal.__init__(whrwthal)
