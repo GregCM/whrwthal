@@ -175,7 +175,7 @@ You may download any or all of them, and please distribute them liberally. As me
 ## FAQ and Psuedo-Lies ##
 
 - Windows Install size > 25MB?
-    - Okay, technically not lighter than the competition when you run in Windows, but at least it's only 9MB sitting in the thumb drive. If not, why use Windows anyway?
+    - Okay, technically not lighter than the competition when you run in Windows, but it's at most 5MB sitting in the thumb drive. Why use Windows anyway?
 
 - Why use Windows anyway?
     - Great question, this FAQ section is really shaping up.
