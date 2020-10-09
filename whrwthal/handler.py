@@ -59,7 +59,7 @@ class MouseHover(tk.Menu):
 def start(self, t=7.429434566786795):
     # A simple timed progress bar out of ~7.4 seconds
     # (The average time clocked to perform the
-    #  __init__ huffman decoding)
+    #  __init__ huffman decoding on my machine)
     branch = tk.Tk()
     branch.resizable(0, 0)
     branch.title('whrwthal')
@@ -95,7 +95,6 @@ def shutdown(self, event=None):
 
     co = self.config_obj['FOOTPRINT']
     if (co['switch'] == 'on') and (co['transient'] == 'true'):
-        # INSERT: tk evalutation on checkbox
         msg = '\n'.join(['Would you like to disable Low Footprint Mode?',
                          'You would enjoy shorter wait times,',
                          'but sacrifice more disk space.'])
@@ -129,7 +128,7 @@ def shutdown(self, event=None):
 
 
 def info(self):
-    # the "about" text from deprecated make_bibdict
+    # TODO: the "about" text under the Help menu
     return None
 
 
