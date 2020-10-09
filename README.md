@@ -8,16 +8,16 @@ whrwhtal (adverb), as in:
 
 **whrwhtal** is a cross-platform lightweight application, compared to current alternatives. It is meant to be dirt simple and unassuming. It was inspired by the need for access to [rapidly distributable](https://flashdrivesforfreedom.org/) scriptures without fear of [persecution in closed-countries](https://www.opendoorsusa.org/christian-persecution/world-watch-list/).
 
-As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows at 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
+As such, **whrwhtal** totals just under 5MB, or 3MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows at 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
 Using **whrwhtal** requires no internet connection, and therefore presents little threat on your own personal computer, or even plugged in at a public access computer or library. It communicates with no outside program, and requires no additional inputs beyond initial installation.
 
 ## Dependencies & Installation ##
 **whrwhtal** lives here, so all you need in order to download it is
 
-    git clone https://github.com/GregCM/whrwhtal ./whrwthal/
+    git clone https://github.com/GregCM/whrwhtal directory/
 
-where ``./whrwthal/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to ``./whrwthal/``.
+where ``directory/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to ``directory/``.
 
 **whrwhtal** is pure python, and runs on Windows, MacOS, and Linux. If you are running on Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
@@ -50,24 +50,24 @@ If you do decide to download embedded Python, place it in your folder of choice 
 - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
 ## First-Use ##
-On any OS, execute ``cd whrwthal`` in your terminal / command prompt. Now, you can run ``thrto.py`` [Windows], or ``./thrto.py`` [Linux/MacOS].
+On any OS, execute ``cd directory/`` to enter your install directory where whrwthal now resides. Now, you can run ``python -m whrwthal``.
 
-**whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut to the file "thrto.py". This is trivial in Windows; make sure it's set to run in the correct directory, and include the icon file if you like. MacOS shortcuts are a foreign and veiled mystery to me.
+**whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut (associated with command ``python -m whrwthal``). This is trivial in Windows; just make sure it's set to run in the correct directory, and include the icon file if you like. MacOS shortcuts are a foreign and veiled mystery to me.
 
 Desktop enviornment Linux users can create a desktop application referencing **whrwhtal** by writing to a desktop file (others, I recommend dmenu). Most likely, the best place for this is in
 
 ``~/.local/share/applications/``
 
-Once you ``cd`` to this directory, make a file called "**whrwhtal**.desktop" populated by the following:
+Once there, make a file called "whrwhtal.desktop" populated by the following:
 
     [DESKTOP ENTRY]
     Version=1.0
     Encoding=UTF-8
     Name=Whrwhtal
     Comment=Offline Bible referencing
-    Exec=whrwthal/thrto.py
-    Icon=whrwthal/icon.ico
-    Path=whrwthal/
+    Exec=python -m directory/whrwthal/__main__.py
+    Icon=directory/icon.ico
+    Path=directory/
     Terminal=false
     Type=Application
     Categories=Educational;Application;
@@ -101,6 +101,8 @@ If you're concern is security and privacy, I cannot recommend highly enough that
     - Free and Open-Source Software is rigorously reviewed by the user community to help guard against security flaws due to negligence of the designer or, worse yet, malicious intent by the proprietary powers that be (ie keylogging, memory access / watchmen, over-network code execution or even remote operation of your computer); companies like Microsoft and Apple OR companies that put out propriety software that resides on your Microsoft or Apple computer. This has happened, happens, and will happen, in part because of the invisible proprietary code impervious to peer review. Leave behind your proprietary crutches if security is your concern!
 2. Choose TAILS as that operating system
     - The first concern that will be raised by proprietary software advocates about free and open-source software is the lack of rigorous code creation; the idea is that security measures are best implemented when the developers are getting paid to implement them. That point is moot with TAILS. See their philosophy, dedication, and impact at https://tails.boum.org/
+
+It's practically written in the stars: TAILS and whrwthal are made for each other <3. Namely because where passing a usb stick along to share the bible is viable, so is passing along another with TAILS, holding in it means to: easily execute whrwthal, access otherwise censored information, and freely communicate with people around the world or within a community in annonymity! This USB toolbelt is indispensible for the persectued Christian and future Convert alike.
 
 ## Anti-Warning ##
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies.
@@ -166,14 +168,14 @@ For study tools to use in Christ-averse regions, see the following for print in 
 
 ## Bible Texts ##
 
-Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to use these simple Text files instead of **whrwhtal**, you may find them [here](https://github.com/GregCM/whrwhtal/tree/texts)
+Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to use these simple Text files instead of **whrwhtal**, you may find them [here](https://github.com/GregCM/whrwhtal/tree/texts).
 
 You may download any or all of them, and please distribute them liberally. As mentioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
 
 ## FAQ and Psuedo-Lies ##
 
 - Windows Install size > 25MB?
-    - Okay, technically not lighter than the competition when you run in Windows, but at least it's only 9MB sitting in the thumb drive. If not, why use Windows anyway?
+    - Okay, technically not lighter than the competition when you run in Windows, but it's at most 5MB sitting in the thumb drive. Why use Windows anyway?
 
 - Why use Windows anyway?
     - Great question, this FAQ section is really shaping up.

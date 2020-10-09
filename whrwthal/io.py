@@ -1,3 +1,9 @@
+'''
+This file is a part of whrwthaal.
+whrwthal is an offline bible referencing module.
+Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
+'''
+
 from configparser import ConfigParser
 import datetime as dt
 import os
@@ -65,10 +71,10 @@ def browse(self, entry, cfg_key):
 
 
 def encode_file(self):
-    with open('.dict.json') as f:
+    with open('src.json') as f:
         bible_dict = f.read()
 
-    os.remove('.dict.json')
+    os.remove('src.json')
     codec = HuffmanCodec.from_data(bible_dict)
     b = codec.encode(bible_dict)
     with open('bytes', 'wb') as f:
@@ -79,7 +85,7 @@ def encode_file(self):
 
 def decode_file(self):
     os.remove('bytes')
-    with open('.dict.json', 'w') as f:
+    with open('src.json', 'w') as f:
         json.dump(self.bible_dict, f)
 
     with open('config.ini', 'w') as cfg:

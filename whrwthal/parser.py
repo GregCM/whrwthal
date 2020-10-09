@@ -1,4 +1,7 @@
 '''
+This file is a part of whrwthal.
+whrwthal is an offline bible referencing module.
+Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 _______________________________________________
 
 The Biblical translations used herein are all
@@ -8,9 +11,8 @@ or share without limit.
 For general support, or if you have any
 questions about the app's functionality,
 the content of the word of God, or
-anything else related, contact at
-
-gregcaceres@gmail.com
+anything else related, feel free
+to contact me directly.
 _______________________________________________
 '''
 
