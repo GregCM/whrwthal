@@ -8,7 +8,7 @@ whrwhtal (adverb), as in:
 
 **whrwhtal** is a cross-platform lightweight application, compared to current alternatives. It is meant to be dirt simple and unassuming. It was inspired by the need for access to [rapidly distributable](https://flashdrivesforfreedom.org/) scriptures without fear of [persecution in closed-countries](https://www.opendoorsusa.org/christian-persecution/world-watch-list/).
 
-As such, **whrwhtal** totals just under 9MB, or 5MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows at 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
+As such, **whrwhtal** totals just under 5MB, or 3MB if low-footprint mode is enabled (consider Xiphos-Unix at just under 30MB, Xiphos-Windows at 47MB). It can inconspicuously reside on your thumb drive among photos, as well as be sent through email! (Gmail caps its message+attachment size at 25MB)
 
 Using **whrwhtal** requires no internet connection, and therefore presents little threat on your own personal computer, or even plugged in at a public access computer or library. It communicates with no outside program, and requires no additional inputs beyond initial installation.
 
@@ -101,6 +101,8 @@ If you're concern is security and privacy, I cannot recommend highly enough that
     - Free and Open-Source Software is rigorously reviewed by the user community to help guard against security flaws due to negligence of the designer or, worse yet, malicious intent by the proprietary powers that be (ie keylogging, memory access / watchmen, over-network code execution or even remote operation of your computer); companies like Microsoft and Apple OR companies that put out propriety software that resides on your Microsoft or Apple computer. This has happened, happens, and will happen, in part because of the invisible proprietary code impervious to peer review. Leave behind your proprietary crutches if security is your concern!
 2. Choose TAILS as that operating system
     - The first concern that will be raised by proprietary software advocates about free and open-source software is the lack of rigorous code creation; the idea is that security measures are best implemented when the developers are getting paid to implement them. That point is moot with TAILS. See their philosophy, dedication, and impact at https://tails.boum.org/
+
+It's practically written in the stars: TAILS and whrwthal are made for each other <3. Namely because where passing a usb stick along to share the bible is viable, so is passing along another with TAILS, holding in it means to: easily execute whrwthal, access otherwise censored information, and freely communicate with people around the world or within a community in annonymity! This USB toolbelt is indispensible for the persectued Christian and future Convert alike.
 
 ## Anti-Warning ##
 If you live in a country that doesn't burn books, go crazy, download **TWO** copies.
