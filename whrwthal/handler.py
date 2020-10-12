@@ -4,7 +4,6 @@ whrwthal is an offline bible referencing module.
 Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 from configparser import ConfigParser
-import collections
 from dahuffman.huffmancodec import HuffmanCodec
 from functools import partial
 import re
@@ -110,7 +109,7 @@ def shutdown(self, event=None):
 
             os.remove('bytes')
             with open('src.json', 'w') as f:
-                json.dump(self.bible_dict, f)
+                json.dump(self.d, f)
 
         else:
             # LFM remains on and shutdown won't query again
@@ -317,6 +316,31 @@ def regex(self):
 
 
 def get_input(self, event=None):
+    '''
+    Takes input from tk.Entry(). Executes the following logic and returns a list and calls list_update to handle displaying results.
+
+    If all entry contents reference a book, but none reference words / phrases:
+
+        0:: "Genesis" Returns the entire book of Genesis
+
+    or if entry contents reference a book, and chapter or verse:
+
+        0:: "Rom 12:1" Returns Romans Chapter 12 verse 1.
+
+    Else If certain entry contents reference a book and a word in text:
+
+        1:: "romans" Returns the entire book of Romans and verses like "... if we being romans ..."
+
+    Else If some entry contents reference a book, and some text:
+
+        2:: "if we being romans" Returns the verse "... if we being romans ..."
+
+    Else If entry contents only reference a number combination:
+
+        4:: "23" Returns the 23rd chapter of every book (if such a chapter exists)
+            "1:3" Returns the 3rd verse from the 1st chapter of every book (if such a verse exists)
+            "1-3" Returns the 1st through 3rd verse (a subset) of every chapter of every book (if such a subset exists)
+    '''
     self.frame.var.set(1)
     self.frame.entry = self.frame.SearchBar.get()
     gui_update(self.frame.header, self.frame.entry.upper())
@@ -324,9 +348,9 @@ def get_input(self, event=None):
     # Table of contents entry check, any full or abbreviated reference
     ToC = self.bkAbbrv + self.bkNames
     ToC = [C.upper() for C in ToC]
-    unique_words = self.bible_dict['CONCORDANCE']
+    unique_words = self.d['CONCORDANCE']
 
-    # TODO: (1) Upper?
+    # TODO: (1) Replace UPPER with colorized text (tk attributes)?
     unique_words = [w.upper() for w in unique_words]
 
     if self.frame.entry is not None:
@@ -353,57 +377,47 @@ def get_input(self, event=None):
 
         numeric_entries = []
 
-    o = self.use_re.get()
+    u = self.use_re.get()
     a = any(ToC_entries)
     b = any(conc_entries)
     c = any(numeric_entries)
 
-    # if all entry contents reference a book, but none of the text
-    # EX: "Genesis" --> GENESIS(book)
-    # or if entry contents reference a book, and chapter or verse
-    # EX: "Rom 12:1"
-    out = collections.OrderedDict()
     vcount = pcount = 0
     # Soon to be redundant: SEE parser.phrase (lines -5:-1)
     perr, verr = None, None
-    if o:
-        print(0)
+    if u:
+        print('get_input:: 0')
         # User specified regular expression search (phrases only)
-        out['PS'], pcount, perr = self.parser.phrase(self)
+        out, pcount, perr = self.parser.phrase(self)
     elif (a and not(b)) or (a and c):
-        print(1)
-        out['VR'], vcount, verr = self.parser.verse(self)
-    # else if certain entry contents reference a book and a word in text
-    # EX: "romans" --> ROMANS(book) && "... if we being romans ..."
+        print('get_input:: 1')
+        out, vcount, verr = self.parser.verse(self)
+
     elif (a and b):
-        print(2)
-        out['VR'], vcount, verr = self.parser.verse(self)
-        out['PS'], pcount, perr = self.parser.phrase(self)
-    # else if some entry contents reference a book, and some text
-    # EX: "if we being romans" --> "... if we being romans ..."
+        print('get_input:: 2')
+        out, vcount, verr = self.parser.verse(self)
+        pout, pcount, perr = self.parser.phrase(self)
+        out.extend(pout)
+
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-        print(3)
-        out['PS'], pcount, perr = self.parser.phrase(self)
-    # else if entry contents only reference a number combo
-    # EX: "23", "3:23", "119:8-9"
+        print('get_input:: 3')
+        out, pcount, perr = self.parser.phrase(self)
+
     elif (c and not(any([a, b]))):
-        print(4)
-        # TODO: (3) allow number searches
-        # ie "23" --> GEN 23, EXO 23 ... ACT 23
-        # && "1:3" --> GEN 1:3, EXO 1:3 ... ACT 1:3
-        # && "1-3" --> GEN 1:1-3, 2:1-3 ... EXO 1:1-3, 2:1-3 ... etc.
+        # TODO: incorporate number searches
+        print('get_input:: 4')
         out, vcount, verr = self.parser.verse(self)
 
     # Handling errors
     if perr is MemoryError:
-        print('error --> 5')
+        print('get_input ERROR:: 5')
         msg = '\n'.join(['There are too many results for "{}",',
                          'please be more specific.'])
         messagebox.showwarning('Overloaded Word', msg.format(self.frame.entry))
 
-    elif not(any([o, a, b, c])):
+    elif not(any([u, a, b, c])):
         out = {}
-        print('error --> 6')
+        print('get_input ERROR:: 6')
         messagebox.showerror('Error',
                              '"{}" not found.'.format(self.frame.entry))
     else:
@@ -419,7 +433,7 @@ def get_input(self, event=None):
 
         # A patchy fix that amounts to awful dumb practice
         list_update(self, out)
-        # Will fix...
+        # FIXME I suck
         list_update(self, out)
 
     self.frame.go_b.wait_variable(self.frame.var)
@@ -440,15 +454,18 @@ def gui_update(self, status):
 
 
 def list_update(self, d, mode='w'):
+    # Check that the list doesn't already exists...
     try:
         c = self.canvas
-        for lb in self.list_button:
+        for lb in self.blist:
+            # ... if it does, destroy it.
             lb.destroy()
         c.destroy()
     except AttributeError:
         pass
     finally:
-        self.list_button = []
+        # Ready a new list
+        self.blist = []
         self.canvas = tk.Canvas(self.frame)
         c = self.canvas
 
@@ -460,33 +477,31 @@ def list_update(self, d, mode='w'):
     w = self.frame.SearchBar.winfo_width()
     h = self.frame.SearchBar.winfo_height() * 2
 
-    butt_height = 0
-    b_press = []
-    button_windows = []
     # TODO: (1) Philemon must not return Philippians,
     # but PHM & PHIL must remain their respective abbreviations.
     # (2) Phrase labels should read -->
     # "... not TEMPT the ... ye TEMPTED him..." for DEUT 6:16, etc.
-    for key in d.keys():
-        # "x" will be list of length 1 for verse dict,
-        # list of length == output for phrase dict.
-        label = d[key]['label']
-        x = [k for k in d[key].keys() if k != 'label'][0]
-        for i in range(len(d[key][x])):
-            b_press.append(partial(self.textile.update, self, d[key][x][i]))
-            self.list_button.append(tk.Button(c, text=label[i],
-                                              width=w, height=h,
-                                              command=b_press[-1]))
-            lb = self.list_button[-1]
-            button_windows.append(c.create_window((0, butt_height),
-                                                  anchor='nw',
-                                                  width=w, height=h,
-                                                  window=lb))
-            self.list_button[-1].configure(font=('calibri', 9),
-                                           activebackground='#D2D2D2')
-            self.list_button[-1].update()
-            butt_height += h
+    bheight = 0
+    bpress = []
+    bwin = []
+    for key in d:
+        # Populating all the buttons, labeled as their verse reference
+        # plus a few words around the searched-phrase (if applicable)
+        bpress.append(partial(self.textile.update, self, d[key]))
+        self.blist.append(tk.Button(c, text=key,
+                                    width=w, height=h,
+                                    command=bpress[-1]))
+        lb = self.blist[-1]
+        bwin.append(c.create_window((0, bheight),
+                                    anchor='nw',
+                                    width=w, height=h,
+                                    window=lb))
+        self.blist[-1].configure(font=('calibri', 9),
+                                       activebackground='#D2D2D2')
+        self.blist[-1].update()
+        bheight += h
 
+    # placing the canvas that will hold all the listed buttons / options
     c.grid(row=6, column=1, rowspan=8, columnspan=1, sticky='nsew')
     c.update()
 
@@ -498,7 +513,5 @@ def list_update(self, d, mode='w'):
     self.sbar.update()
 
     c.config(yscrollcommand=self.sbar.set, scrollregion=c.bbox('all'))
-    '''
-    self.canvas.bind('<Enter>', self._bound_mouse_to_scrollbar)
-    self.canvas.bind('<Leave>', self._unbound_mouse_to_scrollbar)
-    '''
+    # self.canvas.bind('<Enter>', self._bound_mouse_to_scrollbar)
+    # self.canvas.bind('<Leave>', self._unbound_mouse_to_scrollbar)

@@ -11,6 +11,9 @@ import json
 from tkinter import filedialog
 
 
+# TODO: Implement PGP crytographic protection...
+# require passphrase on First-Use
+
 def save(self, event=None):
     text = self.frame.text_widget.get('1.0', 'end')
     log_time = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

@@ -6,7 +6,7 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 
 from ast import literal_eval
 from configparser import ConfigParser
-import collections
+from collections import OrderedDict
 from dahuffman.huffmancodec import HuffmanCodec
 from functools import partial
 import json
@@ -312,14 +312,13 @@ def __init__(self, configfile='config.ini'):
         # b decoded with json delimiters as strings objects
         codec = HuffmanCodec.load('.codec')
         # literal_eval interprets the delimiters into type=dict
-        self.bible_dict = literal_eval(codec.decode(b))
-        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
+        self.d = literal_eval(codec.decode(b))
+        [self.bkNames, self.bkAbbrv] = self.d['ToC']
 
     else:
-        # Import bible dictionary as "bible_dict"
-        with open('src.json', 'r') as b:
-            d = collections.OrderedDict
-            self.bible_dict = json.load(b, object_pairs_hook=d)
+        # Import bible dictionary
+        with open('src.json', 'r') as f:
+            self.d = json.load(f, object_pairs_hook=OrderedDict)
 
         # Parse Table of Contents
-        [self.bkNames, self.bkAbbrv] = self.bible_dict['ToC']
+        [self.bkNames, self.bkAbbrv] = self.d['ToC']
