@@ -221,34 +221,64 @@ def phrase(self):
     ###########################
     '''
 
-    out = []
+    out = OrderedDict()
 
     srch = self.frame.entry
-    # addOns = ''
+
+    # PATTERN
+    # ===============================================================
+    # Book Title Group
+    g1 = '([A-Z]{2,})'
+    # Chapter Number Group
+    g2 = '(\d+)'
+    # Verse Number Group
+    g3 = '(\d+)'
 
     text = make_text(self, d=self.d)
+    # SubText Group
     if self.use_re.get():
         # Whatever regular expression the user specifies!
-        c = re.compile(r'%s' % (srch))
+        match = re.finditer(r'(?:%s(?= \d+:\d)|(?!^))(?:%s:%s)?\s*%s'
+                            % (g1, g2, g3, g4), text)
     else:
         # Case insensitive search anywhere within a word.
         # EX: srch = "tempt" -->
         # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
-        c = re.compile(r'(\w*%s\w*)' % (srch), re.IGNORECASE)
+        g4 = '((?:%s(?!:\d)|[A-Z](?![A-Z]+ \d+:\d))*)' % (srch)
+        match = re.finditer(r'(?:%s(?= \d+:\d)|(?!^))(?:%s:%s)?\s*%s'
+                            % (g1, g2, g3, g4), text, re.IGNORECASE)
+    # ===============================================================
 
+    # Count serves as speed / crash prevention:
+    # no one wants to see a 62,000-Count word list.
     count = 0
     err = None
-    for i in c.finditer(text):
-        # Serves as speed / crash prevention:
-        # no one wants to see a 62,000-Count word list.
-        count += 1
-        # TODO: out[ref] = vrsAlph
-        # Every list with length greater than 2564 gets tossed
-        if (count > 2564):
-            err = MemoryError 
-            # TODO replace with Raise MemoryError
-            break
+    # FIXME (Issue #2)
+    for m in match:
+        if m.group(1):
+            # Book
+            b = m.group(1)
+        else:
+            # Chapter
+            c = m.group(2)
+            # Verse
+            v = m.group(3)
+            # SubText
+            st = m.group(4)
+
+            ref = ''.join([' ', b,
+                           ' ', c,
+                           ':', v])
+            out[ref] = st
+
+            # Every list with length greater than 2564 gets tossed
+            count += 1
+            if (count > 2564):
+                err = MemoryError 
+                # TODO replace with Raise MemoryError
+                break
     return out, count, err
+
     '''
                     for item in m.finditer(vFound):
                         g = item.group(1)
@@ -299,7 +329,7 @@ def make_json(**kwargs):
 
         d = {book: {chapter: {verse: text }}}
 
-    Key-word arguments consist of 'self' and 'filename'.
+    Key-word arguments consist of 'self', 'text', and 'filename'.
 
     Use:
 
@@ -311,31 +341,37 @@ def make_json(**kwargs):
 
             d = make_json(filename=f)
 
-        Return the dictionary as an attribute of the parent object, and write it to file ``f``:
+        Return the dictionary as an attribute of the parent object, using str() ``text``, and write it to file ``f``:
 
-            d = make_json(self='whrwthal', filename='f')
+            d = make_json(self='whrwthal', t=text, filename='f')
 
     '''
     # ===================================================
     # Handling key word arguments:
-    try:
-        keys, values = kwargs.items()
-        if 'self' in keys:
-            if 'whrwthal' in values:
-                self = kwargs['self']
-        if 'filename' in keys:
-            filename = kwargs['filename']
-    except ValueError:
+    keys = kwargs.keys()
+    values = kwargs.values()
+    if 'self' in keys:
+        if 'whrwthal' in values:
+            self = kwargs['self']
+    else:
         # dummy object to stand in for whrwthal...
         # for use in make_json call from shell / interpreter
         self = whrwthal
+    if 't' in keys:
+        text = kwargs['t']
+    else:
+        # dummy string to signify read from file
+        text = None
+    if 'filename' in keys:
+        filename = kwargs['filename']
+    else:
         # dummy filename to signify no file output
         filename = ''
-
     # ===================================================
     # Import source text:
-    with open('src.txt') as f:
-        text = f.read()
+    if not(text):
+        with open('src.txt') as f:
+            text = f.read()
 
     # ===================================================
     # Dictionary Table of Contents:
@@ -375,16 +411,20 @@ def make_json(**kwargs):
     # ===================================================
     # Dictionary Verse Number / Text Pairs:
 
-    # Book Title Group
+    # Book Title Group -- captures more than 2 capitals before a digit
     g1 = '([A-Z]{2,})'
-    # Chapter Number Group
+    # Chapter Number Group -- captures digit before a colon
     g2 = '(\d+)'
-    # Verse Number Group
+    # Verse Number Group -- captures digit after a colon
     g3 = '(\d+)'
-    # SubText Group
-    g4 = '((?:[^\dA-Z]+(?!:\d)|[A-Z](?![A-Z]+ \d+:\d))*)'
-    match = re.finditer(r'(?:%s(?= \d+:\d)|(?!^))(?:%s:%s)?\s*%s'
+    # SubText Group -- captures verse between digits/title, no trailing \s
+    g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
+    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
                         % (g1, g2, g3, g4), text)
+    '''
+    The full pattern is expressed:
+    (?:([A-Z]{2,})(?= \d+:)|(?!^))(?:(\d+):(\d+))?\s((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?![A-Z]+ \d|\d))*)
+    '''
     for m in match:
         if m.group(1):
             # Book Title
@@ -392,20 +432,21 @@ def make_json(**kwargs):
         else:
             # Chapter Number
             c = m.group(2)
-            # Verse Number
-            v = m.group(3)
-            # SubText
-            st = m.group(4)
-            
-            # Initialize dict
-            if b not in d:
-                d[b] = OrderedDict({c: OrderedDict({v: st})})
-            # Initialize subdict
-            elif c not in d[b]:
-                d[b][c] = OrderedDict({v: st})
-            # Populate subdict
-            else:
-                d[b][c][v] = st
+            if m.group(3):
+                # Verse Number
+                v = m.group(3)
+                # SubText
+                st = m.group(4)
+                
+                # Initialize dict
+                if b not in d:
+                    d[b] = OrderedDict({c: OrderedDict({v: st})})
+                # Initialize subdict
+                elif c not in d[b]:
+                    d[b][c] = OrderedDict({v: st})
+                # Populate subdict
+                else:
+                    d[b][c][v] = st
 
     # ===================================================
     # Dictionary Concordance:
@@ -431,13 +472,13 @@ def make_json(**kwargs):
 
 # Consider adding url request to whrwthal-text raw source
 # TODO: Ensure make_json compatibility && add parser.make_* to whrwthal methods
-def make_text(self, **kwargs):
+def make_text(**kwargs):
     '''
     Returns a str():
 
         text = "Alpha ... Omega"
 
-    Key-word arguments consist of 'd', and 'filename'.
+    Key-word arguments consist of 'self', 'd', and 'filename'.
 
     Use:
 
@@ -462,26 +503,30 @@ def make_text(self, **kwargs):
     '''
     # ===================================================
     # Handling key word arguments:
-    try:
-        keys, values = kwargs.items()
-        if 'd' in keys:
-            d = kwargs['d']
-        if 'filename' in keys:
-            filename = kwargs['filename']
-            print(filename)
-    except ValueError:
+    keys = kwargs.keys()
+    values = kwargs.values()
+    if 'self' in keys:
+        if 'whrwthal' in values:
+            self = kwargs['self']
+    else:
+        # dummy object to stand in for whrwthal...
+        # for use in make_json call from shell / interpreter
+        self = whrwthal
+    if 'd' in keys:
+        d = kwargs['d']
+    else:
+        # dummy dictionary to signify read from file
+        d = None
+    if 'filename' in keys:
+        filename = kwargs['filename']
+    else:
         # dummy filename to signify no file output
         filename = ''
-        # dummy dictionary to signify the dictionary
-        # is coming from file, not namespace
-        d = None
-
     # ===================================================
     # Import dictionary:
     if not(d):
         with open('src.json') as f:
             d = json.load(f, object_pairs_hook=OrderedDict)
-
     # ===================================================
     # Parse text from dictionary:
     text = []
@@ -490,17 +535,21 @@ def make_text(self, **kwargs):
             for c in d[b]:
                 if c == '1':
                     # grabs the first verse of the first chapter in a book
-                    # ('Book Chapter:Verse')
-                    first = ''.join(['{} {}:{}'.format(b, c, d[b][c][v])
+                    # (' Book Chapter:Verse')
+                    if b != 'GENESIS':
+                        form = '{} {}:{} {}'
+                    else:
+                        form = ' {} {}:{} {}'
+                    first = ''.join([form.format(b, c, v, d[b][c][v])
                                      for v in d[b][c] if v == '1'])
                     text.append(first)
                     # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{}'.format(c, d[b][c][v])
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v])
                                        for v in d[b][c] if v != '1'])
                     text.append(remains)
                 else:
                     # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{}'.format(c, d[b][c][v]) for v in d[b][c]])
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v]) for v in d[b][c]])
                     text.append(remains)
 
     text = ''.join(text)
