@@ -25,6 +25,8 @@ from whrwthal import handler, io, parser, textile
 # FIXME Determine if it would be better to have just the plain text
 # and utilize regular expressions instead of the dictionary.
 
+# TODO Trim fat: is bkNames necessary?
+
 # By convention, any method call of "self" will be self=whrwthal
 whrwthal.__init__(whrwthal)
 gsize = whrwthal.frame.grid_size()

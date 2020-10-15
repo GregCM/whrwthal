@@ -237,18 +237,21 @@ def phrase(self):
     text = make_text(self, d=self.d)
     # SubText Group
     if self.use_re.get():
+        # OLD (update-me)
+        g4 = '((?:%s(?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)' % (srch)
         # Whatever regular expression the user specifies!
-        match = re.finditer(r'(?:%s(?= \d+:\d)|(?!^))(?:%s:%s)?\s*%s'
+        match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
                             % (g1, g2, g3, g4), text)
     else:
         # Case insensitive search anywhere within a word.
+        # NEW (update-to-me)
+        g4 = '([^\d]+%(srch)s[^\d]+)' % locals()
         # EX: srch = "tempt" -->
         # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
-        g4 = '((?:%s(?!:\d)|[A-Z](?![A-Z]+ \d+:\d))*)' % (srch)
-        match = re.finditer(r'(?:%s(?= \d+:\d)|(?!^))(?:%s:%s)?\s*%s'
+        match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s(?= \d)'
                             % (g1, g2, g3, g4), text, re.IGNORECASE)
-    # ===============================================================
 
+    # ===============================================================
     # Count serves as speed / crash prevention:
     # no one wants to see a 62,000-Count word list.
     count = 0
@@ -404,13 +407,12 @@ def make_json(**kwargs):
                     'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
                     'REV']
 
-    # OderedDict()
     d = OrderedDict()
     # Table of Contents
     d['ToC'] = [self.bkNames, self.bkAbbrv]
-    # ===================================================
-    # Dictionary Verse Number / Text Pairs:
 
+    # PATTERN
+    # ===============================================================
     # Book Title Group -- captures more than 2 capitals before a digit
     g1 = '([A-Z]{2,})'
     # Chapter Number Group -- captures digit before a colon
@@ -425,6 +427,8 @@ def make_json(**kwargs):
     The full pattern is expressed:
     (?:([A-Z]{2,})(?= \d+:)|(?!^))(?:(\d+):(\d+))?\s((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?![A-Z]+ \d|\d))*)
     '''
+    # ===================================================
+    # Dictionary Verse Number / Text Pairs:
     for m in match:
         if m.group(1):
             # Book Title
