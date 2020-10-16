@@ -222,8 +222,6 @@ def phrase(self):
 
     out = OrderedDict()
     srch = self.frame.entry
-    with open('src.txt') as f:
-        text = f.read()
 
     # PATTERN
     # Book Title Group -- captures more than 2 capitals before a digit
@@ -235,7 +233,7 @@ def phrase(self):
     # SubText Group -- captures verse between digits/title, no trailing \s
     g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
     match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
-                        % (g1, g2, g3, g4), text)
+                        % (g1, g2, g3, g4), self.text)
     # SearchMatch
     if self.use_re.get():
         sm = re.compile(r'%(srch)s' % locals())

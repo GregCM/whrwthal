@@ -5,6 +5,7 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
 from configparser import ConfigParser
+from dahuffman.huffmancodec import HuffmanCodec
 import datetime as dt
 import os
 from tkinter import filedialog
