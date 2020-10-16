@@ -6,7 +6,6 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 from configparser import ConfigParser
 from functools import partial
 import re
-import json
 import os
 import signal
 import sys
@@ -99,7 +98,6 @@ def shutdown(self, event=None):
 
         r = messagebox.askyesno(title='Low Footprint',
                                 message=msg)
-
         if r:
             # LFM disabled, and will not be queried again,
             # except as a Checkbox under the Options menu
@@ -107,8 +105,8 @@ def shutdown(self, event=None):
             self.config_obj['FOOTPRINT']['transient'] = 'false'
 
             os.remove('bytes')
-            with open('src.json', 'w') as f:
-                json.dump(self.d, f)
+            with open('src.txt', 'w') as f:
+                f.write(self.text)
 
         else:
             # LFM remains on and shutdown won't query again
@@ -347,10 +345,9 @@ def get_input(self, event=None):
     # Table of contents entry check, any full or abbreviated reference
     ToC = self.bkAbbrv + self.bkNames
     ToC = [C.upper() for C in ToC]
-    unique_words = self.d['CONCORDANCE']
 
     # TODO: (1) Replace UPPER with colorized text (tk attributes)?
-    unique_words = [w.upper() for w in unique_words]
+    self.concordance = [w.upper() for w in self.concordance]
 
     if self.frame.entry is not None:
         upper = self.frame.entry.upper()
@@ -361,8 +358,8 @@ def get_input(self, event=None):
 
         # TODO: (2) Case sensitive search options,
         # potentially supported by the several entries
-        # contained in "unique_words".
-        conc_entries = [W for W in unique_words if W in upper.split()]
+        # contained in "self.concordance".
+        conc_entries = [W for W in self.concordance if W in upper.split()]
         # SEE: "dispensation of"
         con_count = len(conc_entries)
 

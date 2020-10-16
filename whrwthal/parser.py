@@ -25,6 +25,7 @@ import string
 
 from time import time
 
+
 def verse(self):
     '''
     ####################################
@@ -221,7 +222,8 @@ def phrase(self):
 
     out = OrderedDict()
     srch = self.frame.entry
-    text = make_text(d=self.d)
+    with open('src.txt') as f:
+        text = f.read()
 
     # PATTERN
     # Book Title Group -- captures more than 2 capitals before a digit
@@ -398,7 +400,17 @@ def make_json(**kwargs):
 
     # ===================================================
     # Dictionary Concordance:
+    d['CONCORDANCE'] = make_concord(text)
+    # ===================================================
+    # Handle file output:
+    if os.path.exists(filename):
+        with open('src.json', 'w') as f:
+            json.dump(d, f)
+    # ===================================================
+    return d
 
+
+def make_concord(text):
     # Exclude punctuation & numerberation
     words = []
     alpha = string.ascii_letters + ' '
@@ -408,14 +420,7 @@ def make_json(**kwargs):
     words.remove('')
     # Alphabetize
     words.sort()
-    d['CONCORDANCE'] = words
-    # ===================================================
-    # Handle file output:
-    if os.path.exists(filename):
-        with open('src.json', 'w') as f:
-            json.dump(d, f)
-    # ===================================================
-    return d
+    return words
 
 
 # Consider adding url request to whrwthal-text raw source

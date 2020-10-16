@@ -7,7 +7,6 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 from configparser import ConfigParser
 import datetime as dt
 import os
-import json
 from tkinter import filedialog
 
 
@@ -74,12 +73,12 @@ def browse(self, entry, cfg_key):
 
 
 def encode_file(self):
-    with open('src.json') as f:
-        bible_dict = f.read()
+    with open('src.txt') as f:
+        text = f.read()
 
-    os.remove('src.json')
-    codec = HuffmanCodec.from_data(bible_dict)
-    b = codec.encode(bible_dict)
+    os.remove('src.txt')
+    codec = HuffmanCodec.from_data(text)
+    b = codec.encode(text)
     with open('bytes', 'wb') as f:
         f.write(b)
 
@@ -88,8 +87,8 @@ def encode_file(self):
 
 def decode_file(self):
     os.remove('bytes')
-    with open('src.json', 'w') as f:
-        json.dump(self.bible_dict, f)
+    with open('src.txt', 'w') as f:
+        f.write(self.text)
 
     with open('config.ini', 'w') as cfg:
         self.config_obj.write(cfg)

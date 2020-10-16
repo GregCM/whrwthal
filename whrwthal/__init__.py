@@ -4,7 +4,6 @@ whrwthal is an offline bible referencing module.
 Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
-from ast import literal_eval
 from configparser import ConfigParser
 from collections import OrderedDict
 from dahuffman.huffmancodec import HuffmanCodec
@@ -301,7 +300,7 @@ def __init__(self, configfile='config.ini'):
 
     # LOW FOOTPRINT MODE
     if LFM:
-        # First time decode of bible data
+        # Decode bible string
         with open('bytes', 'rb') as f:
             # comes as bytes
             b = f.read()
@@ -309,16 +308,42 @@ def __init__(self, configfile='config.ini'):
         thread = Thread(target=self.handler.start, args=(self,))
         thread.start()
 
-        # b decoded with json delimiters as strings objects
         codec = HuffmanCodec.load('.codec')
-        # literal_eval interprets the delimiters into type=dict
-        self.d = literal_eval(codec.decode(b))
-        [self.bkNames, self.bkAbbrv] = self.d['ToC']
-
+        self.text = codec.decode(b)
     else:
         # Import bible dictionary
-        with open('src.json', 'r') as f:
-            self.d = json.load(f, object_pairs_hook=OrderedDict)
+        with open('src.txt') as f:
+            self.text = f.read()
 
-        # Parse Table of Contents
-        [self.bkNames, self.bkAbbrv] = self.d['ToC']
+    # Table of Contents
+    self.bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
+                    'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
+                    'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
+                    'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
+                    'ECCLESIASTES', 'SONG OF SONGS', 'ISAIAH', 'JEREMIAH',
+                    'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
+                    'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
+                    'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
+                    'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
+                    'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
+                    'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
+                    'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
+                    'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
+                    'IIIJOHN', 'JUDE', 'REVELATION']
+    self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
+                    'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
+                    'I KI', 'II KI', 'I CHRON', 'II CHRON',
+                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
+                    'ECC', 'SONG', 'ISA', 'JER',
+                    'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
+                    'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
+                    'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
+                    'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
+                    'GAL', 'EPH', 'PHLP', 'COL',
+                    'I THESS', 'II THESS', 'I TIM',
+                    'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
+                    'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
+                    'REV']
+
+    # Concordance
+    self.concordance = parser.make_concord(self.text)
