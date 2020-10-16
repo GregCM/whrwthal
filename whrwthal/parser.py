@@ -22,10 +22,8 @@ import json
 import random as rnd
 import re
 import string
-import whrwthal
 
-import time
-
+from time import time
 
 def verse(self):
     '''
@@ -222,44 +220,33 @@ def phrase(self):
     '''
 
     out = OrderedDict()
-
     srch = self.frame.entry
+    text = make_text(d=self.d)
 
     # PATTERN
-    # ===============================================================
-    # Book Title Group
+    # Book Title Group -- captures more than 2 capitals before a digit
     g1 = '([A-Z]{2,})'
-    # Chapter Number Group
+    # Chapter Number Group -- captures digit before a colon
     g2 = '(\d+)'
-    # Verse Number Group
+    # Verse Number Group -- captures digit after a colon
     g3 = '(\d+)'
-
-    text = make_text(self, d=self.d)
-    # SubText Group
+    # SubText Group -- captures verse between digits/title, no trailing \s
+    g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
+    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
+                        % (g1, g2, g3, g4), text)
+    # SearchMatch
     if self.use_re.get():
-        # OLD (update-me)
-        g4 = '((?:%s(?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)' % (srch)
-        # Whatever regular expression the user specifies!
-        match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
-                            % (g1, g2, g3, g4), text)
+        sm = re.compile(r'%(srch)s' % locals())
     else:
-        # Case insensitive search anywhere within a word.
-        # NEW (update-to-me)
-        g4 = '([^\d]+%(srch)s[^\d]+)' % locals()
-        # EX: srch = "tempt" -->
-        # [Tempt, tempted, aTTempt, contEmpT, TEMPTATION, ...]
-        match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s(?= \d)'
-                            % (g1, g2, g3, g4), text, re.IGNORECASE)
-
-    # ===============================================================
+        # Case insensitive search, anywhere in a word.
+        # --> "the" Returns "these", "anthem", "THE", etc.
+        sm = re.compile(r'[^\d]*%(srch)s[^\d]*' % locals(), re.IGNORECASE)
     # Count serves as speed / crash prevention:
     # no one wants to see a 62,000-Count word list.
     count = 0
     err = None
-    # FIXME (Issue #2)
     for m in match:
         if m.group(1):
-            # Book
             b = m.group(1)
         else:
             # Chapter
@@ -269,61 +256,18 @@ def phrase(self):
             # SubText
             st = m.group(4)
 
-            ref = ''.join([' ', b,
-                           ' ', c,
-                           ':', v])
-            out[ref] = st
+            # Search in st?
+            if sm.match(st):
+                ref = ''.join([b, ' ', c, ':', v])
+                out[ref] = st
 
-            # Every list with length greater than 2564 gets tossed
-            count += 1
-            if (count > 2564):
-                err = MemoryError 
-                # TODO replace with Raise MemoryError
-                break
+                # Every list with length greater than 2564 gets tossed
+                count += 1
+                if (count > 2564):
+                    err = MemoryError
+                    # TODO replace with Raise MemoryError
+                    break
     return out, count, err
-
-    '''
-                    for item in m.finditer(vFound):
-                        g = item.group(1)
-                        vFound = m.sub(g.upper(), vFound)
-                        # \S instead of \w to include
-                        # punctuation at fringes of words
-
-                        # pattern appears at Start Of Line
-                        o = re.compile(r'^\S*%s\S* \S* \S*' % (g.upper()))
-                        so = o.search(vFound)
-                        # pattern appears in Middle Of Line
-                        p = re.compile(r'\S* \S*%s\S* \S*' % (g.upper()))
-                        sp = p.search(vFound)
-                        # pattern appears at End Of Line
-                        q = re.compile(r'\S* \S* \S*%s\S*$' % (g.upper()))
-                        sq = q.search(vFound)
-
-                        if so:
-                            # print('o')
-                            iterspan = '%s...' % (
-                                       ''.join([vFound[i.start():i.end()]
-                                                for i in o.finditer(vFound)]))
-                        elif sp:
-                            # print('p')
-                            iterspan = '...%s...' % (
-                                       ''.join([vFound[i.start():i.end()]
-                                                for i in p.finditer(vFound)]))
-                        elif sq:
-                            # print('q')
-                            iterspan = '...%s...' % (
-                                       ''.join([vFound[i.start():i.end()]
-                                                for i in q.finditer(vFound)]))
-
-                        vrsNumb = ''.join([c for c in vFound if c.isdigit()])
-                        vrsAlph = ''.join([c for c in vFound
-                                           if not(c.isdigit())])
-                        ref = ''.join([' ', b,
-                                       ' ', c,
-                                       ':', vrsNumb,
-                                       '\n%(iterspan)s' % locals()])
-                        out[ref] = vrsAlph
-    '''
 
 
 def make_json(**kwargs):
@@ -482,7 +426,7 @@ def make_text(**kwargs):
 
         text = "Alpha ... Omega"
 
-    Key-word arguments consist of 'self', 'd', and 'filename'.
+    Key-word arguments consist of 'd' and 'filename'.
 
     Use:
 
@@ -494,14 +438,14 @@ def make_text(**kwargs):
 
             text = make_text(filename='f')
 
-        Return the string as an attribute of the parent object, and write it to plain-text file ``f``:
+        Return the string and write it to plain-text file ``f``:
 
-            text = make_text(self='whrwthal', filename='f')
+            text = make_text(filename='f')
 
-        Return the string as an attribute of the parent object, and write it to plain-text file ``f``,
-        using dictionary ``dict()`` as the source instead of default ``./src.json``:
+        Return the string and write it to plain-text file ``f``, using namespace
+        dictionary ``dict()`` as the source instead of default ``./src.json``:
 
-            text = make_text(self='whrwthal', d=dict(), filename='f')
+            text = make_text(d=dict(), filename='f')
 
     Alternative source texts @ https://github.com/GregCM/whrwthal/tree/texts
     '''
@@ -509,13 +453,6 @@ def make_text(**kwargs):
     # Handling key word arguments:
     keys = kwargs.keys()
     values = kwargs.values()
-    if 'self' in keys:
-        if 'whrwthal' in values:
-            self = kwargs['self']
-    else:
-        # dummy object to stand in for whrwthal...
-        # for use in make_json call from shell / interpreter
-        self = whrwthal
     if 'd' in keys:
         d = kwargs['d']
     else:
@@ -540,7 +477,7 @@ def make_text(**kwargs):
                 if c == '1':
                     # grabs the first verse of the first chapter in a book
                     # (' Book Chapter:Verse')
-                    if b != 'GENESIS':
+                    if b == 'GENESIS':
                         form = '{} {}:{} {}'
                     else:
                         form = ' {} {}:{} {}'
