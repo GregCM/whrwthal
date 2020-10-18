@@ -27,15 +27,15 @@ def verse(self):
     out = OrderedDict()
     destination = self.frame.entry
     # Saves the alphabetic part of destination
-    alph = ''.join([char for char in destination
+    alph = ''.join([char.upper() for char in destination
                     if (char.isalpha() or char.isspace())])
     # Saves the numeric part of destination
     numb = ''.join([char for char in destination
                     if (not(char.isalpha()) and not(char.isspace()))])
     # Search Pattern
-    fore = '(%(alph)s).*?(?<= (%(numb)s) )' % locals()
-    aft = '(?= [A-Z]{2,} \d| \d:)'
-    match = re.finditer(r'%(fore)s(.+?)%(aft)s' % locals(), self.text)
+    stern = '(%(alph)s).*?(?<= (%(numb)s) )' % locals()
+    bow = '(?= [A-Z]{2,} \d| \d)'
+    match = re.finditer(r'%(stern)s(.+?)%(bow)s' % locals(), self.text)
     count = 0
     err = None
     for m in match:
