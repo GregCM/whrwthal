@@ -23,10 +23,39 @@ import random as rnd
 import re
 import string
 
-from time import time
-
-
 def verse(self):
+    out = OrderedDict()
+    destination = self.frame.entry
+    # Saves the alphabetic part of destination
+    alph = ''.join([char for char in destination
+                    if (char.isalpha() or char.isspace())])
+    # Saves the numeric part of destination
+    numb = ''.join([char for char in destination
+                    if (not(char.isalpha()) and not(char.isspace()))])
+    # Search Pattern
+    fore = '(%(alph)s).*?(?<= (%(numb)s) )' % locals()
+    aft = '(?= [A-Z]{2,} \d| \d:)'
+    match = re.finditer(r'%(fore)s(.+?)%(aft)s' % locals(), self.text)
+    count = 0
+    err = None
+    for m in match:
+        print(m.groups())
+        b = m.group(1)
+        # Reference group
+        r = m.group(2)
+        st = m.group(3)
+        ref = ' '.join([b, r])
+        out[ref] = st
+        # Every list with length greater than 2564 gets tossed
+        count += 1
+        if (count > 2564):
+            err = MemoryError
+            # TODO replace with Raise MemoryError
+            break
+    return out, count, err
+
+
+def VERSE(self):
     '''
     ####################################
     ##                                ##
@@ -35,17 +64,18 @@ def verse(self):
     ####################################
     '''
     # Initialize 'out' for concatenation.
-    out = OrderedDict({'verses': [], 'label': ''})
+    out = OrderedDict()
 
     err = None
     location = self.frame.entry
     loc = []
 
     # Saves the alphabetic part of location
-    locAlph = ''.join([char for char in location if (char.isalpha() or char.isspace())])
+    locAlph = ''.join([char for char in location
+                       if (char.isalpha() or char.isspace())])
     # Saves the numeric part of location
-    locNumb = ''.join([char for char in location if
-                            (not(char.isalpha()) and not(char.isspace()))])
+    locNumb = ''.join([char for char in location
+                       if (not(char.isalpha()) and not(char.isspace()))])
 
     loc.append(locAlph)
     # Combine the alphabetic and numeric parts to loc
@@ -65,14 +95,12 @@ def verse(self):
         if inToC:
             book = self.bkAbbrv[b]
             # The following Marks for header update
-            bkMark = self.bkNames[b]
-            out['label'] = bkMark
+            ref = self.bkNames[b]
             break
         # SEE <TODO (3)> in getInput
         elif not(locAlph):
             book = 'all'
-            bkMark = 'Parellel References'
-            out['label'] = bkMark
+            ref = 'Parellel References'
             self.close_window(self)
             break
         # Proceed to next book. If no match is
@@ -126,7 +154,7 @@ def verse(self):
     if chpRef == '0':
         cKeyList = range(len(outFind.keys()))
         # Hone in on a chapter for the verse loop sake:
-        out['verses'].append('\n %s' % out['label'])
+        out[ref] = '\n %s' % ref
         for cKey in cKeyList:
             cKey = str(cKey+1)
             # LOOP through verses keys
@@ -137,7 +165,7 @@ def verse(self):
             # Verses acquired!
             cf = '\n'.join([cFind[str(vKey + 1)]
                             for v in vKeyList if v == '1'])
-            out['verses'].append('\n\n Chapter %(cKey)s\n%(cf)s' % locals())
+            out[ref] = '\n\n Chapter %(cKey)s\n%(cf)s' % locals()
                                  
     else:
         cKey = chpRef
@@ -150,10 +178,10 @@ def verse(self):
             # Plural or not?
             if cMax == 1:
                 noCRef = ('ortunetly, %s only has %i chapter'
-                          % (bkMark, cMax))
+                          % (ref, cMax))
             else:
                 noCRef = ('ortunetly, %s only has %i chapters'
-                          % (bkMark, cMax))
+                          % (ref, cMax))
             fortunate = rnd.randint(0, 1)
             if fortunate:
                 noCRef = '\n F%s' % (noCRef)
@@ -162,39 +190,39 @@ def verse(self):
 
         # If only chapter is input, output whole chapter
         if vrsRef == '0':
-            out['label'] = '%(bkMark)s%(cKey)s' % locals()
+            ref = '%(ref)s%(cKey)s' % locals()
             vKeyList = range(len(cFind.keys()))
-            out['verses'].append('\n %s' % (out['label']))
+            out[ref] = '\n %s' % (ref)
             # LOOP through these verses, and
             # concatenate each verse-field's string.
-            out['verses'].append('\n'.join([cFind[str(vKey + 1)]
-                                           for vKey in vKeyList]))
+            out[ref] = '\n'.join([cFind[str(vKey + 1)]
+                                  for vKey in vKeyList])
 
         # Range of verses
         elif severalVrs:
             vMax = len(cFind.keys())
             try:
-                out['verses'].append('\n'.join([cFind[str(vKey)] for vKey in range(fV, lV)]))
+                out[ref] = '\n'.join([cFind[str(vKey)] for vKey in range(fV, lV)])
                 vEnd = lV
             except KeyError:
                 # Verse number larger than max number of verses in chapter
                 vEnd = vMax
-                out['verses'].append('\n'.join([cFind[str(vEnd)] for vKey in range(fV, vMax)]))
+                out[ref] = '\n'.join([cFind[str(vEnd)] for vKey in range(fV, vMax)])
                 # --> print only to chapter's end and cast change to label
             finally:
-                out['label'] = ''.join([out['label'], ':%i-%i' % (fV, vEnd - 1)])
+                ref = ''.join([ref, ':%i-%i' % (fV, vEnd - 1)])
 
         # Just one verse
         else:
             vKey = vrsRef
-            out['label'] = ''.join([out['label'], ':%s' % (vKey)])
+            ref = '0'
             try:
                 # Verse acquired!
-                out['verses'].append(cFind[vKey])
+                out[ref] = cFind[vKey]
             except KeyError:
                 vMax = len(cFind.keys())
                 noVRef = ('ortunetly, %s %s only has %i verses'
-                          % (bkMark, chpRef, vMax))
+                          % (ref, chpRef, vMax))
                 fortunate = rnd.randint(0, 1)
                 if fortunate:
                     noVRef = '\n F' % (noVRef)
@@ -204,8 +232,6 @@ def verse(self):
 
     self.textile.update(self, out['label'])
     # list-ify because of bad downstream coding... on my TODO
-    out['verses'] = [out['verses']]
-    out['label'] = [out['label']]
     # TODO: count > 1 for instances such as many chapters containing "1-3"
     count = 1
     return out, count, err
