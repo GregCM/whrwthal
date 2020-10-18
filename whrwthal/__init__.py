@@ -346,4 +346,4 @@ def __init__(self, configfile='config.ini'):
                     'REV']
 
     # Concordance
-    self.concordance = parser.make_concord(self.text)
+    self.concordance = parser.make_concord(self, self.text)

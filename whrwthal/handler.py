@@ -294,8 +294,10 @@ def adv_opts(self, frame, r, c, s):
 
 
 def regex(self):
-    # A method to place regular expression syntax around the Search Bar
-    # and enable the use of it in handler.get_in()
+    '''
+    A method to place regular expression syntax around the Search Bar
+    and enable the use of it in handler.get_in()
+    '''
     if self.use_re.get():
         self.frame.leading = tk.Label(self.frame, text='r\'')
         self.frame.leading.grid(row=3, column=0, sticky='e')
@@ -308,7 +310,6 @@ def regex(self):
     else:
         self.frame.leading.grid_remove()
         self.frame.trailing.grid_remove()
-
     # Consider regex preference housing in "config.ini"
 
 
@@ -346,7 +347,7 @@ def get_input(self, event=None):
     ToC = self.bkAbbrv + self.bkNames
     ToC = [C.upper() for C in ToC]
 
-    # TODO: (1) Replace UPPER with colorized text (tk attributes)?
+    # TODO: (1) Replace UPPER results with colorized text (tk attributes)?
     self.concordance = [w.upper() for w in self.concordance]
 
     if self.frame.entry is not None:
@@ -356,9 +357,6 @@ def get_input(self, event=None):
         ToC_entries = [e for e in upper.split() if e in ToC]
         ToC_count = len(ToC_entries)
 
-        # TODO: (2) Case sensitive search options,
-        # potentially supported by the several entries
-        # contained in "self.concordance".
         conc_entries = [W for W in self.concordance if W in upper.split()]
         # SEE: "dispensation of"
         con_count = len(conc_entries)
@@ -393,14 +391,15 @@ def get_input(self, event=None):
         print('get_input:: 2')
         out, vcount, verr = self.parser.verse(self)
         pout, pcount, perr = self.parser.phrase(self)
-        out.extend(pout)
+        # append pout to out as a combined dict
+        for key in pout:
+            out[key] = pout[key]
 
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
         print('get_input:: 3')
         out, pcount, perr = self.parser.phrase(self)
 
     elif (c and not(any([a, b]))):
-        # TODO: incorporate number searches
         print('get_input:: 4')
         out, vcount, verr = self.parser.verse(self)
 

@@ -23,24 +23,101 @@ import random as rnd
 import re
 import string
 
+
+def phrase(self):
+    '''
+    ###########################
+    ##                       ##
+    ## For Searching Phrases ##
+    ##                       ##
+    ###########################
+    '''
+
+    out = OrderedDict()
+    srch = self.frame.entry
+
+    # PATTERN
+    # Book Title Group -- captures more than 2 capitals before a digit
+    g1 = '([A-Z]+)'
+    # Chapter Number Group -- captures digit before a colon
+    g2 = '(\d+)'
+    # Verse Number Group -- captures digit after a colon
+    g3 = '(\d+)'
+    # SubText Group -- captures verse between digits/title, no trailing \s
+    g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
+    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
+                        % (g1, g2, g3, g4), self.text)
+    # SearchMatch
+    if self.use_re.get():
+        sm = re.compile(r'%(srch)s' % locals())
+    else:
+        # Case insensitive search, anywhere in a word.
+        # --> "the" Returns "these", "anthem", "THE", etc.
+        sm = re.compile(r'[^\d]*%(srch)s[^\d]*' % locals(), re.IGNORECASE)
+    # Count serves as speed / crash prevention:
+    # no one wants to see a 62,000-Count word list.
+    count = 0
+    err = None
+    for m in match:
+        if m.group(1):
+            b = m.group(1)
+        else:
+            # Chapter
+            c = m.group(2)
+            # Verse
+            v = m.group(3)
+            # SubText
+            st = m.group(4)
+
+            # Search in st?
+            if sm.match(st):
+                ref = ''.join([b, ' ', c, ':', v])
+                out[ref] = st
+
+                # Every list with length greater than 2564 gets tossed
+                count += 1
+                if (count > 2564):
+                    err = MemoryError
+                    # TODO replace with Raise MemoryError
+                    break
+    return out, count, err
+
+
 def verse(self):
     out = OrderedDict()
     destination = self.frame.entry
     # Saves the alphabetic part of destination
-    alph = ''.join([char.upper() for char in destination
-                    if (char.isalpha() or char.isspace())])
+    alph = ''.join([char.upper() for char in destination if char.isalpha()])
     # Saves the numeric part of destination
     numb = ''.join([char for char in destination
                     if (not(char.isalpha()) and not(char.isspace()))])
-    # Search Pattern
-    stern = '(%(alph)s).*?(?<= (%(numb)s) )' % locals()
-    bow = '(?= [A-Z]{2,} \d| \d)'
-    match = re.finditer(r'%(stern)s(.+?)%(bow)s' % locals(), self.text)
+    # PATTERN
+    # ===============================================================
+    # Specified book
+    if alph:
+        alph = '(%(alph)s).*?' % locals()
+    else:
+        alph = '()'
+    # Specified chapter and / or verse number
+    if numb:
+        numb = '(?<= (%(numb)s) )'
+        trail = '(?= \d| [A-Z]+ \d|$)'
+    else:
+        # Grab the whole book
+        numb = '()'
+        trail = '(?= [A-Z]+ \d|$)'
+    lead = '%(alph)s%(numb)s' % locals()
+    match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
+    # ===============================================================
     count = 0
     err = None
     for m in match:
-        print(m.groups())
-        b = m.group(1)
+        if m.group(1):
+            b = m.group(1)
+        # No book was specified (or found)
+        else:
+            # Try every book with the verse specified
+            b = self.bkNames[count]
         # Reference group
         r = m.group(2)
         st = m.group(3)
@@ -53,6 +130,243 @@ def verse(self):
             # TODO replace with Raise MemoryError
             break
     return out, count, err
+
+
+def make_json(**kwargs):
+    '''
+    Returns a nested dictionary:
+
+        d = {book: {chapter: {verse: text }}}
+
+    Key-word arguments consist of 'self', 'text', and 'filename'.
+
+    Use:
+
+        Return the dictionary, don't write to file:
+
+            d = make_json()
+
+        Return the dictionary and write it to file ``f``:
+
+            d = make_json(filename=f)
+
+        Return the dictionary as an attribute of the parent object, using str() ``text``, and write it to file ``f``:
+
+            d = make_json(self='whrwthal', t=text, filename='f')
+
+    '''
+    # ===================================================
+    # Handling key word arguments:
+    keys = kwargs.keys()
+    values = kwargs.values()
+    if 'self' in keys:
+        if 'whrwthal' in values:
+            self = kwargs['self']
+    else:
+        # dummy object to stand in for whrwthal...
+        # for use in make_json call from shell / interpreter
+        self = whrwthal
+    if 't' in keys:
+        text = kwargs['t']
+    else:
+        # dummy string to signify read from file
+        text = None
+    if 'filename' in keys:
+        filename = kwargs['filename']
+    else:
+        # dummy filename to signify no file output
+        filename = ''
+    # ===================================================
+    # Import source text:
+    if not(text):
+        with open('src.txt') as f:
+            text = f.read()
+
+    # ===================================================
+    # Dictionary Table of Contents:
+    self.bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
+                    'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
+                    'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
+                    'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
+                    'ECCLESIASTES', 'SONGOFSONGS', 'ISAIAH', 'JEREMIAH',
+                    'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
+                    'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
+                    'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
+                    'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
+                    'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
+                    'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
+                    'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
+                    'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
+                    'IIIJOHN', 'JUDE', 'REVELATION']
+    self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
+                    'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
+                    'I KI', 'II KI', 'I CHRON', 'II CHRON',
+                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
+                    'ECC', 'SONG', 'ISA', 'JER',
+                    'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
+                    'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
+                    'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
+                    'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
+                    'GAL', 'EPH', 'PHLP', 'COL',
+                    'I THESS', 'II THESS', 'I TIM',
+                    'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
+                    'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
+                    'REV']
+
+    d = OrderedDict()
+    # Table of Contents
+    d['ToC'] = [self.bkNames, self.bkAbbrv]
+
+    # PATTERN
+    # ===============================================================
+    # Book Title Group -- captures more than 2 capitals before a digit
+    g1 = '([A-Z]+)'
+    # Chapter Number Group -- captures digit before a colon
+    g2 = '(\d+)'
+    # Verse Number Group -- captures digit after a colon
+    g3 = '(\d+)'
+    # SubText Group -- captures verse between digits/title, no trailing \s
+    g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
+    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
+                        % (g1, g2, g3, g4), text)
+    '''
+    The full pattern is expressed:
+    (?:([A-Z]+)(?= \d+:)|(?!^))(?:(\d+):(\d+))?\s((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?![A-Z]+ \d|\d))*)
+    '''
+    # ===================================================
+    # Dictionary Verse Number / Text Pairs:
+    for m in match:
+        if m.group(1):
+            # Book Title
+            b = m.group(1)
+        else:
+            # Chapter Number
+            c = m.group(2)
+            if m.group(3):
+                # Verse Number
+                v = m.group(3)
+                # SubText
+                st = m.group(4)
+                
+                # Initialize dict
+                if b not in d:
+                    d[b] = OrderedDict({c: OrderedDict({v: st})})
+                # Initialize subdict
+                elif c not in d[b]:
+                    d[b][c] = OrderedDict({v: st})
+                # Populate subdict
+                else:
+                    d[b][c][v] = st
+
+    # ===================================================
+    # Dictionary Concordance:
+    d['CONCORDANCE'] = make_concord(self, text)
+    # ===================================================
+    # Handle file output:
+    if os.path.exists(filename):
+        with open('src.json', 'w') as f:
+            json.dump(d, f)
+    # ===================================================
+    return d
+
+
+def make_concord(self, text):
+    # Exclude punctuation & numerberation
+    words = []
+    alpha = string.ascii_letters + ' '
+    trim = ''.join([char for char in text if char in alpha])
+    words.extend([w for w in set(re.split(' ', trim))
+                  if w not in self.bkNames])
+    # No space
+    words.remove('')
+    # Alphabetize
+    words.sort()
+    return words
+
+
+# Consider adding url request to whrwthal-text raw source
+# TODO: Ensure make_json compatibility && add parser.make_* to whrwthal methods
+def make_text(**kwargs):
+    '''
+    Returns a str():
+
+        text = "Alpha ... Omega"
+
+    Key-word arguments consist of 'd' and 'filename'.
+
+    Use:
+
+        Return the string, don't write to file:
+
+            text = make_text()
+
+        Return the string and write it to plain-text file ``f``:
+
+            text = make_text(filename='f')
+
+        Return the string and write it to plain-text file ``f``:
+
+            text = make_text(filename='f')
+
+        Return the string and write it to plain-text file ``f``, using namespace
+        dictionary ``dict()`` as the source instead of default ``./src.json``:
+
+            text = make_text(d=dict(), filename='f')
+
+    Alternative source texts @ https://github.com/GregCM/whrwthal/tree/texts
+    '''
+    # ===================================================
+    # Handling key word arguments:
+    keys = kwargs.keys()
+    values = kwargs.values()
+    if 'd' in keys:
+        d = kwargs['d']
+    else:
+        # dummy dictionary to signify read from file
+        d = None
+    if 'filename' in keys:
+        filename = kwargs['filename']
+    else:
+        # dummy filename to signify no file output
+        filename = ''
+    # ===================================================
+    # Import dictionary:
+    if not(d):
+        with open('src.json') as f:
+            d = json.load(f, object_pairs_hook=OrderedDict)
+    # ===================================================
+    # Parse text from dictionary:
+    text = []
+    for b in d:
+        if (b != 'CONCORDANCE') and (b != 'ToC'):
+            for c in d[b]:
+                if c == '1':
+                    # grabs the first verse of the first chapter in a book
+                    # (' Book Chapter:Verse')
+                    if b == 'GENESIS':
+                        form = '{} {}:{} {}'
+                    else:
+                        form = ' {} {}:{} {}'
+                    first = ''.join([form.format(b, c, v, d[b][c][v])
+                                     for v in d[b][c] if v == '1'])
+                    text.append(first)
+                    # remaining verses (' Chapter:Verse')
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v])
+                                       for v in d[b][c] if v != '1'])
+                    text.append(remains)
+                else:
+                    # remaining verses (' Chapter:Verse')
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v]) for v in d[b][c]])
+                    text.append(remains)
+
+    text = ''.join(text)
+    # ===================================================
+    # Handle file output:
+    if os.path.exists(filename):
+        with open('src.txt', 'w') as f:
+            f.write(text)
+    # ===================================================
+    return text
 
 
 def VERSE(self):
@@ -235,298 +549,3 @@ def VERSE(self):
     # TODO: count > 1 for instances such as many chapters containing "1-3"
     count = 1
     return out, count, err
-
-
-def phrase(self):
-    '''
-    ###########################
-    ##                       ##
-    ## For Searching Phrases ##
-    ##                       ##
-    ###########################
-    '''
-
-    out = OrderedDict()
-    srch = self.frame.entry
-
-    # PATTERN
-    # Book Title Group -- captures more than 2 capitals before a digit
-    g1 = '([A-Z]{2,})'
-    # Chapter Number Group -- captures digit before a colon
-    g2 = '(\d+)'
-    # Verse Number Group -- captures digit after a colon
-    g3 = '(\d+)'
-    # SubText Group -- captures verse between digits/title, no trailing \s
-    g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
-    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
-                        % (g1, g2, g3, g4), self.text)
-    # SearchMatch
-    if self.use_re.get():
-        sm = re.compile(r'%(srch)s' % locals())
-    else:
-        # Case insensitive search, anywhere in a word.
-        # --> "the" Returns "these", "anthem", "THE", etc.
-        sm = re.compile(r'[^\d]*%(srch)s[^\d]*' % locals(), re.IGNORECASE)
-    # Count serves as speed / crash prevention:
-    # no one wants to see a 62,000-Count word list.
-    count = 0
-    err = None
-    for m in match:
-        if m.group(1):
-            b = m.group(1)
-        else:
-            # Chapter
-            c = m.group(2)
-            # Verse
-            v = m.group(3)
-            # SubText
-            st = m.group(4)
-
-            # Search in st?
-            if sm.match(st):
-                ref = ''.join([b, ' ', c, ':', v])
-                out[ref] = st
-
-                # Every list with length greater than 2564 gets tossed
-                count += 1
-                if (count > 2564):
-                    err = MemoryError
-                    # TODO replace with Raise MemoryError
-                    break
-    return out, count, err
-
-
-def make_json(**kwargs):
-    '''
-    Returns a nested dictionary:
-
-        d = {book: {chapter: {verse: text }}}
-
-    Key-word arguments consist of 'self', 'text', and 'filename'.
-
-    Use:
-
-        Return the dictionary, don't write to file:
-
-            d = make_json()
-
-        Return the dictionary and write it to file ``f``:
-
-            d = make_json(filename=f)
-
-        Return the dictionary as an attribute of the parent object, using str() ``text``, and write it to file ``f``:
-
-            d = make_json(self='whrwthal', t=text, filename='f')
-
-    '''
-    # ===================================================
-    # Handling key word arguments:
-    keys = kwargs.keys()
-    values = kwargs.values()
-    if 'self' in keys:
-        if 'whrwthal' in values:
-            self = kwargs['self']
-    else:
-        # dummy object to stand in for whrwthal...
-        # for use in make_json call from shell / interpreter
-        self = whrwthal
-    if 't' in keys:
-        text = kwargs['t']
-    else:
-        # dummy string to signify read from file
-        text = None
-    if 'filename' in keys:
-        filename = kwargs['filename']
-    else:
-        # dummy filename to signify no file output
-        filename = ''
-    # ===================================================
-    # Import source text:
-    if not(text):
-        with open('src.txt') as f:
-            text = f.read()
-
-    # ===================================================
-    # Dictionary Table of Contents:
-    self.bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
-                    'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
-                    'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
-                    'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
-                    'ECCLESIASTES', 'SONG OF SONGS', 'ISAIAH', 'JEREMIAH',
-                    'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
-                    'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
-                    'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
-                    'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
-                    'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
-                    'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
-                    'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
-                    'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
-                    'IIIJOHN', 'JUDE', 'REVELATION']
-    self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
-                    'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
-                    'I KI', 'II KI', 'I CHRON', 'II CHRON',
-                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
-                    'ECC', 'SONG', 'ISA', 'JER',
-                    'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
-                    'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
-                    'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
-                    'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
-                    'GAL', 'EPH', 'PHLP', 'COL',
-                    'I THESS', 'II THESS', 'I TIM',
-                    'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
-                    'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
-                    'REV']
-
-    d = OrderedDict()
-    # Table of Contents
-    d['ToC'] = [self.bkNames, self.bkAbbrv]
-
-    # PATTERN
-    # ===============================================================
-    # Book Title Group -- captures more than 2 capitals before a digit
-    g1 = '([A-Z]{2,})'
-    # Chapter Number Group -- captures digit before a colon
-    g2 = '(\d+)'
-    # Verse Number Group -- captures digit after a colon
-    g3 = '(\d+)'
-    # SubText Group -- captures verse between digits/title, no trailing \s
-    g4 = '((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
-    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
-                        % (g1, g2, g3, g4), text)
-    '''
-    The full pattern is expressed:
-    (?:([A-Z]{2,})(?= \d+:)|(?!^))(?:(\d+):(\d+))?\s((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?![A-Z]+ \d|\d))*)
-    '''
-    # ===================================================
-    # Dictionary Verse Number / Text Pairs:
-    for m in match:
-        if m.group(1):
-            # Book Title
-            b = m.group(1)
-        else:
-            # Chapter Number
-            c = m.group(2)
-            if m.group(3):
-                # Verse Number
-                v = m.group(3)
-                # SubText
-                st = m.group(4)
-                
-                # Initialize dict
-                if b not in d:
-                    d[b] = OrderedDict({c: OrderedDict({v: st})})
-                # Initialize subdict
-                elif c not in d[b]:
-                    d[b][c] = OrderedDict({v: st})
-                # Populate subdict
-                else:
-                    d[b][c][v] = st
-
-    # ===================================================
-    # Dictionary Concordance:
-    d['CONCORDANCE'] = make_concord(text)
-    # ===================================================
-    # Handle file output:
-    if os.path.exists(filename):
-        with open('src.json', 'w') as f:
-            json.dump(d, f)
-    # ===================================================
-    return d
-
-
-def make_concord(text):
-    # Exclude punctuation & numerberation
-    words = []
-    alpha = string.ascii_letters + ' '
-    trim = ''.join([char for char in text if char in alpha])
-    words.extend([w for w in set(re.split(' ', trim))])
-    # No space
-    words.remove('')
-    # Alphabetize
-    words.sort()
-    return words
-
-
-# Consider adding url request to whrwthal-text raw source
-# TODO: Ensure make_json compatibility && add parser.make_* to whrwthal methods
-def make_text(**kwargs):
-    '''
-    Returns a str():
-
-        text = "Alpha ... Omega"
-
-    Key-word arguments consist of 'd' and 'filename'.
-
-    Use:
-
-        Return the string, don't write to file:
-
-            text = make_text()
-
-        Return the string and write it to plain-text file ``f``:
-
-            text = make_text(filename='f')
-
-        Return the string and write it to plain-text file ``f``:
-
-            text = make_text(filename='f')
-
-        Return the string and write it to plain-text file ``f``, using namespace
-        dictionary ``dict()`` as the source instead of default ``./src.json``:
-
-            text = make_text(d=dict(), filename='f')
-
-    Alternative source texts @ https://github.com/GregCM/whrwthal/tree/texts
-    '''
-    # ===================================================
-    # Handling key word arguments:
-    keys = kwargs.keys()
-    values = kwargs.values()
-    if 'd' in keys:
-        d = kwargs['d']
-    else:
-        # dummy dictionary to signify read from file
-        d = None
-    if 'filename' in keys:
-        filename = kwargs['filename']
-    else:
-        # dummy filename to signify no file output
-        filename = ''
-    # ===================================================
-    # Import dictionary:
-    if not(d):
-        with open('src.json') as f:
-            d = json.load(f, object_pairs_hook=OrderedDict)
-    # ===================================================
-    # Parse text from dictionary:
-    text = []
-    for b in d:
-        if (b != 'CONCORDANCE') and (b != 'ToC'):
-            for c in d[b]:
-                if c == '1':
-                    # grabs the first verse of the first chapter in a book
-                    # (' Book Chapter:Verse')
-                    if b == 'GENESIS':
-                        form = '{} {}:{} {}'
-                    else:
-                        form = ' {} {}:{} {}'
-                    first = ''.join([form.format(b, c, v, d[b][c][v])
-                                     for v in d[b][c] if v == '1'])
-                    text.append(first)
-                    # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v])
-                                       for v in d[b][c] if v != '1'])
-                    text.append(remains)
-                else:
-                    # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v]) for v in d[b][c]])
-                    text.append(remains)
-
-    text = ''.join(text)
-    # ===================================================
-    # Handle file output:
-    if os.path.exists(filename):
-        with open('src.txt', 'w') as f:
-            f.write(text)
-    # ===================================================
-    return text
