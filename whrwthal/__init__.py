@@ -72,7 +72,7 @@ def __init__(self, configfile='config.ini'):
         self.config_obj['LANGUAGE'] = {'current': 'eng',
                                        'options':
                                        'eng,spa,fre,ger,heb,gre'}
-        self.config_obj['FONT'] = {'font': 'times',
+        self.config_obj['FONT'] = {'font': 'roman',
                                    'text size': '12',
                                    'title size': '25',
                                    'font options':

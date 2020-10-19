@@ -22,7 +22,7 @@ def start(self, t=5.0):
     branch.title('whrwthal')
 
     msg = 'Initializing...'
-    info = tk.Label(branch, text=msg, relief='flat', font=('cambria', 14))
+    info = tk.Label(branch, text=msg, relief='flat', font=('roman', 14))
     progress = ttk.Progressbar(branch, orient='horizontal',
                                length=200, mode='determinate')
     info.pack(padx=10, pady=5)
@@ -136,7 +136,7 @@ def settings(self):
     m_label = tk.Label(m_frame, text='Main Path', relief='flat')
     m_label.grid(row=0, column=0, padx=6, sticky='sw')
 
-    m_entry = tk.Entry(m_frame, relief='sunken', font=('courier', 10))
+    m_entry = tk.Entry(m_frame, relief='sunken', font=('roman', 10))
     m_entry.grid(row=1, column=0, columnspan=4, padx=5, ipadx=50,  sticky='w')
     m_entry.insert('end', config_obj['PATH']['main'])
     # TODO: bug-fix for enter-leave-enter-leave-etc... loop under mouse
@@ -154,7 +154,7 @@ def settings(self):
     s_label = tk.Label(s_frame, text='Save Path', relief='flat')
     s_label.grid(row=2, column=0, padx=5, sticky='sw')
 
-    s_entry = tk.Entry(s_frame, relief='sunken', font=('courier', 10))
+    s_entry = tk.Entry(s_frame, relief='sunken', font=('roman', 10))
     s_entry.grid(row=3, column=0, columnspan=3, padx=5, ipadx=50, sticky='w')
     s_entry.insert('end', config_obj['PATH']['save'])
     # self.s_hover = MouseHover(s_entry, s_entry.get())
@@ -394,14 +394,16 @@ def get_input(self, event=None):
     else:
         count = vcount + pcount
         if count == 1:
-            head = [k for k in d.keys()][0]
-            text = [v for v in d.values()][0]
-            gui_update(self, '{} RESULT MATCHING \"{}\"'.format(
-                           count, self.frame.entry), head, text)
+            h = [k for k in d.keys()][0]
+            t = [v for v in d.values()][0]
+            gui_update(self, status='{} RESULT MATCHING \"{}\"'.format(
+                           count, self.frame.entry), head=h, text=t)
         elif count > 1:
-            head = '...'
-            gui_update(self, '{} RESULTS MATCHING \"{}\"'.format(
-                           count, self.frame.entry), head, '')
+            # OPINIONPOLL: what's a good header to
+            # show while waiting for a selection?
+            h = '...'
+            gui_update(self, status='{} RESULTS MATCHING \"{}\"'.format(
+                           count, self.frame.entry), head=h)
 
             # FIXME this frame sucks
             list_update(self, d)
