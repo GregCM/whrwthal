@@ -6,61 +6,63 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 
 
 def mini_preamble():
-    cross = '''\n\n
--   \\              /  +
-+    \\     _      /   -
--         | |         +
-+         | |         -
--    _____| |_____    +
-+   |_____   _____|   -
--         | |         +
-+         | |         -
--         | |         +
-+         | |         -
--         | |         +
-+         | |         -
--         |_|         +
-+ _______/   \\_______ -
-'''
-
-    version = '''
-______________________
-
-THE KING JAMES BIBLE
-______________________
-
-Please rightly divide and handle with prayer.
-\n\n'''
-
-    return ''.join([cross, version])
+    book =  "\n".join([r"    ,   ,",
+                        r"   /////|",
+                        r"  ///// |",
+                        r" /////  |",
+                        r"|~~~| | |",
+                        r"|===| |/|",
+                        r"| B |/| |",
+                        r"| I | | |",
+                        r"| B | | |",
+                        r"| L |  / ",
+                        r"| E | /  ",
+                        r"|===|/   ",
+                        r"'---'    "])
+    cross = '\n'.join(['\n',
+                       r'   \              /  ',
+                       r'    \     _      /   ',
+                       r'         | |         ',
+                       r'         | |         ',
+                       r'    _____| |_____    ',
+                       r'   |_____   _____|   ',
+                       r'         | |         ',
+                       r'         | |         ',
+                       r'         | |         ',
+                       r'         | |         ',
+                       r'         | |         ',
+                       r'         | |         ',
+                       r'         |_|         ',
+                       r' _______/   \_______ '])
+    version = '\n'.join(['______________________\n',
+                         ' THE KING JAMES BIBLE ',
+                         '______________________',
+                         '\n',
+                         ' Please rightly divide and handle with prayer.'])
+    return '\n'.join([cross, version])
 
 
 def preamble():
-    cross = '''\n\n
--   \\              /  +
-+    \\     _      /   -
--         | |         +
-+         | |         -
--    _____| |_____    +
-+   |_____   _____|   -
--         | |         +
-+         | |         -
--         | |         +
-+         | |         -
--         | |         +
-+         | |         -
--         |_|         +
-+ _______/   \\_______ -
-'''
-
-    version = '''
-______________________
-
-THE KING JAMES BIBLE
-______________________
-
-Please rightly divide and handle with prayer.
-\n\n'''
+    cross = '\n'.join([r'-   \              /  +',
+                       r'+    \     _      /   -',
+                       r'-         | |         +',
+                       r'+         | |         -',
+                       r'-    _____| |_____    +',
+                       r'+   |_____   _____|   -',
+                       r'-         | |         +',
+                       r'+         | |         -',
+                       r'-         | |         +',
+                       r'+         | |         -',
+                       r'-         | |         +',
+                       r'+         | |         -',
+                       r'-         |_|         +',
+                       r'+ _______/   \_______ -'])
+    version = '\n'.join(['______________________',
+                         '\n',
+                         ' THE KING JAMES BIBLE ',
+                         '______________________',
+                         '\n',
+                         ' Please rightly divide and handle with prayer.'])
 
     AppFormat = ''' The format: \n\n When queried "Where To?", a good
 response would be one of the following...
@@ -81,7 +83,7 @@ To find full books --
 ______________________________________________________________\n
 '''
 
-    return ''.join([cross, version, AppFormat])
+    return '\n'.join([cross, version, AppFormat])
 
 
 def update(self, text, just='left'):
