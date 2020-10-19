@@ -382,36 +382,36 @@ def get_input(self, event=None):
     if u:
         print('get_input:: 0')
         # User specified regular expression search (phrases only)
-        out, pcount, perr = self.parser.phrase(self)
+        d, pcount, perr = self.parser.phrase(self)
     elif (a and not(b)) or (a and c):
         print('get_input:: 1')
-        out, vcount, verr = self.parser.verse(self)
+        d, vcount, verr = self.parser.verse(self)
 
     elif (a and b):
         print('get_input:: 2')
-        out, vcount, verr = self.parser.verse(self)
-        pout, pcount, perr = self.parser.phrase(self)
+        d, vcount, verr = self.parser.verse(self)
+        pd, pcount, perr = self.parser.phrase(self)
         # append pout to out as a combined dict
-        for key in pout:
-            out[key] = pout[key]
+        for key in pd:
+            d[key] = pd[key]
 
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
         print('get_input:: 3')
-        out, pcount, perr = self.parser.phrase(self)
+        d, pcount, perr = self.parser.phrase(self)
 
     elif (c and not(any([a, b]))):
         print('get_input:: 4')
-        out, vcount, verr = self.parser.verse(self)
+        d, vcount, verr = self.parser.verse(self)
 
     # Handling errors
     if perr is MemoryError:
         print('get_input ERROR:: 5')
         msg = '\n'.join(['There are too many results for "{}",',
                          'please be more specific.'])
-        messagebox.showwarning('Overloaded Word', msg.format(self.frame.entry))
+        messagebox.showwarning('Overloaded Search', msg.format(self.frame.entry))
 
     elif not(any([u, a, b, c])):
-        out = {}
+        d = {}
         print('get_input ERROR:: 6')
         messagebox.showerror('Error',
                              '"{}" not found.'.format(self.frame.entry))
@@ -421,15 +421,17 @@ def get_input(self, event=None):
             gui_update(self.frame.status_bar,
                        '{} RESULT MATCHING \"{}\"'.format(
                        count, self.frame.entry))
+            text = [v for v in d.values()][0]
+            self.textile.update(self, text)
         elif count > 1:
             gui_update(self.frame.status_bar,
                        '{} RESULTS MATCHING \"{}\"'.format(
                        count, self.frame.entry))
 
-        # A patchy fix that amounts to awful dumb practice
-        list_update(self, out)
-        # FIXME I suck
-        list_update(self, out)
+            # A patchy fix that amounts to awful dumb practice
+            list_update(self, d)
+            # FIXME I suck
+            list_update(self, d)
 
     self.frame.go_b.wait_variable(self.frame.var)
 
