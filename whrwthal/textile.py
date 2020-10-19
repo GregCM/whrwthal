@@ -5,81 +5,42 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
 
-def mini_preamble():
-    cross = '\n'.join(['\n',
-                       '         _____            ',
-                       '        |     |\          ',
-                       '        |     | \         ',
-                       '        |     |  |        ',
-                       ' _______|     |__|____    ',
-                       '|                     |\  ',
-                       '|                     | \ ',
-                       '|_______       _______|  |',
-                       ' \      |     |\       \ |',
-                       '  \_____|     | \_______\|',
-                       '        |     |  |        ',
-                       '        |     |  |        ',
-                       '        |     |  |        ',
-                       '        |     |  |        ',
-                       '        |     |  |        ',
-                       '        |     |  |        ',
-                       '        |_____|  |        ', 
-                       '        \      \ |        ',
-                       '         \______\|        '])
-
-    version = '\n'.join([' _____ _   _ _____   ____ ___ ____  _     _____ ',
-                         '|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
-                         '  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
-                         '  | | |  _  | |___  | |_) | || |_) | |___| |___ ',
-                         '  |_| |_| |_|_____| |____/___|____/|_____|_____|',
-                         '________________________________________________',
-                         '|                                                |',
-                         '|  Please rightly divide and handle with prayer  |',
-                         '|________________________________________________|'])
-    return '\n'.join([cross, version])
 def preamble():
-    cross = '\n'.join([r'-   \              /  +',
-                       r'+    \     _      /   -',
-                       r'-         | |         +',
-                       r'+         | |         -',
-                       r'-    _____| |_____    +',
-                       r'+   |_____   _____|   -',
-                       r'-         | |         +',
-                       r'+         | |         -',
-                       r'-         | |         +',
-                       r'+         | |         -',
-                       r'-         | |         +',
-                       r'+         | |         -',
-                       r'-         |_|         +',
-                       r'+ _______/   \_______ -'])
-    version = '\n'.join(['______________________',
-                         '\n',
-                         ' THE KING JAMES BIBLE ',
-                         '______________________',
-                         '\n',
-                         ' Please rightly divide and handle with prayer.'])
+    cross = '\n'.join([r'         _____            ',
+                       r'        |     |\          ',
+                       r'        |     | \         ',
+                       r'        |     |  |        ',
+                       r' _______|     |__|____    ',
+                       r'|                     |\  ',
+                       r'|                     | \ ',
+                       r'|_______       _______|  |',
+                       r' \      |     |\       \ |',
+                       r'  \_____|     | \_______\|',
+                       r'        |     |  |        ',
+                       r'        |     |  |        ',
+                       r'        |     |  |        ',
+                       r'        |     |  |        ',
+                       r'        |     |  |        ',
+                       r'        |     |  |        ',
+                       r'        |_____|  |        ', 
+                       r'        \      \ |        ',
+                       r'         \______\|  v2.3.1'])
+    v = '\n'.join([r' _____ _   _ _____   ____ ___ ____  _     _____ ',
+                   r'|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
+                   r'  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
+                   r'  | | |  _  | |___  | |_) | || |_) | |___| |___ ',
+                   r'  |_| |_| |_|_____| |____/___|____/|_____|_____|',
+                   r'________________________________________________',
+                   r'|                                                |',
+                   r'|  Please rightly divide and handle with prayer  |',
+                   r'|________________________________________________|'])
+    AppFormat = '\n'.join(['\nA good search looks like...',
+                           '-----------------------------',
+                           'Romans 5:8-10     John 3:16',
+                           'Psalm 119         Philemon',
+                           'word              phrase'])
 
-    AppFormat = ''' The format: \n\n When queried "Where To?", a good
-response would be one of the following...
-
-To find a verse-to-verse passage --
-"Book Chapter:Verse-Verse"
-    EX: "Romans 5:8-10"
-
-To find only one verse --
-"Book Chapter:Verse"
-    EX: "John 3:16"
-To find full chapters --
-"Book Chapter"
-    EX: "Psalm 119"
-To find full books --
-"Book"
-    EX: "Philemon"\n
-______________________________________________________________\n
-'''
-
-    return '\n'.join([cross, version, AppFormat])
-
+    return '\n'.join([cross, v, AppFormat])
 
 def update(self, text, just='left'):
     cls(self.frame)
