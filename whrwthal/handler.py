@@ -125,6 +125,20 @@ def shutdown(self, event=None):
 
 def info(self):
     # TODO: the "about" text under the Help menu
+    book =  "\n".join([r"    ,   ,",
+                        r"   /////|",
+                        r"  ///// |",
+                        r" /////  |",
+                        r"|~~~| | |",
+                        r"|===| |/|",
+                        r"| B |/| |",
+                        r"| I | | |",
+                        r"| B | | |",
+                        r"| L |  / ",
+                        r"| E | /  ",
+                        r"|===|/   ",
+                        r"'---'    "])
+
     return None
 
 
