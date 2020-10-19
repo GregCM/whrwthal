@@ -25,14 +25,6 @@ import string
 
 
 def phrase(self):
-    '''
-    ###########################
-    ##                       ##
-    ## For Searching Phrases ##
-    ##                       ##
-    ###########################
-    '''
-
     out = OrderedDict()
     srch = self.frame.entry
 
@@ -104,15 +96,26 @@ def verse(self):
     # Unspecifed
     else:
         alph = r'()'
-    # Specified chapter and / or verse number
-    # FIXME
-    if numb:
-        numb = r'(?<= (%(numb)s) )' % locals()
-        trail = r'(?= \d| [A-Z]+ \d|$)'
-    else:
+
+    # Specified chapter/verse number (logic from least to most specific)
+    # A book
+    if not(numb):
         # Grab the whole book
         numb = r'()'
         trail = r'(?= [A-Z]+ \d|$)'
+    # A chapter
+    elif ('-' not in numb) and (':' not in numb):
+        trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
+        numb = r'(?<= (%(numb)s) )' % locals()
+    # Some chapters
+    elif ('-' in numb) and (':' not in numb):
+        trail = r'(?= %()s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
+    # A verse
+    elif (':' in numb) and ('-' not in numb):
+        pass
+    # Some verses
+    elif (':' in numb) and ('-' in numb):
+        pass
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
     # ===============================================================
@@ -137,6 +140,103 @@ def verse(self):
             # TODO replace with Raise MemoryError
             break
     return out, count, err
+
+
+def make_text(**kwargs):
+    '''
+    Returns a str():
+
+        text = "Alpha ... Omega"
+
+    Key-word arguments consist of 'd' and 'filename'.
+
+    Use:
+
+        Return the string, don't write to file:
+
+            text = make_text()
+
+        Return the string and write it to plain-text file ``f``:
+
+            text = make_text(filename='f')
+
+        Return the string and write it to plain-text file ``f``:
+
+            text = make_text(filename='f')
+
+        Return the string and write it to plain-text file ``f``, using namespace
+        dictionary ``dict()`` as the source instead of default ``./src.json``:
+
+            text = make_text(d=dict(), filename='f')
+
+    Alternative source texts @ https://github.com/GregCM/whrwthal/tree/texts
+    '''
+    # ===================================================
+    # Handling key word arguments:
+    keys = kwargs.keys()
+    values = kwargs.values()
+    if 'd' in keys:
+        d = kwargs['d']
+    else:
+        # dummy dictionary to signify read from file
+        d = None
+    if 'filename' in keys:
+        filename = kwargs['filename']
+    else:
+        # dummy filename to signify no file output
+        filename = ''
+    # ===================================================
+    # Import dictionary:
+    if not(d):
+        with open('src.json') as f:
+            d = json.load(f, object_pairs_hook=OrderedDict)
+    # ===================================================
+    # Parse text from dictionary:
+    text = []
+    for b in d:
+        if (b != 'CONCORDANCE') and (b != 'ToC'):
+            for c in d[b]:
+                if c == '1':
+                    # grabs the first verse of the first chapter in a book
+                    # (' Book Chapter:Verse')
+                    if b == 'GENESIS':
+                        form = '{} {}:{} {}'
+                    else:
+                        form = ' {} {}:{} {}'
+                    first = ''.join([form.format(b, c, v, d[b][c][v])
+                                     for v in d[b][c] if v == '1'])
+                    text.append(first)
+                    # remaining verses (' Chapter:Verse')
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v])
+                                       for v in d[b][c] if v != '1'])
+                    text.append(remains)
+                else:
+                    # remaining verses (' Chapter:Verse')
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v]) for v in d[b][c]])
+                    text.append(remains)
+
+    text = ''.join(text)
+    # ===================================================
+    # Handle file output:
+    if os.path.exists(filename):
+        with open('src.txt', 'w') as f:
+            f.write(text)
+    # ===================================================
+    return text
+
+
+def make_concord(self, text):
+    # Exclude punctuation & numerberation
+    words = []
+    alpha = string.ascii_letters + ' '
+    trim = ''.join([char for char in text if char in alpha])
+    words.extend([w for w in set(re.split(' ', trim))
+                  if w not in self.bkNames])
+    # No space
+    words.remove('')
+    # Alphabetize
+    words.sort()
+    return words
 
 
 def _make_json(**kwargs):
@@ -273,100 +373,3 @@ def _make_json(**kwargs):
             json.dump(d, f)
     # ===================================================
     return d
-
-
-def make_concord(self, text):
-    # Exclude punctuation & numerberation
-    words = []
-    alpha = string.ascii_letters + ' '
-    trim = ''.join([char for char in text if char in alpha])
-    words.extend([w for w in set(re.split(' ', trim))
-                  if w not in self.bkNames])
-    # No space
-    words.remove('')
-    # Alphabetize
-    words.sort()
-    return words
-
-
-def make_text(**kwargs):
-    '''
-    Returns a str():
-
-        text = "Alpha ... Omega"
-
-    Key-word arguments consist of 'd' and 'filename'.
-
-    Use:
-
-        Return the string, don't write to file:
-
-            text = make_text()
-
-        Return the string and write it to plain-text file ``f``:
-
-            text = make_text(filename='f')
-
-        Return the string and write it to plain-text file ``f``:
-
-            text = make_text(filename='f')
-
-        Return the string and write it to plain-text file ``f``, using namespace
-        dictionary ``dict()`` as the source instead of default ``./src.json``:
-
-            text = make_text(d=dict(), filename='f')
-
-    Alternative source texts @ https://github.com/GregCM/whrwthal/tree/texts
-    '''
-    # ===================================================
-    # Handling key word arguments:
-    keys = kwargs.keys()
-    values = kwargs.values()
-    if 'd' in keys:
-        d = kwargs['d']
-    else:
-        # dummy dictionary to signify read from file
-        d = None
-    if 'filename' in keys:
-        filename = kwargs['filename']
-    else:
-        # dummy filename to signify no file output
-        filename = ''
-    # ===================================================
-    # Import dictionary:
-    if not(d):
-        with open('src.json') as f:
-            d = json.load(f, object_pairs_hook=OrderedDict)
-    # ===================================================
-    # Parse text from dictionary:
-    text = []
-    for b in d:
-        if (b != 'CONCORDANCE') and (b != 'ToC'):
-            for c in d[b]:
-                if c == '1':
-                    # grabs the first verse of the first chapter in a book
-                    # (' Book Chapter:Verse')
-                    if b == 'GENESIS':
-                        form = '{} {}:{} {}'
-                    else:
-                        form = ' {} {}:{} {}'
-                    first = ''.join([form.format(b, c, v, d[b][c][v])
-                                     for v in d[b][c] if v == '1'])
-                    text.append(first)
-                    # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v])
-                                       for v in d[b][c] if v != '1'])
-                    text.append(remains)
-                else:
-                    # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v]) for v in d[b][c]])
-                    text.append(remains)
-
-    text = ''.join(text)
-    # ===================================================
-    # Handle file output:
-    if os.path.exists(filename):
-        with open('src.txt', 'w') as f:
-            f.write(text)
-    # ===================================================
-    return text
