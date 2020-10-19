@@ -22,9 +22,7 @@ along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 import whrwthal
 from whrwthal import handler, io, parser, textile
 
-# TODO Trim fat: is bkNames necessary?
-
-# By convention, any method call of "self" will be self=whrwthal
+# By convention, any method call of "self" is whrwthal by default
 whrwthal.__init__(whrwthal)
 gsize = whrwthal.frame.grid_size()
 for row in range(gsize[0]):

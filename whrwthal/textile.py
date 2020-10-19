@@ -43,7 +43,7 @@ def preamble():
     return '\n'.join([cross, v, AppFormat])
 
 def update(self, text, just='left'):
-    cls(self.frame)
+    clear(self.frame)
     t = self.frame.text_widget
     t.configure(state='normal')
     t.insert('end', text)
@@ -53,7 +53,7 @@ def update(self, text, just='left'):
     t.configure(state='disabled')
 
 
-def cls(self):
+def clear(self):
     self.text_widget.configure(state='normal')
     self.text_widget.delete('1.0', 'end')
     self.text_widget.configure(state='disabled')

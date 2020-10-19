@@ -12,51 +12,11 @@ import sys
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
+from whrwthal import textile
 
 
-class MouseHover(tk.Menu):
-
-    def __init__(self, parent, text, command=None):
-        self._com = command
-        tk.Menu.__init__(self, parent, tearoff=0)
-        if not isinstance(text, str):
-            raise TypeError('Non-string type: ' + text.__class__.__name__)
-
-        toktext = re.split('\n', text)
-        for t in toktext:
-            self.add_command(label=t)
-
-        self._displayed = False
-        self.master.bind("<Enter>", self._on_enter)
-        self.master.bind("<Leave>", self._on_leave)
-
-    def __del__(self):
-        self.master.unbind("<Enter>")
-        self.master.unbind("<Leave>")
-
-    def _on_enter(self, event):
-        if not self._displayed:
-            self._displayed = True
-            self.post(event.x_root, event.y_root)
-        if self._com is not None:
-            self.master.unbind_all("<Return>")
-            self.master.bind_all("<Return>", self.Click)
-
-    def _on_leave(self, event):
-        if self._displayed:
-            self._displayed = False
-            self.unpost()
-        if self._com is not None:
-            self.unbind_all("<Return>")
-
-    def click(self, event):
-        self._com()
-
-
-def start(self, t=7.429434566786795):
-    # A simple timed progress bar out of ~7.4 seconds
-    # (The average time clocked to perform the
-    #  __init__ huffman decoding on my machine)
+def start(self, t=5.0):
+    # A simple timed progress bar ~5.0 seconds
     branch = tk.Tk()
     branch.resizable(0, 0)
     branch.title('whrwthal')
@@ -126,18 +86,18 @@ def shutdown(self, event=None):
 def info(self):
     # TODO: the "about" text under the Help menu
     book =  "\n".join([r"    ,   ,",
-                        r"   /////|",
-                        r"  ///// |",
-                        r" /////  |",
-                        r"|~~~| | |",
-                        r"|===| |/|",
-                        r"| B |/| |",
-                        r"| I | | |",
-                        r"| B | | |",
-                        r"| L |  / ",
-                        r"| E | /  ",
-                        r"|===|/   ",
-                        r"'---'    "])
+                       r"   /////|",
+                       r"  ///// |",
+                       r" /////  |",
+                       r"|~~~| | |",
+                       r"|===| |/|",
+                       r"| B |/| |",
+                       r"| I | | |",
+                       r"| B | | |",
+                       r"| L |  / ",
+                       r"| E | /  ",
+                       r"|===|/   ",
+                       r"'---'    "])
 
     return None
 
@@ -335,7 +295,7 @@ def get_input(self, event=None):
 
         0:: "Genesis" Returns the entire book of Genesis
 
-    or if entry contents reference a book, and chapter or verse:
+    or If entry contents reference a book, and chapter or verse:
 
         0:: "Rom 12:1" Returns Romans Chapter 12 verse 1.
 
@@ -349,13 +309,15 @@ def get_input(self, event=None):
 
     Else If entry contents only reference a number combination:
 
-        4:: "23" Returns the 23rd chapter of every book (if such a chapter exists)
+        3:: "23" Returns the 23rd chapter of every book (if such a chapter exists)
             "1:3" Returns the 3rd verse from the 1st chapter of every book (if such a verse exists)
             "1-3" Returns the 1st through 3rd verse (a subset) of every chapter of every book (if such a subset exists)
+
+    Else:
+        4:: "word" Returns every verse containing "word"
     '''
     self.frame.var.set(1)
     self.frame.entry = self.frame.SearchBar.get()
-    gui_update(self.frame.header, self.frame.entry.upper())
 
     # Table of contents entry check, any full or abbreviated reference
     ToC = self.bkAbbrv + self.bkNames
@@ -409,13 +371,13 @@ def get_input(self, event=None):
         for key in pd:
             d[key] = pd[key]
 
-    elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-        print('get_input:: 3')
-        d, pcount, perr = self.parser.phrase(self)
-
     elif (c and not(any([a, b]))):
-        print('get_input:: 4')
+        print('get_input:: 3')
         d, vcount, verr = self.parser.verse(self)
+
+    elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
+        print('get_input:: 4')
+        d, pcount, perr = self.parser.phrase(self)
 
     # Handling errors
     if perr is MemoryError:
@@ -432,19 +394,16 @@ def get_input(self, event=None):
     else:
         count = vcount + pcount
         if count == 1:
-            gui_update(self.frame.status_bar,
-                       '{} RESULT MATCHING \"{}\"'.format(
-                       count, self.frame.entry))
+            head = [k for k in d.keys()][0]
             text = [v for v in d.values()][0]
-            self.textile.update(self, text)
+            gui_update(self, '{} RESULT MATCHING \"{}\"'.format(
+                           count, self.frame.entry), head, text)
         elif count > 1:
-            gui_update(self.frame.status_bar,
-                       '{} RESULTS MATCHING \"{}\"'.format(
-                       count, self.frame.entry))
+            head = '...'
+            gui_update(self, '{} RESULTS MATCHING \"{}\"'.format(
+                           count, self.frame.entry), head, '')
 
-            # A patchy fix that amounts to awful dumb practice
-            list_update(self, d)
-            # FIXME I suck
+            # FIXME this frame sucks
             list_update(self, d)
 
     self.frame.go_b.wait_variable(self.frame.var)
@@ -460,9 +419,21 @@ def focus(self, event=None):
     self.focus_set()
 
 
-def gui_update(self, status):
-    self.configure(text=status)
-
+def gui_update(self, **kwargs):
+    '''
+    Key-word arguments consist of 'status', 'head' and 'text'
+    '''
+    keys = kwargs.keys()
+    values = kwargs.values()
+    if 'status' in keys:
+        status = kwargs['status']
+        self.frame.status_bar.configure(text=status)
+    if 'head' in keys:
+        head = kwargs['head']
+        self.frame.header.configure(text=head)
+    if 'text' in keys:
+        text = kwargs['text']
+        textile.update(self, text)
 
 def list_update(self, d, mode='w'):
     # Check that the list doesn't already exists...
@@ -481,7 +452,7 @@ def list_update(self, d, mode='w'):
         c = self.canvas
 
     if mode == 'w':
-        self.textile.cls(self.frame)
+        self.textile.clear(self.frame)
     elif mode == 'a':
         pass
 
@@ -498,7 +469,7 @@ def list_update(self, d, mode='w'):
     for key in d:
         # Populating all the buttons, labeled as their verse reference
         # plus a few words around the searched-phrase (if applicable)
-        bpress.append(partial(self.textile.update, self, d[key]))
+        bpress.append(partial(gui_update, self, head=key, text=d[key]))
         self.blist.append(tk.Button(c, text=key,
                                     width=w, height=h,
                                     command=bpress[-1]))
@@ -507,7 +478,7 @@ def list_update(self, d, mode='w'):
                                     anchor='nw',
                                     width=w, height=h,
                                     window=lb))
-        self.blist[-1].configure(font=('calibri', 9),
+        self.blist[-1].configure(font=('roman', 9),
                                        activebackground='#D2D2D2')
         self.blist[-1].update()
         bheight += h

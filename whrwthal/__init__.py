@@ -254,7 +254,7 @@ def __init__(self, configfile='config.ini'):
                                 sticky='nsew')
 
     # Welcome message!
-    self.textile.update(self, self.textile.mini_preamble(), just='center')
+    self.textile.update(self, self.textile.preamble(), just='center')
 
     '''
     TOOL-TIPS
