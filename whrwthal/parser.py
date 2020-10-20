@@ -103,6 +103,10 @@ def verse(self):
         # Grab the whole book
         numb = r'()'
         trail = r'(?= [A-Z]+ \d|$)'
+    else:
+        numb = r'(?<= (%(numb)s) )' % locals()
+        trail = r'(?= \d| [A-Z]+ \d|$)'
+    '''
     # A chapter
     elif ('-' not in numb) and (':' not in numb):
         trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
@@ -116,6 +120,7 @@ def verse(self):
     # Some verses
     elif (':' in numb) and ('-' in numb):
         pass
+    '''
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
     # ===============================================================
