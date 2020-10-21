@@ -9,7 +9,7 @@ in the public domain, and free to use, quote,
 or share without limit.
 
 For general support, or if you have any
-questions about the app's functionality,
+questions about whrwthal's functionality,
 the content of the word of God, or
 anything else related, feel free
 to contact me directly.
@@ -77,14 +77,10 @@ def phrase(self):
 
 def verse(self):
     out = OrderedDict()
-    # Saves the alphabetic part
+    # Alphabetic part of user's input
+    # ===============================================================
     alph = ''.join([char.upper() for char in self.frame.entry
                     if char.isalpha()])
-    # Saves the numeric part
-    numb = ''.join([char for char in self.frame.entry
-                    if (not(char.isalpha()) and not(char.isspace()))])
-    # PATTERN
-    # ===============================================================
     # Specified book
     if (alph) and (alph not in self.bkAbbrv):
         alph = r'(%(alph)s).*?' % locals()
@@ -96,26 +92,35 @@ def verse(self):
     # Unspecifed
     else:
         alph = r'()'
-
+    # ===============================================================
+    # Numeric part of user's input
+    # ===============================================================
+    numb = ''.join([char for char in self.frame.entry
+                    if (not(char.isalpha()) and not(char.isspace()))])
     # Specified chapter/verse number (logic from least to most specific)
     # A book
     if not(numb):
         # Grab the whole book
         numb = r'()'
         trail = r'(?= [A-Z]+ \d|$)'
+    # Some chapters
+    elif ('-' in numb) and (':' not in numb):
+        trail = r'(?= %()s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
     # A chapter
     elif ('-' not in numb) and (':' not in numb):
         trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
         numb = r'(?<= (%(numb)s) )' % locals()
-    # Some chapters
-    elif ('-' in numb) and (':' not in numb):
-        trail = r'(?= %()s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
-    # A verse
-    elif (':' in numb) and ('-' not in numb):
-        pass
     # Some verses
     elif (':' in numb) and ('-' in numb):
+        versenumb = numb.split(':')[1].split('-')
+        trail = r'(?= %s| [A-Z]+ \d|$)' % (str(int(versenumb[1]) + 1))
+        numb = r'(?<= (%(numb)s) )' % locals()
         pass
+    # A verse
+    elif (':' in numb) and ('-' not in numb):
+        versenumb = numb.split(':')
+        trail = r'(?= %s| [A-Z]+ \d|$)' % (str(int(versenumb) + 1))
+        numb = r'(?<= (%(numb)s) )' % locals()
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
     # ===============================================================
