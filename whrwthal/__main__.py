@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 '''
 This file is a part of whrwthal.
@@ -20,10 +20,11 @@ along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import whrwthal
-from whrwthal import handler, io, parser, textile
 
-# By convention, any method call of "self" is whrwthal by default
+# base
 whrwthal.__init__(whrwthal)
+# ui
+whrwthal.handler.Reader.__init__(whrwthal)
 gsize = whrwthal.frame.grid_size()
 for row in range(gsize[0]):
     whrwthal.tk.Grid.rowconfigure(whrwthal.frame, row, weight=1)
