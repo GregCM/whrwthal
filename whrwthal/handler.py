@@ -11,7 +11,6 @@ import signal
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
-from whrwthal import textile
 
 
 class Reader():
@@ -630,7 +629,7 @@ def gui_update(self, **kwargs):
         self.frame.header.configure(text=head)
     if 'text' in keys:
         text = kwargs['text']
-        textile.update(self, text)
+        self.textile.update(self, text)
 
 def list_update(self, d, mode='w'):
     # Check that the list doesn't already exists...

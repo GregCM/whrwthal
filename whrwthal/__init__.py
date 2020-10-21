@@ -9,7 +9,7 @@ from dahuffman.huffmancodec import HuffmanCodec
 import os
 import sys
 from threading import Thread
-from whrwthal import parser
+from whrwthal import handler, io, parser, textile
 
 
 def __init__(self, configfile='config.ini'):

@@ -253,23 +253,11 @@ def _make_json(**kwargs):
         Return the dictionary and write it to file ``f``:
 
             d = _make_json(filename=f)
-
-        Return the dictionary as an attribute of the parent object, using str() ``text``, and write it to file ``f``:
-
-            d = _make_json(self='whrwthal', t=text, filename='f')
-
     '''
     # ===================================================
     # Handling key word arguments:
     keys = kwargs.keys()
     values = kwargs.values()
-    if 'self' in keys:
-        if 'whrwthal' in values:
-            self = kwargs['self']
-    else:
-        # dummy object to stand in for whrwthal...
-        # for use in _make_json call from shell / interpreter
-        self = whrwthal
     if 't' in keys:
         text = kwargs['t']
     else:
@@ -288,38 +276,38 @@ def _make_json(**kwargs):
 
     # ===================================================
     # Dictionary Table of Contents:
-    self.bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
-                    'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
-                    'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
-                    'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
-                    'ECCLESIASTES', 'SONGOFSONGS', 'ISAIAH', 'JEREMIAH',
-                    'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
-                    'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
-                    'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
-                    'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
-                    'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
-                    'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
-                    'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
-                    'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
-                    'IIIJOHN', 'JUDE', 'REVELATION']
-    self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
-                    'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
-                    'I KI', 'II KI', 'I CHRON', 'II CHRON',
-                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
-                    'ECC', 'SONG', 'ISA', 'JER',
-                    'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
-                    'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
-                    'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
-                    'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
-                    'GAL', 'EPH', 'PHLP', 'COL',
-                    'I THESS', 'II THESS', 'I TIM',
-                    'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
-                    'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
-                    'REV']
+    bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
+               'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
+               'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
+               'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
+               'ECCLESIASTES', 'SONGOFSONGS', 'ISAIAH', 'JEREMIAH',
+               'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
+               'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
+               'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
+               'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
+               'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
+               'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
+               'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
+               'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
+               'IIIJOHN', 'JUDE', 'REVELATION']
+    bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
+               'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
+               'I KI', 'II KI', 'I CHRON', 'II CHRON',
+               'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
+               'ECC', 'SONG', 'ISA', 'JER',
+               'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
+               'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
+               'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
+               'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
+               'GAL', 'EPH', 'PHLP', 'COL',
+               'I THESS', 'II THESS', 'I TIM',
+               'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
+               'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
+               'REV']
 
     d = OrderedDict()
     # Table of Contents
-    d['ToC'] = [self.bkNames, self.bkAbbrv]
+    d['ToC'] = [bkNames, bkAbbrv]
 
     # PATTERN
     # ===============================================================
@@ -362,7 +350,8 @@ def _make_json(**kwargs):
 
     # ===================================================
     # Dictionary Concordance:
-    d['CONCORDANCE'] = make_concord(self, text)
+    # (uncomment and add self to _make_json's arguments if dict needs concord)
+    # d['CONCORDANCE'] = make_concord(self, text)
     # ===================================================
     # Handle file output:
     if os.path.exists(filename):
