@@ -8,6 +8,7 @@ from configparser import ConfigParser
 from dahuffman.huffmancodec import HuffmanCodec
 import os
 import sys
+import tkinter as tk
 from threading import Thread
 from whrwthal import handler, io, parser, textile
 
