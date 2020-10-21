@@ -103,16 +103,26 @@ def verse(self):
         # Grab the whole book
         numb = r'()'
         trail = r'(?= [A-Z]+ \d|$)'
+    # Some chapters
+    elif ('-' in numb) and (':' not in numb):
+        # FIXME
+        trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
+        numb = r'(?<= (%(numb)s) )' % locals()
     # A chapter
     elif ('-' not in numb) and (':' not in numb):
+        # FIXME
         trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
         numb = r'(?<= (%(numb)s) )' % locals()
     # Some verses
     elif (':' in numb) and ('-' in numb):
-        versenumb = numb.split(':')[1].split('-')
-        trail = r'(?= %s| [A-Z]+ \d|$)' % (str(int(versenumb[1]) + 1))
+        # FIXME
+        lv = int(numb.split(':')[1].split('-')[1])
+        trail = r'(?= %s| [A-Z]+ \d|$)' % (str(lv + 1))
         numb = r'(?<= (%(numb)s) )' % locals()
-        pass
+    # A verse
+    elif (':' in numb) and ('-' not in numb):
+        trail = r'(?= \d| [A-Z]+ \d|$)'
+        numb = r'(?<= (%(numb)s) )' % locals()
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
     # ===============================================================
