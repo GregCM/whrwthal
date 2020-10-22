@@ -77,8 +77,8 @@ def phrase(self):
 
 def verse(self):
     out = OrderedDict()
-    # Alphabetic part of user's input
     # ===============================================================
+    # Alphabetic part of user's input
     alph = ''.join([char.upper() for char in self.frame.entry
                     if char.isalpha()])
     # Specified book
@@ -94,7 +94,6 @@ def verse(self):
         alph = r'()'
     # ===============================================================
     # Numeric part of user's input
-    # ===============================================================
     numb = ''.join([char for char in self.frame.entry
                     if (not(char.isalpha()) and not(char.isspace()))])
     # Specified chapter/verse number (logic from least to most specific)
@@ -105,18 +104,18 @@ def verse(self):
         trail = r'(?= [A-Z]+ \d|$)'
     # Some chapters
     # elif ('-' in numb) and (':' not in numb):
-    #     # FIXME
+    #     # FIXME?
     #     trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
     #     numb = r'(?<= (%(numb)s) )' % locals()
     # A chapter
     elif ('-' not in numb) and (':' not in numb):
         trail = r'(?= %i:| [A-Z]+ \d|$)' % (int(numb) + 1)
-        numb = r'(?<= (%(numb)s)):\d+' % locals()
+        numb = r'(?<= (%(numb)s)):\d+ ' % locals()
     # Some verses
     elif (':' in numb) and ('-' in numb):
-        # FIXME
-        lv = int(numb.split(':')[1].split('-')[1])
-        trail = r'(?= %i| [A-Z]+ \d|$)' % (lv + 1)
+        lv = int(numb.split('-')[1])
+        trail = r'(?= \d+:%i| [A-Z]+ \d|$)' % (lv + 1)
+        numb = numb.split('-')[0]
         numb = r'(?<= (%(numb)s) )' % locals()
     # A verse
     elif (':' in numb) and ('-' not in numb):
@@ -124,12 +123,11 @@ def verse(self):
         numb = r'(?<= (%(numb)s) )' % locals()
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
-    print(r'%(lead)s(.+?)%(trail)s' % locals())
     # ===============================================================
+    # Sort the groups and return to handler.get_in
     count = 0
     err = None
     for m in match:
-        print(m.groups())
         if m.group(1):
             b = m.group(1)
         # No book was specified (or found)
@@ -140,6 +138,8 @@ def verse(self):
         r = m.group(2)
         st = m.group(3)
         ref = ' '.join([b, r])
+        if (':' in self.frame.entry) and ('-' in self.frame.entry):
+            ref = ''.join([ref, '-', str(lv)])
         out[ref] = st
         # Every list with length greater than 2564 gets tossed
         count += 1
@@ -147,6 +147,7 @@ def verse(self):
             err = MemoryError
             # TODO replace with Raise MemoryError
             break
+    # ===============================================================
     return out, count, err
 
 
