@@ -24,9 +24,8 @@ import re
 import string
 
 
-def phrase(self):
+def phrase(self, srch, use_re=False):
     out = OrderedDict()
-    srch = self.frame.entry
 
     # PATTERN
     # Book Title Group -- captures more than 2 capitals before a digit
@@ -40,7 +39,7 @@ def phrase(self):
     match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
                         % (g1, g2, g3, g4), self.text)
     # SearchMatch
-    if self.use_re.get():
+    if use_re:
         sm = re.compile(r'%(srch)s' % locals())
     else:
         # Case insensitive search, anywhere in a word.
@@ -75,11 +74,11 @@ def phrase(self):
     return out, count, err
 
 
-def verse(self):
+def verse(self, srch):
     out = OrderedDict()
     # ===============================================================
     # Alphabetic part of user's input
-    alph = ''.join([char.upper() for char in self.frame.entry
+    alph = ''.join([char.upper() for char in srch
                     if char.isalpha()])
     # Specified book
     if (alph) and (alph not in self.bkAbbrv):
@@ -94,7 +93,7 @@ def verse(self):
         alph = r'()'
     # ===============================================================
     # Numeric part of user's input
-    numb = ''.join([char for char in self.frame.entry
+    numb = ''.join([char for char in srch
                     if (not(char.isalpha()) and not(char.isspace()))])
     # Specified chapter/verse number (logic from least to most specific)
     # A book
@@ -113,8 +112,9 @@ def verse(self):
         numb = r'(?<= (%(numb)s)):\d+ ' % locals()
     # Some verses
     elif (':' in numb) and ('-' in numb):
+        chp = int(numb.split(':')[0])
         lv = int(numb.split('-')[1])
-        trail = r'(?= \d+:%i| [A-Z]+ \d|$)' % (lv + 1)
+        trail = r'(?= %i:%i| %i:1| [A-Z]+ \d|$)' % (chp, lv + 1, chp + 1)
         numb = numb.split('-')[0]
         numb = r'(?<= (%(numb)s) )' % locals()
     # A verse
@@ -138,7 +138,7 @@ def verse(self):
         r = m.group(2)
         st = m.group(3)
         ref = ' '.join([b, r])
-        if (':' in self.frame.entry) and ('-' in self.frame.entry):
+        if (':' in srch) and ('-' in srch):
             ref = ''.join([ref, '-', str(lv)])
         out[ref] = st
         # Every list with length greater than 2564 gets tossed

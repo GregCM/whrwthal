@@ -108,3 +108,5 @@ def __init__(self, configfile='config.ini'):
 
     # Concordance
     self.concordance = parser.make_concord(self, self.text)
+    # By default, don't use regular expressions
+    self.use_re = False

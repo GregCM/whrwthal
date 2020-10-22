@@ -552,26 +552,29 @@ def get_input(self, event=None):
     if u:
         print('get_input:: 0')
         # User specified regular expression search (phrases only)
-        d, pcount, perr = self.parser.phrase(self)
+        d, pcount, perr = self.parser.phrase(self, self.frame.entry,
+                                             self.use_re.get())
     elif (a and not(b)) or (a and c):
         print('get_input:: 1')
-        d, vcount, verr = self.parser.verse(self)
+        d, vcount, verr = self.parser.verse(self, self.frame.entry)
 
     elif (a and b):
         print('get_input:: 2')
-        d, vcount, verr = self.parser.verse(self)
-        pd, pcount, perr = self.parser.phrase(self)
+        d, vcount, verr = self.parser.verse(self, self.frame.entry)
+        pd, pcount, perr = self.parser.phrase(self, self.frame.entry,
+                                              self.use_re.get())
         # append pout to out as a combined dict
         for key in pd:
             d[key] = pd[key]
 
     elif (c and not(any([a, b]))):
         print('get_input:: 3')
-        d, vcount, verr = self.parser.verse(self)
+        d, vcount, verr = self.parser.verse(self, self.frame.entry)
 
     elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
         print('get_input:: 4')
-        d, pcount, perr = self.parser.phrase(self)
+        d, pcount, perr = self.parser.phrase(self, self.frame.entry,
+                                             self.use_re.get())
 
     # Handling errors
     if perr is MemoryError:
