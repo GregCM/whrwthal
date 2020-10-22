@@ -124,7 +124,7 @@ def verse(self, srch):
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
     # ===============================================================
-    # Sort the groups and return to handler.get_in
+    # Sort the groups for dictionary and return
     count = 0
     err = None
     for m in match:
@@ -137,7 +137,10 @@ def verse(self, srch):
         # Reference group
         r = m.group(2)
         st = m.group(3)
-        ref = ' '.join([b, r])
+        if r:
+            ref = ' '.join([b, r])
+        else:
+            ref = b
         if (':' in srch) and ('-' in srch):
             ref = ''.join([ref, '-', str(lv)])
         out[ref] = st
