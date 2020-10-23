@@ -514,7 +514,7 @@ def get_input(self, event=None):
     self.frame.entry = self.frame.SearchBar.get()
 
     # Table of contents entry check, any full or abbreviated reference
-    ToC = self.bkAbbrv + self.bkNames
+    ToC = ''.join([self.bkAbbrv, self.bkNames])
     ToC = [C.upper() for C in ToC]
 
     # TODO: (1) Replace UPPER results with colorized text (tk attributes)?
@@ -524,10 +524,11 @@ def get_input(self, event=None):
         upper = self.frame.entry.upper()
         # There exists an entry "e" referencing the ToC if its uppercase
         # form appears as either an abbreviation or word: e = "ROM/ROMAN"
-        ToC_entries = [e for e in upper.split() if e in ToC]
+        usplit = upper.split()
+        ToC_entries = [e for e in usplit if e in ToC]
         ToC_count = len(ToC_entries)
 
-        conc_entries = [W for W in self.concordance if W in upper.split()]
+        conc_entries = [W for W in self.concordance if W in usplit]
         # SEE: "dispensation of"
         con_count = len(conc_entries)
 
@@ -647,6 +648,8 @@ def list_update(self, d, mode='w'):
     finally:
         # Ready a new list
         self.blist = []
+        append_bl = self.blist.append
+        update_bl = self.blist[-1].update
         self.canvas = tk.Canvas(self.frame)
         c = self.canvas
 
@@ -665,21 +668,22 @@ def list_update(self, d, mode='w'):
     bheight = 0
     bpress = []
     bwin = []
+    append_bp = bpress.append
+    append_bw = bwin.append
     for key in d:
         # Populating all the buttons, labeled as their verse reference
         # plus a few words around the searched-phrase (if applicable)
-        bpress.append(partial(gui_update, self, head=key, text=d[key]))
-        self.blist.append(tk.Button(c, text=key,
-                                    width=w, height=h,
-                                    command=bpress[-1]))
-        lb = self.blist[-1]
-        bwin.append(c.create_window((0, bheight),
-                                    anchor='nw',
-                                    width=w, height=h,
-                                    window=lb))
+        append_bp(partial(gui_update, self, head=key, text=d[key]))
+        append_bl(tk.Button(c, text=key,
+                            width=w, height=h,
+                            command=bpress[-1]))
+        append_bw(c.create_window((0, bheight),
+                                  anchor='nw',
+                                  width=w, height=h,
+                                  window=self.blist[-1]))
         self.blist[-1].configure(font=('roman', 9),
-                                       activebackground='#D2D2D2')
-        self.blist[-1].update()
+                                 activebackground='#D2D2D2')
+        update_bl()
         bheight += h
 
     # placing the canvas that will hold all the listed buttons / options

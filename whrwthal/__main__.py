@@ -20,6 +20,7 @@ along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import whrwthal
+# TODO sys.setcheckinterval
 
 # base
 whrwthal.__init__(whrwthal)
