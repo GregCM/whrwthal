@@ -1,5 +1,6 @@
 bytes
 config.ini
+Makefile
 __pycache__
 src.*
 .*.swp
