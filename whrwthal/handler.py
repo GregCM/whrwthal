@@ -61,7 +61,7 @@ class Reader():
                               command=self.svas_button,
                               underline=0)
 
-        self.qt_Button = partial(self.handler.shutdown, self)
+        self.qt_Button = partial(shutdown, self)
         self.frame.master.bind('<Control-q>', self.qt_Button)
         file_menu.add_command(label='Quit',
                               accelerator='Ctrl+Q',
@@ -69,13 +69,13 @@ class Reader():
                               underline=0)
 
         # Options menu choices:
-        sett = partial(self.handler.settings, self)
+        sett = partial(settings, self)
         options_menu.add_command(label='Settings',
                                  command=sett,
                                  underline=0)
 
         self.show_toc = tk.BooleanVar()
-        tocq = partial(self.handler.toc_query, self)
+        tocq = partial(toc_query, self)
         options_menu.add_checkbutton(label='Display Table of Contents',
                                      onvalue=1, offvalue=0,
                                      variable=self.show_toc,
@@ -83,7 +83,7 @@ class Reader():
 
         self.enable_lfm = tk.BooleanVar()
         self.enable_lfm.set(self.LFM)
-        lfmq = partial(self.handler.lfm_query, self)
+        lfmq = partial(lfm_query, self)
         options_menu.add_checkbutton(label='Low Footprint Mode',
                                      onvalue=1, offvalue=0,
                                      variable=self.enable_lfm,
@@ -95,7 +95,7 @@ class Reader():
                                          relief='flat',
                                          name='status_bar')
 
-        self.frame.status_bar.grid(row=2, column=1, sticky='s')
+        self.frame.status_bar.grid(row=2, column=1, padx=5, pady=5, sticky='s')
 
         # Search Bar placement
         # self.frame.SearchFrame = tk.Frame(self.frame)
@@ -105,27 +105,27 @@ class Reader():
         self.frame.var = tk.IntVar()
         self.frame.SearchBar = tk.Entry(self.frame)
         # Gridified in SearchFrame (alongside potential lead/trail regex)
-        self.frame.SearchBar.grid(row=3, column=1, sticky='ew')
-        slSB = partial(self.handler.select, self)
+        self.frame.SearchBar.grid(row=3, column=1, padx=5, pady=5, sticky='ew')
+        slSB = partial(select, self)
         self.frame.master.bind('<Control-l>', slSB)
 
         # Dropdown search options
         # FIXME: finish toggle button and frame placement / padding...
         # ... then more opts
         self.frame.drop_frame = tk.Frame(self.frame, relief='flat')
-        ao_gridify = partial(self.handler.adv_opts, self,
+        ao_gridify = partial(adv_opts, self,
                              frame=self.frame.drop_frame,
                              r=5, c=1, s='new')
         self.frame.drop_button = tk.Button(self.frame,
                                            relief='flat',
                                            text='Advanded Options ▼',
                                            command=ao_gridify)
-        self.frame.drop_button.grid(row=4, column=1, sticky='ew')
+        self.frame.drop_button.grid(row=4, column=1, padx=5, pady=5, sticky='sew')
 
         # Regular Expression Input:
         s = 'Use regular expressions'
         self.use_re = tk.BooleanVar()
-        reg_pref = partial(self.handler.regex, self)
+        reg_pref = partial(regex, self)
         self.frame.regex_check = tk.Checkbutton(self.frame.drop_frame,
                                                 text=s,
                                                 onvalue=1, offvalue=0,
@@ -137,13 +137,13 @@ class Reader():
         self.frame.entry = 'Search'
         self.frame.SearchBar.insert('end', self.frame.entry)
 
-        get = partial(self.handler.get_input, self)
+        get = partial(get_input, self)
         self.frame.master.bind('<Return>', get)
         self.frame.go_b = tk.Button(self.frame,
                                     text='ENTER',
                                     comman=get,
                                     relief='raised')
-        self.frame.go_b.grid(row=4, column=1, sticky='new')
+        self.frame.go_b.grid(row=4, column=1, padx=5, pady=5, sticky='new')
 
         self.list_button = []
 
@@ -152,7 +152,7 @@ class Reader():
                                      relief='flat',
                                      name='header')
 
-        self.frame.header.grid(row=1, column=7, sticky='sew')
+        self.frame.header.grid(row=1, column=7, pady=5, sticky='sew')
 
         self.frame.text_widget = tk.Text(self.frame,
                                          relief='sunken',
@@ -161,6 +161,7 @@ class Reader():
         self.frame.text_widget.grid(row=2,
                                     rowspan=10,
                                     column=7,
+                                    padx=5, pady=10,
                                     sticky='nsew')
 
         # Welcome message!
@@ -172,10 +173,6 @@ class Reader():
         # 3 second pause before tooltip appears
         self.waittime = 3000
         '''
-
-        self.frame.Bpadding = tk.Label(self.frame, text='', relief='flat')
-        self.frame.Bpadding.grid(row=14, column=0,
-                                 columnspan=14, sticky='ew')
 
         # COLORS:
         self.frame.configure(bg=self.colors['frame'][0])
@@ -199,8 +196,6 @@ class Reader():
                                              'text']))
         f.text_widget.configure(bg=self.colors['text_widget'][0],
                                 fg=self.colors['text_widget'][1])
-        f.Bpadding.configure(bg=self.colors['frame'][0],
-                             state='disabled')
         f.drop_button.configure(bg=self.colors['header'][0],
                                 fg=self.colors['header'][1])
         f.drop_frame.configure(bg=self.colors['header'][0])
@@ -458,7 +453,7 @@ def adv_opts(self, frame, r, c, s):
     if frame.winfo_ismapped():
         frame.grid_remove()
     elif not(frame.winfo_ismapped()):
-        frame.grid(row=r, column=c, sticky=s)
+        frame.grid(row=r, column=c, padx=5, pady=5, sticky=s)
 
 
 def regex(self):
@@ -514,7 +509,7 @@ def get_input(self, event=None):
     self.frame.entry = self.frame.SearchBar.get()
 
     # Table of contents entry check, any full or abbreviated reference
-    ToC = ''.join([self.bkAbbrv, self.bkNames])
+    ToC = self.bkAbbrv + self.bkNames
     ToC = [C.upper() for C in ToC]
 
     # TODO: (1) Replace UPPER results with colorized text (tk attributes)?
@@ -649,17 +644,17 @@ def list_update(self, d, mode='w'):
         # Ready a new list
         self.blist = []
         append_bl = self.blist.append
-        update_bl = self.blist[-1].update
-        self.canvas = tk.Canvas(self.frame)
-        c = self.canvas
+        cframe = tk.Frame(self.frame)
+        cframe.grid(row=6, column=1, padx=5, pady=5)
+        c = tk.Canvas(cframe)
 
     if mode == 'w':
         self.textile.clear(self.frame)
     elif mode == 'a':
         pass
 
-    w = self.frame.SearchBar.winfo_width()
-    h = self.frame.SearchBar.winfo_height() * 2
+    w = self.frame.go_b.winfo_width()
+    h = round(self.frame.go_b.winfo_height() * 1.25)
 
     # TODO: (1) Philemon must not return Philippians,
     # but PHM & PHIL must remain their respective abbreviations.
@@ -683,20 +678,17 @@ def list_update(self, d, mode='w'):
                                   window=self.blist[-1]))
         self.blist[-1].configure(font=('roman', 9),
                                  activebackground='#D2D2D2')
-        update_bl()
         bheight += h
 
-    # placing the canvas that will hold all the listed buttons / options
-    c.grid(row=6, column=1, rowspan=8, columnspan=1, sticky='nsew')
-    c.update()
-
-    self.sbar = ttk.Scrollbar(self.frame,
+    self.sbar = ttk.Scrollbar(cframe,
                               orient='vertical',
-                              command=self.canvas.yview)
-    self.sbar.grid(row=6, column=0,
-                   rowspan=8, sticky='nes')
+                              command=c.yview)
+    self.sbar.grid(row=0, column=0, sticky='ns')
     self.sbar.update()
 
+    # placing the canvas that will hold all the listed buttons / options
+    c.grid(row=0, column=1, sticky='ns')
     c.config(yscrollcommand=self.sbar.set, scrollregion=c.bbox('all'))
+    c.update()
     # self.canvas.bind('<Enter>', self._bound_mouse_to_scrollbar)
     # self.canvas.bind('<Leave>', self._unbound_mouse_to_scrollbar)
