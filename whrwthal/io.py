@@ -86,6 +86,7 @@ def encode_file(self):
     with open('config.ini', 'w') as cfg:
         self.config_obj.write(cfg)
 
+
 def decode_file(self):
     os.remove('bytes')
     with open('src.txt', 'w') as f:

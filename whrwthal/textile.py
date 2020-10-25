@@ -22,7 +22,7 @@ def preamble():
                        r'        |     |  |        ',
                        r'        |     |  |        ',
                        r'        |     |  |        ',
-                       r'        |_____|  |        ', 
+                       r'        |_____|  |        ',
                        r'        \      \ |        ',
                        r'         \______\|  v2.3.1'])
     v = '\n'.join([r' _____ _   _ _____   ____ ___ ____  _     _____ ',
@@ -41,6 +41,7 @@ def preamble():
                            'word              phrase'])
 
     return '\n'.join([cross, v, AppFormat])
+
 
 def update(self, text, just='left'):
     clear(self.frame)

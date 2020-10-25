@@ -20,15 +20,17 @@ along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import whrwthal
+import tkinter as tk
+from whrwthal import handler
 # TODO sys.setcheckinterval to improve interpreter time
 
 # base
 whrwthal.__init__(whrwthal)
 # ui
-whrwthal.handler.Reader.__init__(whrwthal)
+handler.Reader.__init__(whrwthal)
 gsize = whrwthal.frame.grid_size()
 for row in range(gsize[0]):
-    whrwthal.tk.Grid.rowconfigure(whrwthal.frame, row, weight=1)
+    tk.Grid.rowconfigure(whrwthal.frame, row, weight=1)
     for col in range(gsize[1]):
-        whrwthal.tk.Grid.columnconfigure(whrwthal.frame, col, weight=1)
-main = whrwthal.tk.mainloop()
+        tk.Grid.columnconfigure(whrwthal.frame, col, weight=1)
+main = tk.mainloop()

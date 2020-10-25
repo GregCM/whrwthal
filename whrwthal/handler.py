@@ -11,6 +11,7 @@ import signal
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
+from whrwthal import io, textile
 
 
 class Reader():
@@ -110,9 +111,8 @@ class Reader():
         self.frame.master.bind('<Control-l>', slSB)
 
         # Dropdown search options
-        # FIXME: finish toggle button and frame placement / padding...
-        # ... then more opts
         self.frame.drop_frame = tk.Frame(self.frame, relief='flat')
+        # TODO: more opts
         ao_gridify = partial(adv_opts, self,
                              frame=self.frame.drop_frame,
                              r=5, c=1, s='new')
@@ -120,7 +120,8 @@ class Reader():
                                            relief='flat',
                                            text='Advanded Options ▼',
                                            command=ao_gridify)
-        self.frame.drop_button.grid(row=4, column=1, padx=5, pady=5, sticky='sew')
+        self.frame.drop_button.grid(row=4, column=1, padx=5,
+                                    pady=5, sticky='sew')
 
         # Regular Expression Input:
         s = 'Use regular expressions'
@@ -191,9 +192,7 @@ class Reader():
         f.status_bar.configure(bg=self.colors['header'][0],
                                fg=self.colors['header'][1],
                                font=(self.font,
-                                     self.config_obj[
-                                         'FONT'][
-                                             'text']))
+                                     self.config_obj['FONT']['text']))
         f.text_widget.configure(bg=self.colors['text_widget'][0],
                                 fg=self.colors['text_widget'][1])
         f.drop_button.configure(bg=self.colors['header'][0],
@@ -201,7 +200,6 @@ class Reader():
         f.drop_frame.configure(bg=self.colors['header'][0])
         f.regex_check.configure(bg=self.colors['header'][0],
                                 fg=self.colors['header'][1])
-        # f.SearchFrame.configure(bg=self.colors['header'][0])
 
 
 def start(self, t=5.0):
@@ -225,6 +223,10 @@ def start(self, t=5.0):
         branch.update()
 
     branch.destroy()
+
+
+def focus(self, event=None):
+    self.focus_set()
 
 
 def _on_mousewheel(self, event):
@@ -274,21 +276,20 @@ def shutdown(self, event=None):
 
 def info(self):
     # TODO: the "about" text under the Help menu
-    book =  "\n".join([r"    ,   ,",
-                       r"   /////|",
-                       r"  ///// |",
-                       r" /////  |",
-                       r"|~~~| | |",
-                       r"|===| |/|",
-                       r"| B |/| |",
-                       r"| I | | |",
-                       r"| B | | |",
-                       r"| L |  / ",
-                       r"| E | /  ",
-                       r"|===|/   ",
-                       r"'---'    "])
-
-    return None
+    book = "\n".join([r"    ,   ,",
+                      r"   /////|",
+                      r"  ///// |",
+                      r" /////  |",
+                      r"|~~~| | |",
+                      r"|===| |/|",
+                      r"| B |/| |",
+                      r"| I | | |",
+                      r"| B | | |",
+                      r"| L |  / ",
+                      r"| E | /  ",
+                      r"|===|/   ",
+                      r"'---'    "])
+    return book
 
 
 def settings(self):
@@ -403,17 +404,18 @@ def settings(self):
 
 
 def toc_query(self):
-    frame = tk.Frame(self.frame)
-    frame.grid(row=2, rowspan=8, column=8, sticky='ns')
+    tocframe = tk.Frame(self.frame)
+    tocframe.grid(row=2, rowspan=8, column=8, sticky='w',
+                  padx=5, pady=5, ipadx=2)
     i, j = 0, 0
-    for book in self.bkNames:
-        label = tk.Label(frame, text=book)
+    for book, bk in zip(self.bkNames, self.bkAbbrv):
+        label = tk.Label(tocframe, text='%s (%s)' % (book, bk))
         if self.show_toc.get():
-            label.grid(row=i, column=j)
+            label.grid(row=i, column=j, sticky='nw')
         else:
-            label.grid_forget(row=i, column=j)
+            label.grid_forget()
 
-        if i == 33:
+        if i == 32:
             i, j = 0, 1
         else:
             i += 1
@@ -430,6 +432,7 @@ def lfm_query(self):
         self.config_obj['FOOTPRINT']['switch'] = 'off'
         self.config_obj['FOOTPRINT']['transient'] = 'false'
         self.io.decode_file(self)
+
 
 def get_color(self, tk_obj, ground='bg'):
     # Queries a color choice
@@ -456,6 +459,12 @@ def adv_opts(self, frame, r, c, s):
         frame.grid(row=r, column=c, padx=5, pady=5, sticky=s)
 
 
+def select(self, event=None):
+    focus(self.frame.SearchBar)
+    self.frame.SearchBar.select_range(0, 'end')
+    self.frame.SearchBar.icursor('end')
+
+
 def regex(self):
     '''
     A method to place regular expression syntax around the Search Bar
@@ -478,9 +487,10 @@ def regex(self):
 
 def get_input(self, event=None):
     '''
-    Takes input from tk.Entry(). Executes the following logic and returns a list and calls list_update to handle displaying results.
+    Takes input from tk.Entry(). Executes the following logic and
+    returns a list and calls list_update to handle displaying results.
 
-    If all entry contents reference a book, but none reference words / phrases:
+    If all entry contents reference a book, but none reference words/phrases:
 
         0:: "Genesis" Returns the entire book of Genesis
 
@@ -490,17 +500,16 @@ def get_input(self, event=None):
 
     Else If certain entry contents reference a book and a word in text:
 
-        1:: "romans" Returns the entire book of Romans and verses like "... if we being romans ..."
+        1:: "romans" Returns the book of Romans and "...we being romans..."
 
     Else If some entry contents reference a book, and some text:
 
-        2:: "if we being romans" Returns the verse "... if we being romans ..."
+        2:: "we being romans" Returns the verse "...we being romans..."
 
     Else If entry contents only reference a number combination:
 
-        3:: "23" Returns the 23rd chapter of every book (if such a chapter exists)
-            "1:3" Returns the 3rd verse from the 1st chapter of every book (if such a verse exists)
-            "1-3" Returns the 1st through 3rd verse (a subset) of every chapter of every book (if such a subset exists)
+        3:: "23" Returns the 23rd chapter of every book (if it exists)
+            "1:3" Returns any 3rd verse from any 1st chapter (if it exists)
 
     Else:
         4:: "word" Returns every verse containing "word"
@@ -510,8 +519,6 @@ def get_input(self, event=None):
 
     # Table of contents entry check, any full or abbreviated reference
     ToC = self.bkAbbrv + self.bkNames
-    ToC = [C.upper() for C in ToC]
-
     # TODO: (1) Replace UPPER results with colorized text (tk attributes)?
     self.concordance = [w.upper() for w in self.concordance]
 
@@ -543,7 +550,7 @@ def get_input(self, event=None):
     c = any(numeric_entries)
 
     vcount = pcount = 0
-    # Soon to be redundant: SEE parser.phrase (lines -5:-1)
+    # TODO: deprecate count / err, see parser.phrase (lines -5:-1)
     perr, verr = None, None
     if u:
         print('get_input:: 0')
@@ -571,47 +578,33 @@ def get_input(self, event=None):
         print('get_input:: 4')
         d, pcount, perr = self.parser.phrase(self, self.frame.entry,
                                              self.use_re.get())
-
     # Handling errors
     if perr is MemoryError:
         print('get_input ERROR:: 5')
         msg = '\n'.join(['There are too many results for "{}",',
                          'please be more specific.'])
-        messagebox.showwarning('Overloaded Search', msg.format(self.frame.entry))
-
+        messagebox.showwarning('Overloaded Search',
+                               msg.format(self.frame.entry))
     elif not(any([u, a, b, c])):
         d = {}
         print('get_input ERROR:: 6')
         messagebox.showerror('Error',
-                             '"{}" not found.'.format(self.frame.entry))
+                             '\"{}\" not found.'.format(self.frame.entry))
     else:
         count = vcount + pcount
+        list_destroy(self)
         if count == 1:
             h = [k for k in d.keys()][0]
             t = [v for v in d.values()][0]
             gui_update(self, status='{} RESULT MATCHING \"{}\"'.format(
                            count, self.frame.entry), head=h, text=t)
         elif count > 1:
-            # OPINIONPOLL: what's a good header to
-            # show while waiting for a selection?
-            h = '...'
+            h = 'Awaiting selection...'
             gui_update(self, status='{} RESULTS MATCHING \"{}\"'.format(
                            count, self.frame.entry), head=h)
-
             # FIXME this frame sucks
             list_update(self, d)
-
     self.frame.go_b.wait_variable(self.frame.var)
-
-
-def select(self, event=None):
-    focus(self.frame.SearchBar)
-    self.frame.SearchBar.select_range(0, 'end')
-    self.frame.SearchBar.icursor('end')
-
-
-def focus(self, event=None):
-    self.focus_set()
 
 
 def gui_update(self, **kwargs):
@@ -619,7 +612,6 @@ def gui_update(self, **kwargs):
     Key-word arguments consist of 'status', 'head' and 'text'
     '''
     keys = kwargs.keys()
-    values = kwargs.values()
     if 'status' in keys:
         status = kwargs['status']
         self.frame.status_bar.configure(text=status)
@@ -630,7 +622,8 @@ def gui_update(self, **kwargs):
         text = kwargs['text']
         self.textile.update(self, text)
 
-def list_update(self, d, mode='w'):
+
+def list_destroy(self):
     # Check that the list doesn't already exists...
     try:
         c = self.canvas
@@ -640,13 +633,15 @@ def list_update(self, d, mode='w'):
         c.destroy()
     except AttributeError:
         pass
-    finally:
-        # Ready a new list
-        self.blist = []
-        append_bl = self.blist.append
-        cframe = tk.Frame(self.frame)
-        cframe.grid(row=6, column=1, padx=5, pady=5)
-        c = tk.Canvas(cframe)
+
+
+def list_update(self, d, mode='w'):
+    # Ready a new list
+    self.blist = []
+    append_bl = self.blist.append
+    cframe = tk.Frame(self.frame)
+    cframe.grid(row=6, column=1, padx=5, pady=5)
+    c = tk.Canvas(cframe)
 
     if mode == 'w':
         self.textile.clear(self.frame)
@@ -679,7 +674,6 @@ def list_update(self, d, mode='w'):
         self.blist[-1].configure(font=('roman', 9),
                                  activebackground='#D2D2D2')
         bheight += h
-
     self.sbar = ttk.Scrollbar(cframe,
                               orient='vertical',
                               command=c.yview)

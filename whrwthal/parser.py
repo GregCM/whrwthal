@@ -19,7 +19,6 @@ _______________________________________________
 from collections import OrderedDict
 import os
 import json
-import random as rnd
 import re
 import string
 
@@ -36,7 +35,7 @@ def phrase(self, srch, use_re=False):
     g3 = r'(\d+)'
     # SubText Group -- captures verse between digits/title, no trailing \s
     g4 = r'((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
-    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
+    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)? %s'
                         % (g1, g2, g3, g4), self.text)
     # SearchMatch
     if use_re:
@@ -59,12 +58,10 @@ def phrase(self, srch, use_re=False):
             v = m.group(3)
             # SubText
             st = m.group(4)
-
             # Search in st?
             if sm.match(st):
                 ref = ''.join([b, ' ', c, ':', v])
                 out[ref] = st
-
                 # Every list with length greater than 2564 gets tossed
                 count += 1
                 if (count > 2564):
@@ -176,7 +173,7 @@ def make_text(**kwargs):
 
             text = make_text(filename='f')
 
-        Return the string and write it to plain-text file ``f``, using namespace
+        Return the string and write it to plain-text file ``f`` using namespace
         dictionary ``dict()`` as the source instead of default ``./src.json``:
 
             text = make_text(d=dict(), filename='f')
@@ -186,7 +183,6 @@ def make_text(**kwargs):
     # ===================================================
     # Handling key word arguments:
     keys = kwargs.keys()
-    values = kwargs.values()
     if 'd' in keys:
         d = kwargs['d']
     else:
@@ -224,7 +220,8 @@ def make_text(**kwargs):
                     text.append(remains)
                 else:
                     # remaining verses (' Chapter:Verse')
-                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v]) for v in d[b][c]])
+                    remains = ''.join([' {}:{} {}'.format(c, v, d[b][c][v])
+                                       for v in d[b][c]])
                     text.append(remains)
 
     text = ''.join(text)
@@ -272,7 +269,6 @@ def _make_json(**kwargs):
     # ===================================================
     # Handling key word arguments:
     keys = kwargs.keys()
-    values = kwargs.values()
     if 't' in keys:
         text = kwargs['t']
     else:
@@ -334,10 +330,14 @@ def _make_json(**kwargs):
     g3 = r'(\d+)'
     # SubText Group -- captures verse between digits/title, no trailing \s
     g4 = r'((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
-    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)?\s%s'
+    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)? %s'
                         % (g1, g2, g3, g4), text)
     # The full pattern is expressed:
-    # (?:([A-Z]+)(?= \d+:)|(?!^))(?:(\d+):(\d+))?\s((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?![A-Z]+ \d|\d))*)
+    '''
+    (?:([A-Z]+)(?= \\d+:)|(?!^))\
+    (?:(\\d+):(\\d+))? \
+    ((?:[A-Z](?![A-Z]+ \\d)|[^\\dA-Z](?![A-Z]+ \\d|\\d))*)
+    '''
     # ===================================================
     # Dictionary Verse Number / Text Pairs:
     for m in match:
@@ -352,7 +352,6 @@ def _make_json(**kwargs):
                 v = m.group(3)
                 # SubText
                 st = m.group(4)
-                
                 # Initialize dict
                 if b not in d:
                     d[b] = OrderedDict({c: OrderedDict({v: st})})

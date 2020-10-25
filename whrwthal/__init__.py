@@ -8,9 +8,8 @@ from configparser import ConfigParser
 from dahuffman.huffmancodec import HuffmanCodec
 import os
 import sys
-import tkinter as tk
 from threading import Thread
-from whrwthal import handler, io, parser, textile
+from whrwthal import parser
 
 
 def __init__(self, configfile='config.ini'):
@@ -88,22 +87,22 @@ def __init__(self, configfile='config.ini'):
                     'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
                     'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
                     'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
-                    'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
+                    'ITIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
                     'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
                     'IIIJOHN', 'JUDE', 'REVELATION']
     self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
-                    'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
-                    'I KI', 'II KI', 'I CHRON', 'II CHRON',
+                    'JOSH', 'JUD', 'RU', 'ISA', 'IISA',
+                    'IKI', 'IIKI', 'ICHRON', 'IICHRON',
                     'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
                     'ECC', 'SONG', 'ISA', 'JER',
                     'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
                     'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
                     'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
-                    'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
+                    'JOH', 'ACT', 'ROM', 'ICOR', 'IICOR',
                     'GAL', 'EPH', 'PHLP', 'COL',
-                    'I THESS', 'II THESS', 'I TIM',
-                    'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
-                    'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
+                    'ITHESS', 'IITHESS', 'ITIM',
+                    'IITIM', 'TIT', 'PHM', 'HEB', 'JAM',
+                    'IPE', 'IIPE', 'IJO', 'IIJO', 'IIIJO', 'JU',
                     'REV']
 
     # Concordance
