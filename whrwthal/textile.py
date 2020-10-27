@@ -58,3 +58,20 @@ def clear(self):
     self.text_widget.configure(state='normal')
     self.text_widget.delete('1.0', 'end')
     self.text_widget.configure(state='disabled')
+
+
+def keybinds(self):
+    keys = "\n".join([r"    ,   ,   KEYBINDINGS:",
+                      r"   /////|   %s %s" % ('save', self.key['save']),
+                      r"  ///// |   %s %s" % ('saveas', self.key['saveas']),
+                      r" /////  |   %s %s" % ('quit', self.key['quit']),
+                      r"|   | | |   %s %s" % ('select_search', self.key['select_search']),
+                      r"|===| |/|   %s %s" % ('page-up', self.key['save']),
+                      r"| B |/| |   %s %s" % ('page-down', self.key['save']),
+                      r"| I | | |   %s %s" % ('', ''),
+                      r"| B | | |   %s %s" % ('', ''),
+                      r"| L |  /    %s %s" % ('', ''),
+                      r"| E | /     %s %s" % ('', ''),
+                      r"|===|/      %s %s" % ('', ''),
+                      r"'---'       %s %s" % ('', '')])
+    return keys

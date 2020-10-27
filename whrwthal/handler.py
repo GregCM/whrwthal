@@ -32,7 +32,8 @@ class Reader():
         self.h = self.frame.winfo_screenheight()
         self.frame.master.geometry('%dx%d+0+0' % (self.w, self.h))
         self.frame.master.title('whrwthal')
-
+        # ===============================================
+        # MENU
         # Create & Configure menubar
         self.menubar = tk.Menu(self.frame, name='menubar')
         self.frame.master.config(menu=self.menubar)
@@ -47,35 +48,30 @@ class Reader():
         self.menubar.add_cascade(label='Options', menu=options_menu,
                                  underline=0)
         self.menubar.add_cascade(label='Help', menu=help_menu, underline=0)
-
         # File menu choices:
         self.sv_button = partial(self.io.save, self)
-        self.frame.master.bind('<Control-s>', self.sv_button)
+        self.frame.master.bind(self.key['save'], self.sv_button)
         file_menu.add_command(label='Save',
                               accelerator='Ctrl+S',
                               command=self.sv_button,
                               underline=0)
-
         self.svas_button = partial(self.io.saveas, self)
-        self.frame.master.bind('<Control-Shift-S>', self.svas_button)
+        self.frame.master.bind(self.key['saveas'], self.svas_button)
         file_menu.add_command(label='SaveAs',
                               accelerator='Ctrl+Shift+S',
                               command=self.svas_button,
                               underline=0)
-
         qt_Button = partial(shutdown, self)
-        self.frame.master.bind('<Control-q>', qt_Button)
+        self.frame.master.bind(self.key['quit'], qt_Button)
         file_menu.add_command(label='Quit',
                               accelerator='Ctrl+Q',
                               command=qt_Button,
                               underline=0)
-
         # Options menu choices:
         sett = partial(settings, self)
         options_menu.add_command(label='Settings',
                                  command=sett,
                                  underline=0)
-
         self.show_toc = tk.BooleanVar()
         tocq = partial(toc_query, self)
         options_menu.add_checkbutton(label='Display Table of Contents',
@@ -83,7 +79,6 @@ class Reader():
                                      variable=self.show_toc,
                                      command=tocq,
                                      underline=8)
-
         self.enable_lfm = tk.BooleanVar()
         self.enable_lfm.set(self.LFM)
         lfmq = partial(lfm_query, self)
@@ -92,26 +87,26 @@ class Reader():
                                      variable=self.enable_lfm,
                                      command=lfmq,
                                      underline=0)
-
+        # Help menu choices:
+        hkb = partial(hkeybinds, self)
+        help_menu.add_command(label='Keys',
+                              command=hkb)
+        # ===============================================
+        # MAIN LAYOUT
         # Status Bar
         self.frame.status_bar = tk.Label(self.frame,
                                          text='Awaiting input...',
                                          relief='flat',
                                          name='status_bar')
-
         self.frame.status_bar.grid(row=2, column=1, padx=5, pady=5, sticky='s')
-
-        # Search Bar placement
-        # self.frame.SearchFrame = tk.Frame(self.frame)
-        # self.frame.SearchFrame.grid(row=3, column=1, sticky='ew')
 
         self.qvar = tk.IntVar()
         self.frame.var = tk.IntVar()
         self.frame.SearchBar = tk.Entry(self.frame)
         # Gridified in SearchFrame (alongside potential lead/trail regex)
         self.frame.SearchBar.grid(row=3, column=1, padx=5, pady=5, sticky='ew')
-        slSB = partial(select, self)
-        self.frame.master.bind('<Control-f>', slSB)
+        selsbar = partial(select, self)
+        self.frame.master.bind(self.key['select_search'], selsbar)
 
         # Dropdown search options
         self.frame.drop_frame = tk.Frame(self.frame, relief='flat')
@@ -129,12 +124,10 @@ class Reader():
         # Regular Expression Input:
         s = 'Use regular expressions'
         self.use_re = tk.BooleanVar()
-        reg_pref = partial(regex, self)
         self.frame.regex_check = tk.Checkbutton(self.frame.drop_frame,
                                                 text=s,
                                                 onvalue=1, offvalue=0,
-                                                variable=self.use_re,
-                                                command=reg_pref)
+                                                variable=self.use_re)
         self.frame.regex_check.pack(side='top', fill='both')
 
         # For any entry field, ensures one time only call.
@@ -148,14 +141,10 @@ class Reader():
                                     command=get,
                                     relief='raised')
         self.frame.go_b.grid(row=4, column=1, padx=5, pady=5, sticky='new')
-
-        self.list_button = []
-
         self.frame.header = tk.Label(self.frame,
                                      text='Welcome!',
                                      relief='flat',
                                      name='header')
-
         self.frame.header.grid(row=1, column=7, pady=5, sticky='sew')
 
         self.frame.text_widget = tk.Text(self.frame,
@@ -180,18 +169,18 @@ class Reader():
         # NAVIGATION:
         navs = tk.Frame(self.frame)
         navs.grid(row=12, column=7, padx=5, pady=0, sticky='new')
-        # Left
-        navleft = partial(self.parser.navigate, self, -1)
-        self.frame.master.bind('<Control-h>', navleft)
+        # Up
+        pageup = partial(self.parser.navigate, self, -1)
+        self.frame.master.bind(self.key['pageup'], pageup)
         nl = tk.Button(navs, text='<',
-                       command=navleft,
+                       command=pageup,
                        relief='raised')
         nl.grid(row=0, column=0, sticky='nw')
-        # Right
-        navright = partial(self.parser.navigate, self, 1)
-        self.frame.master.bind('<Control-l>', navright)
+        # Down
+        pagedown = partial(self.parser.navigate, self, 1)
+        self.frame.master.bind(self.key['pagedown'], pagedown)
         nr = tk.Button(navs, text='>',
-                       command=navright,
+                       command=pagedown,
                        relief='raised')
         nr.grid(row=0, column=1, sticky='ne')
         # ===============================================
@@ -234,10 +223,10 @@ def start(self, t=5.0):
     branch.title('whrwthal')
 
     msg = 'Initializing...'
-    info = tk.Label(branch, text=msg, relief='flat', font=('roman', 14))
+    label = tk.Label(branch, text=msg, relief='flat', font=('roman', 14))
     progress = ttk.Progressbar(branch, orient='horizontal',
                                length=200, mode='determinate')
-    info.pack(padx=10, pady=5)
+    label.pack(padx=10, pady=5)
     progress.pack(padx=10, pady=10)
 
     i = 0
@@ -297,24 +286,6 @@ def shutdown(self, event=None):
     # Kill by Process ID and exit with a vengence
     pid = os.getpid()
     os.kill(pid, signal.SIGTERM)
-
-
-def info(self):
-    # TODO: the "about" text under the Help menu
-    book = "\n".join([r"    ,   ,",
-                      r"   /////|",
-                      r"  ///// |",
-                      r" /////  |",
-                      r"|~~~| | |",
-                      r"|===| |/|",
-                      r"| B |/| |",
-                      r"| I | | |",
-                      r"| B | | |",
-                      r"| L |  / ",
-                      r"| E | /  ",
-                      r"|===|/   ",
-                      r"'---'    "])
-    return book
 
 
 def settings(self):
@@ -479,6 +450,11 @@ def get_color(self, tk_obj, ground='bg'):
         self.config_obj.write(cfg)
 
 
+def hkeybinds(self):
+    keys = self.textile.keybinds(self)
+    gui_update(self, text=keys)
+
+
 def adv_opts(self, frame, r, c, s):
     # A toggle grid/ungrid for extra options under Search Bar
     if frame.winfo_ismapped():
@@ -491,26 +467,6 @@ def select(self, event=None):
     focus(self.frame.SearchBar)
     self.frame.SearchBar.select_range(0, 'end')
     self.frame.SearchBar.icursor('end')
-
-
-def regex(self):
-    '''
-    A method to place regular expression syntax around the Search Bar
-    and enable the use of it in handler.get_in()
-    '''
-    if self.use_re.get():
-        self.frame.leading = tk.Label(self.frame, text='r\'')
-        self.frame.leading.grid(row=3, column=0, sticky='e')
-        self.frame.leading.configure(bg=self.colors['header'][0],
-                                     fg=self.colors['header'][1])
-        self.frame.trailing = tk.Label(self.frame, text='\'')
-        self.frame.trailing.grid(row=3, column=2, sticky='w')
-        self.frame.trailing.configure(bg=self.colors['header'][0],
-                                      fg=self.colors['header'][1])
-    else:
-        self.frame.leading.grid_remove()
-        self.frame.trailing.grid_remove()
-    # Consider regex preference housing in "config.ini"
 
 
 def get_input(self, event=None):

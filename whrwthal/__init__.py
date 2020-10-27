@@ -13,7 +13,7 @@ from dahuffman.huffmancodec import HuffmanCodec
 from whrwthal import parser
 
 
-def __init__(self, configfile='config.ini'):
+def __init__(self):
     self.ispc = sys.platform.startswith('win')
     self.ismac = sys.platform.startswith('darwin')
     self.islinux = sys.platform.startswith('linux')
@@ -21,12 +21,12 @@ def __init__(self, configfile='config.ini'):
         self.homeDirectory = '%userprofile%'
         self.pathPart = '\\'
     elif (self.ismac or self.islinux):
-        self.homeDirectory = '/home'
+        self.homeDirectory = '~/'
         self.pathPart = '/'
 
     self.config_obj = ConfigParser()
     try:
-        self.config_obj.read(configfile)
+        self.config_obj.read('config.ini')
     except KeyError:
         fd = os.getwd()
         # Defaults:
@@ -43,11 +43,17 @@ def __init__(self, configfile='config.ini'):
         # Low Footprint Mode:
         self.config_obj['FOOTPRINT'] = {'switch': 'true',
                                         'transient': 'true'}
+        self.config_obj['KEYS'] = {'save': '<Control-s>',
+                                   'saveas': '<Control-Shift-S>',
+                                   'quit': '<Control-q>',
+                                   'select_search': '<Control-l>',
+                                   'pageup': '<Control-k>',
+                                   'pagedown': '<Control-j>'}
         for key in self.colors.keys():
             self.colors[key] = self.colors[key].split(',')
 
         # Change to Defaults available in Settings menubar
-        with open(configfile, 'w') as cfg:
+        with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
     finally:
         self.fileLocation = self.config_obj['PATH']['main']
@@ -58,17 +64,16 @@ def __init__(self, configfile='config.ini'):
             self.colors[key] = self.colors[key].split(',')
         # Low Footprint Mode:
         self.LFM = bool(self.config_obj['FOOTPRINT']['switch'])
+        self.key = self.config_obj['KEYS']
 
     # LOW FOOTPRINT MODE
     if self.LFM:
+        thread = Thread(target=self.handler.start, args=(self,))
+        thread.start()
         # Decode bible string
         with open('bytes', 'rb') as f:
             # comes as bytes
             b = f.read()
-
-        thread = Thread(target=self.handler.start, args=(self,))
-        thread.start()
-
         codec = HuffmanCodec.load('.codec')
         self.text = codec.decode(b)
     else:
@@ -82,3 +87,4 @@ def __init__(self, configfile='config.ini'):
     self.concordance = parser.make_concord(self, self.text)
     # By default, don't use regular expressions
     self.use_re = False
+    # Consider regex preference housing in "config.ini"

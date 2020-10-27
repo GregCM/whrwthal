@@ -116,7 +116,7 @@ def alpheval(ref):
     alph = ''.join([char.upper() for char in ref
                     if char.isalpha()])
     aref = alph
-    bkName, bkAbbrv = toc()
+    bkNames, bkAbbrv = toc()
     # Specified book
     if (alph) and (alph not in bkAbbrv):
         alph = r'(%(alph)s).*?' % locals()
