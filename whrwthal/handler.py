@@ -111,7 +111,7 @@ class Reader():
         # Gridified in SearchFrame (alongside potential lead/trail regex)
         self.frame.SearchBar.grid(row=3, column=1, padx=5, pady=5, sticky='ew')
         slSB = partial(select, self)
-        self.frame.master.bind('<Control-l>', slSB)
+        self.frame.master.bind('<Control-i>', slSB)
 
         # Dropdown search options
         self.frame.drop_frame = tk.Frame(self.frame, relief='flat')
@@ -182,14 +182,14 @@ class Reader():
         navs.grid(row=12, column=7, padx=5, pady=0, sticky='new')
         # Left
         navleft = partial(self.parser.navigate, self, vector=-1)
-        self.frame.master.bind('<Control-o>', navleft)
+        self.frame.master.bind('<Control-h>', navleft)
         nl = tk.Button(navs, text='<',
                        command=navleft,
                        relief='raised')
         nl.grid(row=0, column=0, sticky='nw')
         # Right
         navright = partial(self.parser.navigate, self, vector=1)
-        self.frame.master.bind('<Control-i>', navright)
+        self.frame.master.bind('<Control-l>', navright)
         nr = tk.Button(navs, text='>',
                        command=navright,
                        relief='raised')
