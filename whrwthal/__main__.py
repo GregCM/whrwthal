@@ -20,11 +20,13 @@ along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import tkinter as tk
+import sys
 
 import whrwthal
 from whrwthal import handler
-# TODO sys.setcheckinterval to improve interpreter time
 
+# Interpreter refresh every 10 milisec.
+sys.setswitchinterval(0.01)
 # base
 whrwthal.__init__(whrwthal)
 # ui
