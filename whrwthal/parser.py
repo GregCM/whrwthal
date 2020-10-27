@@ -162,7 +162,7 @@ def numbeval(ref):
     return numeric, trail, numb, nref
 
 
-def navigate(self, vector):
+def navigate(self, vector, event=None):
     ref = self.frame.header.cget('text')
     _, _, numb, nref = numbeval(ref)
     srch = ref.replace(numb, str(nref + vector))
