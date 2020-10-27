@@ -527,54 +527,41 @@ def get_input(self, event=None):
         con_count = len(conc_entries)
 
         numeric_entries = []
-
     u = self.use_re.get()
     a = any(ToC_entries)
     b = any(conc_entries)
     c = any(numeric_entries)
-
     vcount = pcount = 0
-    # TODO: deprecate count / err, see parser.phrase (lines -5:-1)
-    perr, verr = None, None
-    if u:
-        print('get_input:: 0')
-        # User specified regular expression search (phrases only)
-        d, pcount, perr = self.parser.phrase(self, self.frame.entry,
-                                             self.use_re.get())
-    elif (a and not(b)) or (a and c):
-        print('get_input:: 1')
-        d, vcount, verr = self.parser.verse(self, self.frame.entry)
+    try:
+        if u:
+            print('get_input:: 0')
+            # User specified regular expression search (phrases only)
+            d, pcount = self.parser.phrase(self, self.frame.entry,
+                                           self.use_re.get())
+        elif (a and not(b)) or (a and c):
+            print('get_input:: 1')
+            d, vcount = self.parser.verse(self, self.frame.entry)
 
-    elif (a and b):
-        print('get_input:: 2')
-        d, vcount, verr = self.parser.verse(self, self.frame.entry)
-        pd, pcount, perr = self.parser.phrase(self, self.frame.entry,
-                                              self.use_re.get())
-        # append pout to out as a combined dict
-        for key in pd:
-            d[key] = pd[key]
+        elif (a and b):
+            print('get_input:: 2')
+            d, vcount = self.parser.verse(self, self.frame.entry)
+            pd, pcount = self.parser.phrase(self, self.frame.entry,
+                                            self.use_re.get())
+            # append pout to out as a combined dict
+            for key in pd:
+                d[key] = pd[key]
 
-    elif (c and not(any([a, b]))):
-        print('get_input:: 3')
-        d, vcount, verr = self.parser.verse(self, self.frame.entry)
+        elif (c and not(any([a, b]))):
+            print('get_input:: 3')
+            d, vcount = self.parser.verse(self, self.frame.entry)
 
-    elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-        print('get_input:: 4')
-        d, pcount, perr = self.parser.phrase(self, self.frame.entry,
-                                             self.use_re.get())
-    # Handling errors
-    if perr is MemoryError:
-        print('get_input ERROR:: 5')
-        msg = '\n'.join(['There are too many results for "{}",',
-                         'please be more specific.'])
-        messagebox.showwarning('Overloaded Search',
-                               msg.format(self.frame.entry))
-    elif not(any([u, a, b, c])):
-        d = {}
-        print('get_input ERROR:: 6')
-        messagebox.showerror('Error',
-                             '\"{}\" not found.'.format(self.frame.entry))
-    else:
+        elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
+            print('get_input:: 4')
+            d, pcount = self.parser.phrase(self, self.frame.entry,
+                                           self.use_re.get())
+        if not(any([u, a, b, c])):
+            raise KeyError
+
         count = vcount + pcount
         list_destroy(self)
         if count == 1:
@@ -588,6 +575,18 @@ def get_input(self, event=None):
                            count, self.frame.entry), head=h)
             # FIXME this frame sucks
             list_update(self, d)
+    # Handling errors
+    except MemoryError:
+        print('get_input ERROR:: 5')
+        msg = '\n'.join(['There are too many results for "{}",',
+                         'please be more specific.'])
+        messagebox.showwarning('Overloaded Search',
+                               msg.format(self.frame.entry))
+    except KeyError:
+        print('get_input ERROR:: 6')
+        messagebox.showerror('Error',
+                             '\"{}\" not found.'.format(self.frame.entry))
+        d = {}
     self.frame.go_b.wait_variable(self.frame.var)
 
 

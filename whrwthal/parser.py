@@ -47,7 +47,6 @@ def phrase(self, srch, use_re=False):
     # Count serves as speed / crash prevention:
     # no one wants to see a 62,000-Count word list.
     count = 0
-    err = None
     for m in match:
         if m.group(1):
             b = m.group(1)
@@ -65,10 +64,9 @@ def phrase(self, srch, use_re=False):
                 # Every list with length greater than 2564 gets tossed
                 count += 1
                 if (count > 2564):
-                    err = MemoryError
-                    # TODO replace with Raise MemoryError
+                    raise MemoryError
                     break
-    return out, count, err
+    return out, count
 
 
 def verse(self, srch):
@@ -84,7 +82,6 @@ def verse(self, srch):
     # ===============================================================
     # Sort the groups for dictionary and return
     count = 0
-    err = None
     for m in match:
         if m.group(1):
             b = m.group(1)
@@ -105,11 +102,11 @@ def verse(self, srch):
         # Every list with length greater than 2564 gets tossed
         count += 1
         if (count > 2564):
-            err = MemoryError
+            raise MemoryError
             # TODO replace with Raise MemoryError
             break
     # ===============================================================
-    return out, count, err
+    return out, count
 
 
 def alpheval(ref):
@@ -166,7 +163,7 @@ def navigate(self, vector, event=None):
     ref = self.frame.header.cget('text')
     _, _, numb, nref = numbeval(ref)
     srch = ref.replace(numb, str(nref + vector))
-    d, count, _= verse(self, srch)
+    d, count = verse(self, srch)
     h = [k for k in d.keys()][0]
     t = [v for v in d.values()][0]
     self.handler.gui_update(self, head=h, text=t,
