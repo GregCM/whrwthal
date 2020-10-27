@@ -452,7 +452,7 @@ def get_color(self, tk_obj, ground='bg'):
 
 def hkeybinds(self):
     keys = self.textile.keybinds(self)
-    gui_update(self, text=keys)
+    gui_update(self, text=keys, just='right')
 
 
 def adv_opts(self, frame, r, c, s):
@@ -604,7 +604,11 @@ def gui_update(self, **kwargs):
         self.frame.header.configure(text=head)
     if 'text' in keys:
         text = kwargs['text']
-        self.textile.update(self, text)
+        if 'just' in keys:
+            just = kwargs['just']
+            self.textile.update(self, text, just)
+        else:
+            self.textile.update(self, text)
 
 
 def list_destroy(self):

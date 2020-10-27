@@ -61,17 +61,17 @@ def clear(self):
 
 
 def keybinds(self):
-    keys = "\n".join([r"    ,   ,   KEYBINDINGS:",
-                      r"   /////|   %s %s" % ('save', self.key['save']),
-                      r"  ///// |   %s %s" % ('saveas', self.key['saveas']),
-                      r" /////  |   %s %s" % ('quit', self.key['quit']),
-                      r"|   | | |   %s %s" % ('select_search', self.key['select_search']),
-                      r"|===| |/|   %s %s" % ('page-up', self.key['save']),
-                      r"| B |/| |   %s %s" % ('page-down', self.key['save']),
-                      r"| I | | |   %s %s" % ('', ''),
-                      r"| B | | |   %s %s" % ('', ''),
-                      r"| L |  /    %s %s" % ('', ''),
-                      r"| E | /     %s %s" % ('', ''),
-                      r"|===|/      %s %s" % ('', ''),
-                      r"'---'       %s %s" % ('', '')])
+    keys = "\n".join(["KEYBINDINGS:",
+                      "%s %s" % ('save', self.key['save']),
+                      "%s %s" % ('saveas', self.key['saveas']),
+                      "%s %s" % ('quit', self.key['quit']),
+                      "%s %s" % ('select_search', self.key['select_search']),
+                      "%s %s" % ('page-up', self.key['save']),
+                      "%s %s" % ('page-down', self.key['save']),
+                      "%s %s" % ('', ''),
+                      "%s %s" % ('', ''),
+                      "%s %s" % ('', ''),
+                      "%s %s" % ('', ''),
+                      "%s %s" % ('', ''),
+                      "%s %s" % ('', '')])
     return keys
