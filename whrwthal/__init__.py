@@ -5,10 +5,11 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
 from configparser import ConfigParser
-from dahuffman.huffmancodec import HuffmanCodec
 import os
 import sys
 from threading import Thread
+
+from dahuffman.huffmancodec import HuffmanCodec
 from whrwthal import parser
 
 
@@ -76,35 +77,7 @@ def __init__(self, configfile='config.ini'):
             self.text = f.read()
 
     # Table of Contents
-    self.bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
-                    'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
-                    'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
-                    'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
-                    'ECCLESIASTES', 'SONG OF SONGS', 'ISAIAH', 'JEREMIAH',
-                    'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
-                    'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
-                    'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
-                    'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
-                    'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
-                    'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
-                    'ITIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
-                    'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
-                    'IIIJOHN', 'JUDE', 'REVELATION']
-    self.bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
-                    'JOSH', 'JUD', 'RU', 'ISA', 'IISA',
-                    'IKI', 'IIKI', 'ICHRON', 'IICHRON',
-                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
-                    'ECC', 'SONG', 'ISA', 'JER',
-                    'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
-                    'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
-                    'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
-                    'JOH', 'ACT', 'ROM', 'ICOR', 'IICOR',
-                    'GAL', 'EPH', 'PHLP', 'COL',
-                    'ITHESS', 'IITHESS', 'ITIM',
-                    'IITIM', 'TIT', 'PHM', 'HEB', 'JAM',
-                    'IPE', 'IIPE', 'IJO', 'IIJO', 'IIIJO', 'JU',
-                    'REV']
-
+    self.bkNames, self.bkAbbrv = parser.toc()
     # Concordance
     self.concordance = parser.make_concord(self, self.text)
     # By default, don't use regular expressions

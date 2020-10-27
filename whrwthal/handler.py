@@ -11,6 +11,7 @@ import signal
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk, messagebox
+
 from whrwthal import io, textile
 
 
@@ -62,11 +63,11 @@ class Reader():
                               command=self.svas_button,
                               underline=0)
 
-        self.qt_Button = partial(shutdown, self)
-        self.frame.master.bind('<Control-q>', self.qt_Button)
+        qt_Button = partial(shutdown, self)
+        self.frame.master.bind('<Control-q>', qt_Button)
         file_menu.add_command(label='Quit',
                               accelerator='Ctrl+Q',
-                              command=self.qt_Button,
+                              command=qt_Button,
                               underline=0)
 
         # Options menu choices:
@@ -80,7 +81,8 @@ class Reader():
         options_menu.add_checkbutton(label='Display Table of Contents',
                                      onvalue=1, offvalue=0,
                                      variable=self.show_toc,
-                                     command=tocq)
+                                     command=tocq,
+                                     underline=8)
 
         self.enable_lfm = tk.BooleanVar()
         self.enable_lfm.set(self.LFM)
@@ -88,7 +90,8 @@ class Reader():
         options_menu.add_checkbutton(label='Low Footprint Mode',
                                      onvalue=1, offvalue=0,
                                      variable=self.enable_lfm,
-                                     command=lfmq)
+                                     command=lfmq,
+                                     underline=0)
 
         # Status Bar
         self.frame.status_bar = tk.Label(self.frame,
@@ -142,7 +145,7 @@ class Reader():
         self.frame.master.bind('<Return>', get)
         self.frame.go_b = tk.Button(self.frame,
                                     text='ENTER',
-                                    comman=get,
+                                    command=get,
                                     relief='raised')
         self.frame.go_b.grid(row=4, column=1, padx=5, pady=5, sticky='new')
 
@@ -164,17 +167,34 @@ class Reader():
                                     column=7,
                                     padx=5, pady=10,
                                     sticky='nsew')
-
+        # ===============================================
         # Welcome message!
         self.textile.update(self, self.textile.preamble(), just='center')
-
         '''
         TOOL-TIPS
         self.frame.bind('<ButtonPress>', self.leave)
         # 3 second pause before tooltip appears
         self.waittime = 3000
         '''
-
+        # ===============================================
+        # NAVIGATION:
+        navs = tk.Frame(self.frame)
+        navs.grid(row=12, column=7, padx=5, pady=0, sticky='new')
+        # Left
+        navleft = partial(self.parser.navigate, self, vector=-1)
+        self.frame.master.bind('<Control-o>', navleft)
+        nl = tk.Button(navs, text='<',
+                       command=navleft,
+                       relief='raised')
+        nl.grid(row=0, column=0, sticky='nw')
+        # Right
+        navright = partial(self.parser.navigate, self, vector=1)
+        self.frame.master.bind('<Control-i>', navright)
+        nr = tk.Button(navs, text='>',
+                       command=navright,
+                       relief='raised')
+        nr.grid(row=0, column=1, sticky='ne')
+        # ===============================================
         # COLORS:
         self.frame.configure(bg=self.colors['frame'][0])
         self.frame.master.configure(bg=self.colors['master'][0])
@@ -182,7 +202,6 @@ class Reader():
                             fg=self.colors['menubar'][1],
                             relief='flat')
         f = self.frame
-        # Alias for line readability
         f.header.configure(bg=self.colors['header'][0],
                            fg=self.colors['header'][1],
                            font=(self.font,
@@ -200,6 +219,12 @@ class Reader():
         f.drop_frame.configure(bg=self.colors['header'][0])
         f.regex_check.configure(bg=self.colors['header'][0],
                                 fg=self.colors['header'][1])
+        navs.configure(bg=self.colors['header'][0])
+        nl.configure(bg=self.colors['header'][0],
+                     fg=self.colors['header'][1])
+        nr.configure(bg=self.colors['header'][0],
+                     fg=self.colors['header'][1])
+        # ===============================================
 
 
 def start(self, t=5.0):
@@ -407,11 +432,14 @@ def toc_query(self):
     tocframe = tk.Frame(self.frame)
     tocframe.grid(row=2, rowspan=8, column=8, sticky='w',
                   padx=5, pady=5, ipadx=2)
+    tocframe.configure(bg=self.colors['header'][0])
     i, j = 0, 0
     for book, bk in zip(self.bkNames, self.bkAbbrv):
         label = tk.Label(tocframe, text='%s (%s)' % (book, bk))
         if self.show_toc.get():
             label.grid(row=i, column=j, sticky='nw')
+            label.configure(bg=self.colors['header'][0],
+                            fg=self.colors['header'][1])
         else:
             label.grid_forget()
 

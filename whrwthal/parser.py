@@ -75,49 +75,10 @@ def verse(self, srch):
     out = OrderedDict()
     # ===============================================================
     # Alphabetic part of user's input
-    alph = ''.join([char.upper() for char in srch
-                    if char.isalpha()])
-    # Specified book
-    if (alph) and (alph not in self.bkAbbrv):
-        alph = r'(%(alph)s).*?' % locals()
-    # Alias
-    elif alph in self.bkAbbrv:
-        alph = [self.bkNames[i] for i in range(66)
-                if alph == self.bkAbbrv[i]][0]
-        alph = r'(%(alph)s).*?' % locals()
-    # Unspecifed
-    else:
-        alph = r'()'
+    alph, aref = alpheval(srch)
     # ===============================================================
     # Numeric part of user's input
-    numb = ''.join([char for char in srch
-                    if (not(char.isalpha()) and not(char.isspace()))])
-    # Specified chapter/verse number (logic from least to most specific)
-    # A book
-    if not(numb):
-        # Grab the whole book
-        numb = r'()'
-        trail = r'(?= [A-Z]+ \d|$)'
-    # Some chapters
-    # elif ('-' in numb) and (':' not in numb):
-    #     # FIXME?
-    #     trail = r'(?= %s:\d| [A-Z]+ \d|$)' % (str(int(numb) + 1))
-    #     numb = r'(?<= (%(numb)s) )' % locals()
-    # A chapter
-    elif ('-' not in numb) and (':' not in numb):
-        trail = r'(?= %i:| [A-Z]+ \d|$)' % (int(numb) + 1)
-        numb = r'(?<= (%(numb)s)):\d+ ' % locals()
-    # Some verses
-    elif (':' in numb) and ('-' in numb):
-        chp = int(numb.split(':')[0])
-        lv = int(numb.split('-')[1])
-        trail = r'(?= %i:%i| %i:1| [A-Z]+ \d|$)' % (chp, lv + 1, chp + 1)
-        numb = numb.split('-')[0]
-        numb = r'(?<= (%(numb)s) )' % locals()
-    # A verse
-    elif (':' in numb) and ('-' not in numb):
-        trail = r'(?= \d| [A-Z]+ \d|$)'
-        numb = r'(?<= (%(numb)s) )' % locals()
+    numb, trail, _, _ = numbeval(srch)
     lead = r'%(alph)s%(numb)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
     # ===============================================================
@@ -149,6 +110,101 @@ def verse(self, srch):
             break
     # ===============================================================
     return out, count, err
+
+
+def alpheval(ref):
+    alph = ''.join([char.upper() for char in ref
+                    if char.isalpha()])
+    aref = alph
+    bkName, bkAbbrv = toc()
+    # Specified book
+    if (alph) and (alph not in bkAbbrv):
+        alph = r'(%(alph)s).*?' % locals()
+    # Alias
+    elif alph in bkAbbrv:
+        alph = [bkNames[i] for i in range(66)
+                if alph == bkAbbrv[i]][0]
+        alph = r'(%(alph)s).*?' % locals()
+    # Unspecifed
+    else:
+        alph = r'()'
+    return alph, aref
+
+
+def numbeval(ref):
+    numb = ''.join([char for char in ref
+                    if (not(char.isalpha()) and not(char.isspace()))])
+    # Specified chapter/verse number (logic from least to most specific)
+    # A book
+    if not(numb):
+        # Grab the whole book
+        numeric = r'()'
+        trail = r'(?= [A-Z]+ \d|$)'
+        nref = None
+    # A chapter
+    # FIXME: See "Romans 17"
+    elif ('-' not in numb) and (':' not in numb):
+        nref = int(numb)
+        trail = r'(?= %i:| [A-Z]+ \d|$)' % (nref + 1)
+        numeric = r'(?<= (%(numb)s)):\d+ ' % locals()
+    # Some verses
+    elif (':' in numb) and ('-' in numb):
+        chp = int(numb.split(':')[0])
+        nref = int(numb.split('-')[1])
+        trail = r'(?= %i:%i| %i:1| [A-Z]+ \d|$)' % (chp, nref + 1, chp + 1)
+        numeric = r'(?<= (%s) )' % (numb.split('-')[0])
+    # A verse
+    elif (':' in numb) and ('-' not in numb):
+        nref = int(numb.split(':')[1])
+        trail = r'(?= \d| [A-Z]+ \d|$)'
+        numeric = r'(?<= (%(numb)s) )' % locals()
+
+    return numeric, trail, numb, nref
+
+
+def navigate(self, vector):
+    ref = self.frame.header.cget('text')
+    _, _, numb, nref = numbeval(ref)
+    srch = ref.replace(numb, str(nref + vector))
+    d, count, _= verse(self, srch)
+    h = [k for k in d.keys()][0]
+    t = [v for v in d.values()][0]
+    self.handler.gui_update(self, head=h, text=t,
+                            status='{} RESULT MATCHING \"{}\"'.format(
+                                count, srch))
+
+
+def toc():
+    # Table of Contents
+    bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
+               'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
+               'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
+               'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
+               'ECCLESIASTES', 'SONG OF SONGS', 'ISAIAH', 'JEREMIAH',
+               'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
+               'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
+               'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
+               'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
+               'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
+               'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
+               'ITIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
+               'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
+               'IIIJOHN', 'JUDE', 'REVELATION']
+    bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
+               'JOSH', 'JUD', 'RU', 'ISA', 'IISA',
+               'IKI', 'IIKI', 'ICHRON', 'IICHRON',
+               'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
+               'ECC', 'SONG', 'ISA', 'JER',
+               'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
+               'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
+               'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
+               'JOH', 'ACT', 'ROM', 'ICOR', 'IICOR',
+               'GAL', 'EPH', 'PHLP', 'COL',
+               'ITHESS', 'IITHESS', 'ITIM',
+               'IITIM', 'TIT', 'PHM', 'HEB', 'JAM',
+               'IPE', 'IIPE', 'IJO', 'IIJO', 'IIIJO', 'JU',
+               'REV']
+    return bkNames, bkAbbrv
 
 
 def make_text(**kwargs):

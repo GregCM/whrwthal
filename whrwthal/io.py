@@ -5,15 +5,14 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
 from configparser import ConfigParser
-from dahuffman.huffmancodec import HuffmanCodec
 import datetime as dt
 import os
 from tkinter import filedialog
 
+from dahuffman.huffmancodec import HuffmanCodec
 
-# TODO: Implement PGP crytographic protection...
-# require passphrase on First-Use
 
+# TODO: Implement PGP or other crytographic protection
 def save(self, event=None):
     text = self.frame.text_widget.get('1.0', 'end')
     log_time = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -37,7 +36,7 @@ def save(self, event=None):
 
     except (KeyError, FileNotFoundError):
         # Save file not found, saveas:
-        self.saveas(self)
+        saveas(self)
 
     finally:
         os.chdir(wd)

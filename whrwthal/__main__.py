@@ -19,8 +19,9 @@ You should have received a copy of the GNU General Public License
 along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
-import whrwthal
 import tkinter as tk
+
+import whrwthal
 from whrwthal import handler
 # TODO sys.setcheckinterval to improve interpreter time
 
