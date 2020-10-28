@@ -254,7 +254,6 @@ def _on_mousewheel(self, event):
 def shutdown(self, event=None):
     # Exit protocol prior to the process kill at handler.kill()
     # TODO: include protocol other than LFM query?
-
     co = self.config_obj['FOOTPRINT']
     if (co['switch']) and (co['transient']):
         msg = '\n'.join(['Would you like to disable Low Footprint Mode?',

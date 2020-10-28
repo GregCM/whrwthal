@@ -65,7 +65,6 @@ def phrase(self, srch, use_re=False):
                 count += 1
                 if (count > 2564):
                     raise MemoryError
-                    break
     return out, count
 
 
@@ -103,8 +102,6 @@ def verse(self, srch):
         count += 1
         if (count > 2564):
             raise MemoryError
-            # TODO replace with Raise MemoryError
-            break
     # ===============================================================
     return out, count
 
@@ -134,10 +131,10 @@ def numbeval(ref):
     # Specified chapter/verse number (logic from least to most specific)
     # A book
     if not(numb):
-        # Grab the whole book
-        numeric = r'()'
-        trail = r'(?= [A-Z]+ \d|$)'
+        # Start a book at Chapter 1 (ie "gen" is an alias of "gen 1")
         nref = None
+        trail = r'(?= 2:| [A-Z]+ \d|$)'
+        numeric = r'(?<= (%(numb)s)):\d+ '
     # A chapter
     # FIXME: See "Romans 17"
     elif ('-' not in numb) and (':' not in numb):
@@ -164,11 +161,15 @@ def navigate(self, vector, event=None):
     _, _, numb, nref = numbeval(ref)
     srch = ref.replace(numb, str(nref + vector))
     d, count = verse(self, srch)
-    h = [k for k in d.keys()][0]
-    t = [v for v in d.values()][0]
-    self.handler.gui_update(self, head=h, text=t,
-                            status='{} RESULT MATCHING \"{}\"'.format(
-                                count, srch))
+    try:
+        h = [k for k in d.keys()][0]
+        t = [v for v in d.values()][0]
+        self.handler.gui_update(self, head=h, text=t,
+                                status='{} RESULT MATCHING \"{}\"'.format(
+                                    count, srch))
+    except IndexError:
+        # <Ctl-k> on "romans 1" should return "Acts 28"
+        pass
 
 
 def toc():
