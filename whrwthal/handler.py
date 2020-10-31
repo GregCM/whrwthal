@@ -172,14 +172,14 @@ class Reader():
         # Up
         pageup = partial(self.parser.navigate, self, -1)
         self.frame.master.bind(self.key['pageup'], pageup)
-        nl = tk.Button(navs, text='<',
+        nl = tk.Button(navs, text='▲',
                        command=pageup,
                        relief='raised')
         nl.grid(row=0, column=0, sticky='nw')
         # Down
         pagedown = partial(self.parser.navigate, self, 1)
         self.frame.master.bind(self.key['pagedown'], pagedown)
-        nr = tk.Button(navs, text='>',
+        nr = tk.Button(navs, text='▼',
                        command=pagedown,
                        relief='raised')
         nr.grid(row=0, column=1, sticky='ne')
