@@ -61,11 +61,10 @@ Desktop enviornment Linux users can create a desktop application referencing **w
 Once there, make a file called "whrwhtal.desktop" populated by the following:
 
     [DESKTOP ENTRY]
-    Version=1.0
     Encoding=UTF-8
     Name=Whrwhtal
     Comment=Offline Bible referencing
-    Exec=python -m directory/whrwthal/__main__.py
+    Exec=python -m directory/whrwthal
     Icon=directory/icon.ico
     Path=directory/
     Terminal=false
