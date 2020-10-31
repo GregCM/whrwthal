@@ -39,8 +39,8 @@ Check that you have "tkinter" included in your Python install as follows:
     python -m tkinter
 
 If this returns a sample tkinter window, you're set (again). If it's missing, see below:
-    - https://tkdocs.com/tutorial/install.html
-    - https://www.activestate.com/products/tcl/downloads/
+- https://tkdocs.com/tutorial/install.html
+- https://www.activestate.com/products/tcl/downloads/
 
 #### A Sidenote: Embedding Python ####
 If you do decide to download embedded Python, place it in your folder of choice and make sure to run **whrwhtal** in that same folder (ie if on your thumb drive, Python and Tkinter will both be embedded there; consider this will require more space that whrwthal on its own). Some reasons you may want to do this:
