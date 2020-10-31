@@ -132,9 +132,9 @@ def numbeval(ref):
     # A book
     if not(numb):
         # Start a book at Chapter 1 (ie "gen" is an alias of "gen 1")
-        nref = None
+        nref = 1
         trail = r'(?= 2:| [A-Z]+ \d|$)'
-        numeric = r'(?<= (%(numb)s)):\d+ '
+        numeric = r'(?<= (1)):\d+ '
     # A chapter
     # FIXME: See "Romans 17"
     elif ('-' not in numb) and (':' not in numb):
