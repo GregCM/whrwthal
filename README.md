@@ -58,20 +58,7 @@ Desktop enviornment Linux users can create a desktop application referencing **w
 
 ``~/.local/share/applications/``
 
-Once there, make a file called "whrwhtal.desktop" populated by the following:
-
-    [DESKTOP ENTRY]
-    Encoding=UTF-8
-    Name=Whrwhtal
-    Comment=Offline Bible referencing
-    Exec=python -m directory/whrwthal
-    Icon=directory/icon.ico
-    Path=directory/
-    Terminal=false
-    Type=Application
-    Categories=Educational;Application;
-
-An icon will now appear in your applications menu to easily access **whrwhtal**!
+Name the file ``whrwthal.desktop`` and populate it accordingly. An icon will now appear in your applications menu to easily access **whrwhtal**!
 
 You can change the default settings stored during your first setup at any time through the Options menu; this includes Language, Colors, Directories, and more. Alternatively, directly alter "config.ini".
 
