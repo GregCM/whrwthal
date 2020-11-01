@@ -14,16 +14,17 @@ from whrwthal import parser
 
 
 def __init__(self):
-    self.ispc = sys.platform.startswith('win')
-    self.ismac = sys.platform.startswith('darwin')
-    self.islinux = sys.platform.startswith('linux')
-    if self.ispc:
-        self.homeDirectory = '%userprofile%'
-        self.pathPart = '\\'
-    elif (self.ismac or self.islinux):
+    if sys.platform.startswith('linux'):
         self.homeDirectory = '~/'
         self.pathPart = '/'
-
+    elif sys.platform.startswith('win'):
+        os.remove(f for f in ['*/*sh', 'Makefile'])
+        self.homeDirectory = '%userprofile%'
+        self.pathPart = '\\'
+    elif sys.platform.startswith('darwin'):
+        os.remove(f for f in ['*/*sh', 'Makefile'])
+        self.homeDirectory = '~/'
+        self.pathPart = '/'
     self.config_obj = ConfigParser()
     try:
         self.config_obj.read('config.ini')

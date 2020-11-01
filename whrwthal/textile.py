@@ -6,41 +6,39 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 
 
 def preamble():
-    cross = '\n'.join([r'         _____            ',
-                       r'        |     |\          ',
-                       r'        |     | \         ',
-                       r'        |     |  |        ',
-                       r' _______|     |__|____    ',
-                       r'|                     |\  ',
-                       r'|                     | \ ',
-                       r'|_______       _______|  |',
-                       r' \      |     |\       \ |',
-                       r'  \_____|     | \_______\|',
-                       r'        |     |  |        ',
-                       r'        |     |  |        ',
-                       r'        |     |  |        ',
-                       r'        |     |  |        ',
-                       r'        |     |  |        ',
-                       r'        |     |  |        ',
-                       r'        |_____|  |        ',
-                       r'        \      \ |        ',
-                       r'         \______\|  v2.3.2'])
-    v = '\n'.join([r' _____ _   _ _____   ____ ___ ____  _     _____ ',
-                   r'|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
-                   r'  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
-                   r'  | | |  _  | |___  | |_) | || |_) | |___| |___ ',
-                   r'  |_| |_| |_|_____| |____/___|____/|_____|_____|',
-                   r'________________________________________________',
-                   r'|                                                |',
-                   r'|  Please rightly divide and handle with prayer  |',
-                   r'|________________________________________________|'])
-    AppFormat = '\n'.join(['\nA good search looks like...',
-                           '-----------------------------',
-                           'Romans 5:8-10     John 3:16',
-                           'Psalm 119         Philemon',
-                           'word              phrase'])
-
-    return '\n'.join([cross, v, AppFormat])
+    return '\n'.join([r'         _____            ',
+                      r'        |     |\          ',
+                      r'        |     | \         ',
+                      r'        |     |  |        ',
+                      r' _______|     |__|____    ',
+                      r'|                     |\  ',
+                      r'|                     | \ ',
+                      r'|_______       _______|  |',
+                      r' \      |     |\       \ |',
+                      r'  \_____|     | \_______\|',
+                      r'        |     |  |        ',
+                      r'        |     |  |        ',
+                      r'        |     |  |        ',
+                      r'        |     |  |        ',
+                      r'        |     |  |        ',
+                      r'        |     |  |        ',
+                      r'        |_____|  |        ',
+                      r'        \      \ |        ',
+                      r'         \______\|  v2.3.3',
+                       ' _____ _   _ _____   ____ ___ ____  _     _____ ',
+                       '|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
+                       '  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
+                       '  | | |  _  | |___  | |_) | || |_) | |___| |___ ',
+                       '  |_| |_| |_|_____| |____/___|____/|_____|_____|',
+                       ' ________________________________________________ ',
+                       '|                                                |',
+                       '|  Please rightly divide and handle with prayer  |',
+                       '|________________________________________________|',
+                       '\nA good search looks like...',
+                       '-----------------------------',
+                      'Romans 5:8-10     John 3:16',
+                      'Psalm 119         Philemon',
+                      'word              phrase'])
 
 
 def update(self, text, just='left'):
@@ -61,17 +59,17 @@ def clear(self):
 
 
 def keybinds(self):
-    keys = "\n".join(["KEYBINDINGS:",
+    return "\n".join(["KEYBINDINGS:",
                       "%s %s" % ('save', self.key['save']),
                       "%s %s" % ('saveas', self.key['saveas']),
                       "%s %s" % ('quit', self.key['quit']),
                       "%s %s" % ('select_search', self.key['select_search']),
                       "%s %s" % ('page-up', self.key['pageup']),
-                      "%s %s" % ('page-down', self.key['pagedown']),
-                      "%s %s" % ('', ''),
-                      "%s %s" % ('', ''),
-                      "%s %s" % ('', ''),
-                      "%s %s" % ('', ''),
-                      "%s %s" % ('', ''),
-                      "%s %s" % ('', '')])
-    return keys
+                      "%s %s" % ('page-down', self.key['pagedown'])])
+
+
+def about():
+    version = 'v2.3.3'
+    uilines = '674 GUI Lines of Code'
+    totallines = '1403 Total Lines of Code'
+    return version, uilines, totallines

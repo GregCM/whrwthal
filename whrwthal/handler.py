@@ -244,9 +244,9 @@ def focus(self, event=None):
 
 
 def _on_mousewheel(self, event):
-    if (self.ispc or self.islinux):
+    if (sys.platform.startswith('win') or sys.platform.startswith('linux')):
         event.delta /= 120
-    elif self.ismac:
+    elif sys.platform.startswith('darwin'):
         event.delta /= 1
     self.canvas.yview_scroll(-1*(event.delta), 'units')
 
