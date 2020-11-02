@@ -24,7 +24,7 @@ def preamble():
                       r'        |     |  |        ',
                       r'        |_____|  |        ',
                       r'        \      \ |        ',
-                      r'         \______\|  v2.3.3',
+                      r'         \______\|  v2.3.4',
                        ' _____ _   _ _____   ____ ___ ____  _     _____ ',
                        '|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
                        '  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
@@ -69,7 +69,7 @@ def keybinds(self):
 
 
 def about():
-    version = 'v2.3.3'
+    version = 'v2.3.4'
     uilines = '676 GUI Lines of Code'
     totallines = '1405 Total Lines of Code'
     return 'whrwthal version %s' % (version), uilines, totallines
