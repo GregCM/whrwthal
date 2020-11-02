@@ -88,9 +88,16 @@ class Reader():
                                      command=lfmq,
                                      underline=0)
         # Help menu choices:
-        hkb = partial(hkeybinds, self)
-        help_menu.add_command(label='Keys',
-                              command=hkb)
+        about = partial(textile.update, self,
+                        '\n'.join(textile.about()), just='center')
+        help_menu.add_command(label='About',
+                              command=about,
+                              underline=0)
+        kb = partial(textile.update, self,
+                     textile.keybinds(self), just='right')
+        help_menu.add_command(label='Keybindings',
+                              command=kb,
+                              underline=0)
         # ===============================================
         # MAIN LAYOUT
         # Status Bar
@@ -447,11 +454,6 @@ def get_color(self, tk_obj, ground='bg'):
 
     with open('config.ini', 'w') as cfg:
         self.config_obj.write(cfg)
-
-
-def hkeybinds(self):
-    keys = self.textile.keybinds(self)
-    gui_update(self, text=keys, just='right')
 
 
 def adv_opts(self, frame, r, c, s):

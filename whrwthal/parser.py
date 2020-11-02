@@ -6,7 +6,7 @@ _______________________________________________
 
 The Biblical translations used herein are all
 in the public domain, and free to use, quote,
-or share without limit.
+modify, or share without limit.
 
 For general support, or if you have any
 questions about whrwthal's functionality,

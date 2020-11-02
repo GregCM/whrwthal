@@ -72,4 +72,4 @@ def about():
     version = 'v2.3.3'
     uilines = '674 GUI Lines of Code'
     totallines = '1403 Total Lines of Code'
-    return version, uilines, totallines
+    return 'whrwthal version %s' % (version), uilines, totallines
