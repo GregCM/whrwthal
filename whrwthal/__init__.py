@@ -42,7 +42,7 @@ def __init__(self):
                                      'header': 'gray18,ghost white',
                                      'text_widget': 'gray26,ghost white'}
         # Low Footprint Mode:
-        self.config_obj['FOOTPRINT'] = {'switch': 'true',
+        self.config_obj['LOWFOOTPRINT'] = {'switch': 'true',
                                         'transient': 'true'}
         self.config_obj['KEYS'] = {'save': '<Control-s>',
                                    'saveas': '<Control-Shift-S>',
@@ -64,7 +64,7 @@ def __init__(self):
         for key in self.colors.keys():
             self.colors[key] = self.colors[key].split(',')
         # Low Footprint Mode:
-        self.LFM = bool(self.config_obj['FOOTPRINT']['switch'])
+        self.LFM = bool(self.config_obj['LOWFOOTPRINT']['switch'])
         self.key = self.config_obj['KEYS']
 
     # LOW FOOTPRINT MODE

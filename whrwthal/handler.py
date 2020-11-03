@@ -261,7 +261,7 @@ def _on_mousewheel(self, event):
 def shutdown(self, event=None):
     # Exit protocol prior to the process kill at handler.kill()
     # TODO: include protocol other than LFM query?
-    co = self.config_obj['FOOTPRINT']
+    co = self.config_obj['LOWFOOTPRINT']
     if (co['switch']) and (co['transient']):
         msg = '\n'.join(['Would you like to disable Low Footprint Mode?',
                          'You would enjoy shorter wait times,',
@@ -272,8 +272,8 @@ def shutdown(self, event=None):
         if r:
             # LFM disabled, and will not be queried again,
             # except as a Checkbox under the Options menu
-            self.config_obj['FOOTPRINT']['switch'] = ''
-            self.config_obj['FOOTPRINT']['transient'] = ''
+            self.config_obj['LOWFOOTPRINT']['switch'] = ''
+            self.config_obj['LOWFOOTPRINT']['transient'] = ''
 
             os.remove('bytes')
             with open('src.txt', 'w') as f:
@@ -281,8 +281,8 @@ def shutdown(self, event=None):
 
         else:
             # LFM remains on and shutdown won't query again
-            self.config_obj['FOOTPRINT']['switch'] = 'true'
-            self.config_obj['FOOTPRINT']['transient'] = ''
+            self.config_obj['LOWFOOTPRINT']['switch'] = 'true'
+            self.config_obj['LOWFOOTPRINT']['transient'] = ''
 
         with open('config.ini', 'w') as cfg:
             self.config_obj.write(cfg)
@@ -429,13 +429,13 @@ def toc_query(self):
 def lfm_query(self):
     # INSERT: tk evalutation on checkbox instead of ^ "co"
     if self.enable_lfm.get():
-        self.config_obj['FOOTPRINT']['switch'] = 'on'
-        self.config_obj['FOOTPRINT']['transient'] = 'false'
+        self.config_obj['LOWFOOTPRINT']['switch'] = 'on'
+        self.config_obj['LOWFOOTPRINT']['transient'] = 'false'
         self.io.encode_file(self)
 
     else:
-        self.config_obj['FOOTPRINT']['switch'] = 'off'
-        self.config_obj['FOOTPRINT']['transient'] = 'false'
+        self.config_obj['LOWFOOTPRINT']['switch'] = 'off'
+        self.config_obj['LOWFOOTPRINT']['transient'] = 'false'
         self.io.decode_file(self)
 
 

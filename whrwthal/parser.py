@@ -75,9 +75,10 @@ def verse(self, srch):
     alph, aref = alpheval(srch)
     # ===============================================================
     # Numeric part of user's input
-    numb, trail, _, _ = numbeval(srch)
-    lead = r'%(alph)s%(numb)s' % locals()
-    match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text)
+    numeric, trail, _, _ = numbeval(srch)
+    lead = r'%(alph)s%(numeric)s' % locals()
+    match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text,
+                        flags=re.DOTALL | re.MULTILINE)
     # ===============================================================
     # Sort the groups for dictionary and return
     count = 0
@@ -113,12 +114,12 @@ def alpheval(ref):
     bkNames, bkAbbrv = toc()
     # Specified book
     if (alph) and (alph not in bkAbbrv):
-        alph = r'(%(alph)s).*?' % locals()
+        alph = r'^(%(alph)s).*?' % locals()
     # Alias
     elif alph in bkAbbrv:
         alph = [bkNames[i] for i in range(66)
                 if alph == bkAbbrv[i]][0]
-        alph = r'(%(alph)s).*?' % locals()
+        alph = r'^(%(alph)s).*?' % locals()
     # Unspecifed
     else:
         alph = r'()'
@@ -133,25 +134,25 @@ def numbeval(ref):
     if not(numb):
         # Start a book at Chapter 1 (ie "gen" is an alias of "gen 1")
         nref = 1
-        trail = r'(?= 2:| [A-Z]+ \d|$)'
-        numeric = r'(?<= (1)):\d+ '
+        trail = r'(?=\n2:|[A-Z]+\n\d|\Z)'
+        numeric = r'(?<=\n(1)):\d+ '
     # A chapter
     # FIXME: See "Romans 17"
     elif ('-' not in numb) and (':' not in numb):
         nref = int(numb)
-        trail = r'(?= %i:| [A-Z]+ \d|$)' % (nref + 1)
-        numeric = r'(?<= (%(numb)s)):\d+ ' % locals()
+        trail = r'(?=%i:|[A-Z]+\n\d|\Z)' % (nref + 1)
+        numeric = r'(?<=\n(%(numb)s)):\d+ ' % locals()
     # Some verses
     elif (':' in numb) and ('-' in numb):
         chp = int(numb.split(':')[0])
         nref = int(numb.split('-')[1])
-        trail = r'(?= %i:%i| %i:1| [A-Z]+ \d|$)' % (chp, nref + 1, chp + 1)
-        numeric = r'(?<= (%s) )' % (numb.split('-')[0])
+        trail = r'(?=\n%i:%i|\n%i:1|[A-Z]+\n\d|\Z)' % (chp, nref + 1, chp + 1)
+        numeric = r'(?<=:(%s) )' % (numb.split('-')[0])
     # A verse
     elif (':' in numb) and ('-' not in numb):
         nref = int(numb.split(':')[1])
-        trail = r'(?= \d| [A-Z]+ \d|$)'
-        numeric = r'(?<= (%(numb)s) )' % locals()
+        trail = r'(?=\n\d|[A-Z]+\n\d|$)'
+        numeric = r'(?<=:(%(numb)s) )' % locals()
 
     return numeric, trail, numb, nref
 
