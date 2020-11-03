@@ -69,17 +69,15 @@ def phrase(self, srch, use_re=False):
 
 
 def verse(self, srch):
+    # FIXME: JOHN returns IIIJOHN
     out = OrderedDict()
-    # ===============================================================
     # Alphabetic part of user's input
     alph, aref = alpheval(srch)
-    # ===============================================================
     # Numeric part of user's input
     numeric, trail, _, _ = numbeval(srch)
     lead = r'%(alph)s%(numeric)s' % locals()
     match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text,
                         flags=re.DOTALL | re.MULTILINE)
-    # ===============================================================
     # Sort the groups for dictionary and return
     count = 0
     for m in match:
@@ -97,13 +95,14 @@ def verse(self, srch):
         else:
             ref = b
         if (':' in srch) and ('-' in srch):
-            ref = ''.join([ref, '-', str(lv)])
+            ref = ''.join([ref, '-', srch.split('-')[1]])
         out[ref] = st
         # Every list with length greater than 2564 gets tossed
         count += 1
         if (count > 2564):
             raise MemoryError
-    # ===============================================================
+    if count == 0:
+        raise KeyError
     return out, count
 
 
@@ -137,7 +136,6 @@ def numbeval(ref):
         trail = r'(?=\n2:|[A-Z]+\n\d|\Z)'
         numeric = r'(?<=\n(1)):\d+ '
     # A chapter
-    # FIXME: See "Romans 17"
     elif ('-' not in numb) and (':' not in numb):
         nref = int(numb)
         trail = r'(?=%i:|[A-Z]+\n\d|\Z)' % (nref + 1)
@@ -161,16 +159,23 @@ def navigate(self, vector, event=None):
     ref = self.frame.header.cget('text')
     _, _, numb, nref = numbeval(ref)
     srch = ref.replace(numb, str(nref + vector))
-    d, count = verse(self, srch)
     try:
+        d, count = verse(self, srch)
         h = [k for k in d.keys()][0]
         t = [v for v in d.values()][0]
         self.handler.gui_update(self, head=h, text=t,
                                 status='{} RESULT MATCHING \"{}\"'.format(
                                     count, srch))
     except IndexError:
-        # <Ctl-k> on "romans 1" should return "Acts 28"
-        pass
+        # FIXME: See "Romans 17"
+        _, book = alpheval(srch)
+        idx = self.bkNames.index(book)
+        if numb == 1:
+            # <Ctl-k> on "romans 1" should return "Acts 28"
+            book = self.bkNames[idx - 1]
+        else:
+            # <Ctl-j> on "romans 16" should return "i corinthians 1"
+            book = self.bkNames[idx + 1]
 
 
 def toc():
@@ -341,39 +346,10 @@ def _make_json(**kwargs):
             text = f.read()
 
     # ===================================================
-    # Dictionary Table of Contents:
-    bkNames = ['GENESIS', 'EXODUS', 'LEVITICUS', 'NUMBERS', 'DEUTERONOMY',
-               'JOSHUA', 'JUDGES', 'RUTH', 'ISAMUEL', 'IISAMUEL',
-               'IKINGS', 'IIKINGS', 'ICHRONICLES', 'IICHRONICLES',
-               'EZRA', 'NEHEMIAH', 'ESTHER', 'JOB', 'PSALMS', 'PROVERBS',
-               'ECCLESIASTES', 'SONGOFSONGS', 'ISAIAH', 'JEREMIAH',
-               'LAMENTATIONS', 'EZEKIEL', 'DANIEL', 'HOSEA', 'JOEL',
-               'AMOS', 'OBADIAH', 'JONAH', 'MICAH', 'NAHUM', 'HABAKKUK',
-               'ZEPHANIAH', 'HAGGAI', 'ZECHARIAH', 'MALACHI', 'MATTHEW',
-               'MARK', 'LUKE', 'JOHN', 'ACTS', 'ROMANS', 'ICORINTHIANS',
-               'IICORINTHIANS', 'GALATIANS', 'EPHESIANS', 'PHILIPPIANS',
-               'COLOSSIANS', 'ITHESSALONIANS', 'IITHESSALONIANS',
-               'I TIMOTHY', 'IITIMOTHY', 'TITUS', 'PHILEMON', 'HEBREWS',
-               'JAMES', 'IPETER', 'IIPETER', 'IJOHN', 'IIJOHN',
-               'IIIJOHN', 'JUDE', 'REVELATION']
-    bkAbbrv = ['GEN', 'EXO', 'LEV', 'NUM', 'DEUT',
-               'JOSH', 'JUD', 'RU', 'I SA', 'II SA',
-               'I KI', 'II KI', 'I CHRON', 'II CHRON',
-               'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO',
-               'ECC', 'SONG', 'ISA', 'JER',
-               'LAM', 'EZE', 'DAN', 'HOS', 'JOE', 'AMO',
-               'OBAD', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
-               'HAG', 'ZEC', 'MAL', 'MATT', 'MAR', 'LUK',
-               'JOH', 'ACT', 'ROM', 'I COR', 'II COR',
-               'GAL', 'EPH', 'PHLP', 'COL',
-               'I THESS', 'II THESS', 'I TIM',
-               'II TIM', 'TIT', 'PHM', 'HEB', 'JAM',
-               'I PE', 'II PE', 'I JO', 'II JO', 'III JO', 'JU',
-               'REV']
-
+    # Dictionary:
     d = OrderedDict()
     # Table of Contents
-    d['ToC'] = [bkNames, bkAbbrv]
+    d['ToC'] = toc()
 
     # PATTERN
     # ===============================================================
@@ -388,11 +364,11 @@ def _make_json(**kwargs):
     match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)? %s'
                         % (g1, g2, g3, g4), text)
     # The full pattern is expressed:
-    '''
-    (?:([A-Z]+)(?= \\d+:)|(?!^))\
-    (?:(\\d+):(\\d+))? \
-    ((?:[A-Z](?![A-Z]+ \\d)|[^\\dA-Z](?![A-Z]+ \\d|\\d))*)
-    '''
+    r'''
+     (?:([A-Z]+)(?= \d+:)|(?!^))...
+     ...(?:(\d+):(\d+))? ...
+     ...((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?![A-Z]+ \d|\d))*)
+     '''
     # ===================================================
     # Dictionary Verse Number / Text Pairs:
     for m in match:
