@@ -25,17 +25,15 @@ import string
 
 def find(self, srch):
     d = OrderedDict()
-    pattern = regex(self, srch)
-    match = re.finditer(pattern, self.text, flags=re.IGNORECASE)
-    count = 0
-    for m in match:
-        st = m.group(1)
-        d[count] = st
-        # Every list with length greater than 2564 gets tossed
-        count += 1
-        if (count > 2564):
-            raise MemoryError
-    return d, count
+    pattern = re.compile(regex(self, srch), flags=re.IGNORECASE | re.MULTILINE)
+    match = pattern.split(self.text)
+    for m in range(0, len(match), 2):
+        b = re.search(r'^[A-Z]+', match[m])
+        try:
+            d[b] = match[m+1]
+        except IndexError:
+            pass
+    return d, len(match)
 
 
 def regex(self, srch):
@@ -102,8 +100,8 @@ def regex(self, srch):
                         and not(char.isspace()))])
         return r'([A-Z]+).*?({}) ()'.format(numb)
     elif (c and not(any([a, b]))):
-        print('3:: phrase / word')
-        return r'(.*\b{}\b.*)'.format(srch)
+        print('3:: %s' % (srch))
+        return r'^(.*\b{}\b.*)'.format(srch)
     if not(any([u, a, b, c])):
         raise KeyError
 
