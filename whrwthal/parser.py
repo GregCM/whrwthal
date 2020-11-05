@@ -23,136 +23,89 @@ import re
 import string
 
 
-def phrase(self, srch, use_re=False):
-    out = OrderedDict()
-
-    # PATTERN
-    # Book Title Group -- captures more than 2 capitals before a digit
-    g1 = r'([A-Z]+)'
-    # Chapter Number Group -- captures digit before a colon
-    g2 = r'(\d+)'
-    # Verse Number Group -- captures digit after a colon
-    g3 = r'(\d+)'
-    # SubText Group -- captures verse between digits/title, no trailing \s
-    g4 = r'((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
-    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)? %s'
-                        % (g1, g2, g3, g4), self.text)
-    # SearchMatch
-    if use_re:
-        sm = re.compile(r'%(srch)s' % locals())
-    else:
-        # Case insensitive search, anywhere in a word.
-        # --> "the" Returns "these", "anthem", "THE", etc.
-        sm = re.compile(r'[^\d]*%(srch)s[^\d]*' % locals(), re.IGNORECASE)
-    # Count serves as speed / crash prevention:
-    # no one wants to see a 62,000-Count word list.
+def find(self, srch):
+    d = OrderedDict()
+    pattern = regex(self, srch)
+    match = re.finditer(pattern, self.text, flags=re.IGNORECASE)
     count = 0
     for m in match:
-        if m.group(1):
-            b = m.group(1)
-        else:
-            # Chapter
-            c = m.group(2)
-            # Verse
-            v = m.group(3)
-            # SubText
-            st = m.group(4)
-            # Search in st?
-            if sm.match(st):
-                ref = ''.join([b, ' ', c, ':', v])
-                out[ref] = st
-                # Every list with length greater than 2564 gets tossed
-                count += 1
-                if (count > 2564):
-                    raise MemoryError
-    return out, count
-
-
-def verse(self, srch):
-    # FIXME: JOHN returns IIIJOHN
-    out = OrderedDict()
-    # Alphabetic part of user's input
-    alph, aref = alpheval(srch)
-    # Numeric part of user's input
-    numeric, trail, _, _ = numbeval(srch)
-    lead = r'%(alph)s%(numeric)s' % locals()
-    match = re.finditer(r'%(lead)s(.+?)%(trail)s' % locals(), self.text,
-                        flags=re.DOTALL | re.MULTILINE)
-    # Sort the groups for dictionary and return
-    count = 0
-    for m in match:
-        if m.group(1):
-            b = m.group(1)
-        # No book was specified (or found)
-        else:
-            # Try every book with the verse specified
-            b = self.bkNames[count]
-        # Reference group
-        r = m.group(2)
-        st = m.group(3)
-        if r:
-            ref = ' '.join([b, r])
-        else:
-            ref = b
-        if (':' in srch) and ('-' in srch):
-            ref = ''.join([ref, '-', srch.split('-')[1]])
-        out[ref] = st
+        st = m.group(1)
+        d[count] = st
         # Every list with length greater than 2564 gets tossed
         count += 1
         if (count > 2564):
             raise MemoryError
-    if count == 0:
+    return d, count
+
+
+def regex(self, srch):
+    '''
+    Takes input and executes the following logic to determine a regular
+    expression to assign. Returns a string which is used for both phrase
+    and verse srches.
+
+    If entry contents reference a book, and chapter or verse:
+
+        1:: "ROM 16:1-3" Returns a regex matching Romans chapter 12 verses
+            "Rom 12:1" Returns a regex matching Romans chapter 12 verse 1.
+                1 through 3.
+            "romans 1" Returns a regex matching Romans chapter 1.
+
+    Else If entry contents only reference a number combination:
+
+        2:: "1:3" Returns any 3rd verse from any 1st chapter (if it exists)
+            "23" Returns the 23rd chapter of every book (if it exists)
+            
+
+    Else:
+        3:: "phrase of words" Returns a regex matching "phrase of words"
+            "word" Returns a regex matching "word"
+            
+    '''
+    # Table of contents entry check, any full or abbreviated reference
+    ToC = self.bkAbbrv + self.bkNames
+    uconcord = [w.upper() for w in self.concordance]
+
+    upper = srch.upper()
+    # There exists an entry "e" referencing the ToC if its uppercase
+    # form appears as either an abbreviation or word: e = "ROM/ROMAN"
+    usplit = upper.split()
+    ToC_entries = [e for e in usplit if e in ToC]
+    ToC_count = len(ToC_entries)
+
+    conc_entries = [W for W in uconcord if W in usplit]
+    conc_count = len(conc_entries)
+
+    numeric_entries = [e for e in srch if e.isnumeric()]
+
+    u = self.use_re
+    a = any(ToC_entries)
+    b = any(numeric_entries)
+    c = any(conc_entries)
+    count = 0
+    if u:
+        print('0::')
+        # User specified regular expression
+        return srch
+    elif a and b:
+        print('1:: book chapter.verse')
+        alph = ''.join([char.upper() for char in srch if char.isalpha()])
+        numb = ''.join([char for char in srch if (not(char.isalpha())
+                        and not(char.isspace()))])
+        return r'({}).*?({}) (.*?)(?=\d)'.format(alph, numb)
+    elif (a and not b):
+        print('1:: book')
+        return r'({})\n(1:\d+) (.*?)(?=2:1 )'.format(upper)
+    elif b:
+        print('2:: chapter.verse')
+        numb = ''.join([char for char in srch if (not(char.isalpha())
+                        and not(char.isspace()))])
+        return r'([A-Z]+).*?({}) ()'.format(numb)
+    elif (c and not(any([a, b]))):
+        print('3:: phrase / word')
+        return r'(.*\b{}\b.*)'.format(srch)
+    if not(any([u, a, b, c])):
         raise KeyError
-    return out, count
-
-
-def alpheval(ref):
-    alph = ''.join([char.upper() for char in ref
-                    if char.isalpha()])
-    aref = alph
-    bkNames, bkAbbrv = toc()
-    # Specified book
-    if (alph) and (alph not in bkAbbrv):
-        alph = r'^(%(alph)s).*?' % locals()
-    # Alias
-    elif alph in bkAbbrv:
-        alph = [bkNames[i] for i in range(66)
-                if alph == bkAbbrv[i]][0]
-        alph = r'^(%(alph)s).*?' % locals()
-    # Unspecifed
-    else:
-        alph = r'()'
-    return alph, aref
-
-
-def numbeval(ref):
-    numb = ''.join([char for char in ref
-                    if (not(char.isalpha()) and not(char.isspace()))])
-    # Specified chapter/verse number (logic from least to most specific)
-    # A book
-    if not(numb):
-        # Start a book at Chapter 1 (ie "gen" is an alias of "gen 1")
-        nref = 1
-        trail = r'(?=\n2:|[A-Z]+\n\d|\Z)'
-        numeric = r'(?<=\n(1)):\d+ '
-    # A chapter
-    elif ('-' not in numb) and (':' not in numb):
-        nref = int(numb)
-        trail = r'(?=%i:|[A-Z]+\n\d|\Z)' % (nref + 1)
-        numeric = r'(?<=\n(%(numb)s)):\d+ ' % locals()
-    # Some verses
-    elif (':' in numb) and ('-' in numb):
-        chp = int(numb.split(':')[0])
-        nref = int(numb.split('-')[1])
-        trail = r'(?=\n%i:%i|\n%i:1|[A-Z]+\n\d|\Z)' % (chp, nref + 1, chp + 1)
-        numeric = r'(?<=:(%s) )' % (numb.split('-')[0])
-    # A verse
-    elif (':' in numb) and ('-' not in numb):
-        nref = int(numb.split(':')[1])
-        trail = r'(?=\n\d|[A-Z]+\n\d|$)'
-        numeric = r'(?<=:(%(numb)s) )' % locals()
-
-    return numeric, trail, numb, nref
 
 
 def navigate(self, vector, event=None):

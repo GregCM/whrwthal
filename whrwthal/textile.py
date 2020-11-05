@@ -71,5 +71,5 @@ def keybinds(self):
 def about():
     version = 'v2.3.4'
     uilines = '676 GUI Lines of Code'
-    totallines = '1408 Total Lines of Code'
-    return 'whrwthal version %s' % (version), uilines, totallines
+    totallines = '1335 Total Lines of Code'
+    return 'whrwthal version {}'.format(version), uilines, totallines
