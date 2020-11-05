@@ -35,7 +35,7 @@ def phrase(self, srch, use_re=False):
     g3 = r'(\d+)'
     # SubText Group -- captures verse between digits/title, no trailing \s
     g4 = r'((?:[A-Z](?![A-Z]+ \d)|[^\dA-Z](?!(?:[A-Z]+ \d|\d)))*)'
-    match = re.finditer(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)? %s'
+    match = re.findall(r'(?:%s(?= \d+:)|(?!^))(?:%s:%s)? %s'
                         % (g1, g2, g3, g4), self.text)
     # SearchMatch
     if use_re:
