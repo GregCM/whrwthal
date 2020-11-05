@@ -88,11 +88,28 @@ class Reader():
                                      command=lfmq,
                                      underline=0)
         # Help menu choices:
-        about = partial(textile.update, self,
-                        '\n'.join(textile.about()), just='center')
-        help_menu.add_command(label='About',
-                              command=about,
+        about_submenu = tk.Menu(help_menu, tearoff=0)
+        help_menu.add_cascade(label='About',
+                              menu=about_submenu,
                               underline=0)
+
+        # about whrwthal
+        w_about = partial(textile.update, self,
+                          textile.about('Whrwthal'), just='center')
+        about_submenu.add_command(label='Whrwthal', command=w_about,
+                                  underline=0)
+        # about license
+        l_about = partial(textile.update, self,
+                          textile.about('License'), just='left')
+        about_submenu.add_command(label='License', command=l_about,
+                                  underline=0)
+        # about security
+        s_about = partial(textile.update, self,
+                          textile.about('Security'), just='left')
+        about_submenu.add_command(label='Security', command=s_about,
+                                  underline=0)
+
+        # keybinds
         kb = partial(textile.update, self,
                      textile.keybinds(self), just='right')
         help_menu.add_command(label='Keybindings',

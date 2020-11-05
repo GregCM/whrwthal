@@ -68,8 +68,15 @@ def keybinds(self):
                       "%s %s" % ('page-down', self.key['pagedown'])])
 
 
-def about():
-    version = 'v2.3.4'
-    uilines = '676 GUI Lines of Code'
-    totallines = '1403 Total Lines of Code'
-    return 'whrwthal version %s' % (version), uilines, totallines
+def about(label):
+    if label == 'Whrwthal':
+        version = 'v2.3.4'
+        uilines = '693 GUI Lines of Code'
+        totallines = '1427 Total Lines of Code'
+        return '\n'.join(['whrwthal version %s' % (version), uilines, totallines])
+    if label == 'License':
+        with open('LICENSE') as f:
+            return f.read()
+    if label == 'Security':
+        with open('SECURITY.md') as f:
+            return f.read()
