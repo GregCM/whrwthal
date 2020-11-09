@@ -25,15 +25,17 @@ import string
 
 def find(self, srch):
     d = OrderedDict()
-    pattern = re.compile(regex(self, srch), flags=re.IGNORECASE | re.MULTILINE)
-    match = pattern.split(self.text)
-    for m in range(0, len(match), 2):
-        b = re.search(r'^[A-Z]+', match[m])
-        try:
-            d[b] = match[m+1]
-        except IndexError:
-            pass
-    return d, len(match)
+    b, r = regex(self, srch)
+    book = re.split(b, self.text, flags=re.MULTILINE | re.DOTALL)[1:]
+    pattern = re.compile(r, flags=re.IGNORECASE | re.MULTILINE)
+    for i in range(0, len(b), 2):
+        b = book[i]
+        match = pattern.finditer(book[i+1])
+        for m in match:
+            cv = m.group(2)
+            print(b, cv)
+            d[' '.join([b, cv])] = m.group(1)
+    return d, len(d)
 
 
 def regex(self, srch):
@@ -58,7 +60,6 @@ def regex(self, srch):
     Else:
         3:: "phrase of words" Returns a regex matching "phrase of words"
             "word" Returns a regex matching "word"
-            
     '''
     # Table of contents entry check, any full or abbreviated reference
     ToC = self.bkAbbrv + self.bkNames
@@ -87,10 +88,10 @@ def regex(self, srch):
         return srch
     elif a and b:
         print('1:: book chapter.verse')
-        alph = ''.join([char.upper() for char in srch if char.isalpha()])
+        alph = r''.join([char.upper() for char in srch if char.isalpha()])
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
-        return r'({}).*?({}) (.*?)(?=\d)'.format(alph, numb)
+        return alph, r'({}).*?({}) (.*?)(?=\d)'.format(alph, numb)
     elif (a and not b):
         print('1:: book')
         return r'({})\n(1:\d+) (.*?)(?=2:1 )'.format(upper)
@@ -98,10 +99,10 @@ def regex(self, srch):
         print('2:: chapter.verse')
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
-        return r'([A-Z]+).*?({}) ()'.format(numb)
+        return r'^(({}).*)$'.format(numb)
     elif (c and not(any([a, b]))):
         print('3:: %s' % (srch))
-        return r'^(.*\b{}\b.*)'.format(srch)
+        return r'^([A-Z]+)', r'^((\d+:\d+).*\b{}\b.*?)$'.format(srch)
     if not(any([u, a, b, c])):
         raise KeyError
 

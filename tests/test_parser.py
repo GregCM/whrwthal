@@ -23,17 +23,15 @@ class TestParser(unittest.TestCase):
         phrase_tests = ['therefore', 'wherefore', 'therewith', 'wherewithal']
         for s, i in zip(phrase_tests, [1220, 344, 36, 2]):
             d, count = whrwthal.parser.find(whrwthal, s)
-            print(d)
             self.assertEqual(count, i, msg='[%s] expected %i result(s), got %i'
                              % (s, i, count))
 
-        '''
-        chapter_tests = ['PSALM 117', 'PSALM 119', 'ROMANS 1']
+        chapter_tests = ['PSALMS 117', 'PSALMS 119', 'ROMANS 1']
         for c, i in zip(chapter_tests, [178, 14285, 4109]):
             d, count = whrwthal.parser.find(whrwthal, c)
+            print(d.keys())
             self.assertEqual(len(d[c]), i, msg='[%s] Expected length %i, got %i'
                              % (c, len(d[c]), i))
-        '''
 
 
 if __name__ == '__main__':
