@@ -6,7 +6,7 @@
 # 2) Codebase size by line-count
 
 version=$(git tag | tail -1)
-sed -Ei "s/v[0-9].[0-9].[0-9]/$version/" textile.py
+sed -Ei "s/v[0-9]+.[0-9]+.[0-9]+/$version/" textile.py
 sed -Ei "s/(version = )'.*'/\1'$version'/" textile.py
 
 uilines=$(wc -l handler.py | sed "s/handler.py/GUI Lines of Code/")
