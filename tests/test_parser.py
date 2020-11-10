@@ -27,7 +27,7 @@ class TestParser(unittest.TestCase):
                              % (s, i, count))
 
         chapter_tests = ['PSALMS 117', 'PSALMS 119', 'ROMANS 1']
-        for c, i in zip(chapter_tests, [185, 14292, 4113]):
+        for c, i in zip(chapter_tests, [185, 14292, 4114]):
             d, count = whrwthal.parser.find(whrwthal, c)
             self.assertEqual(i, len(d[c]), msg='\n\n[%s] Expected length %i, got %i'
                              % (c, i, len(d[c])))

@@ -96,7 +96,7 @@ def regex(self, srch):
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
         return('(%s)' % (alph),
-               r'^(({}):1 .*?)(?={}:1 |^[A-Z]+$|\Z)'.format(numb, str(int(numb)+1)),
+               r'^(({}):1 .*?)(?={}:1 ).*(?=^[A-Z]+$).*(?=\Z)'.format(numb, str(int(numb)+1)),
                re.DOTALL | re.MULTILINE)
     # VERSE
     # elif...:
