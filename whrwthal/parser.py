@@ -25,16 +25,15 @@ import string
 
 def find(self, srch):
     d = OrderedDict()
-    b, r = regex(self, srch)
+    b, r, f = regex(self, srch)
     book = re.split(b, self.text, flags=re.MULTILINE | re.DOTALL)[1:]
-    pattern = re.compile(r, flags=re.IGNORECASE | re.MULTILINE)
-    for i in range(0, len(b), 2):
+    pattern = re.compile(r, flags=f)
+    for i in range(0, len(book), 2):
         b = book[i]
         match = pattern.finditer(book[i+1])
         for m in match:
-            cv = m.group(2)
-            print(b, cv)
-            d[' '.join([b, cv])] = m.group(1)
+            ref = ' '.join([b, m.group(2)])
+            d[ref] = m.group(1)
     return d, len(d)
 
 
@@ -50,6 +49,8 @@ def regex(self, srch):
             "Rom 12:1" Returns a regex matching Romans chapter 12 verse 1.
                 1 through 3.
             "romans 1" Returns a regex matching Romans chapter 1.
+
+        1.5:: "rom" Returns a regex matching Romans chapter 1.
 
     Else If entry contents only reference a number combination:
 
@@ -85,24 +86,39 @@ def regex(self, srch):
     if u:
         print('0::')
         # User specified regular expression
-        return srch
+        alph = r'^([A-Z]+)$'
+        return alph, srch
+    # TODO: It looks like unique cases may be needed for Chapters & for Verses
+    # CHAPTER
     elif a and b:
-        print('1:: book chapter.verse')
-        alph = r''.join([char.upper() for char in srch if char.isalpha()])
+        print('1:: %s' % (srch))
+        alph = ''.join([char.upper() for char in srch if char.isalpha()])
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
-        return alph, r'({}).*?({}) (.*?)(?=\d)'.format(alph, numb)
+        return('(%s)' % (alph),
+               r'^(({}):1 .*?)(?={}:1 |^[A-Z]+$|\Z)'.format(numb, str(int(numb)+1)),
+               re.DOTALL | re.MULTILINE)
+    # VERSE
+    # elif...:
+        # print('1.X:: %s' % (srch))
     elif (a and not b):
-        print('1:: book')
-        return r'({})\n(1:\d+) (.*?)(?=2:1 )'.format(upper)
+        print('1.5:: %s' % (srch))
+        alph = r''.join([char.upper() for char in srch if char.isalpha()])
+        return alph, r'({})\n(1:\d+) (.*?)(?=2:1 )'.format(upper)
     elif b:
-        print('2:: chapter.verse')
+        print('2:: %s' % (srch))
+        alph = r'^([A-Z]+)$'
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
-        return r'^(({}).*)$'.format(numb)
+        return(alph,
+               r'^(({}).*)$'.format(numb),
+               None)
     elif (c and not(any([a, b]))):
         print('3:: %s' % (srch))
-        return r'^([A-Z]+)', r'^((\d+:\d+).*\b{}\b.*?)$'.format(srch)
+        alph = r'^([A-Z]+)$'
+        return(alph,
+               r'^((\d+:\d+).*\b{}\b.*?)$'.format(srch),
+               re.IGNORECASE | re.MULTILINE)
     if not(any([u, a, b, c])):
         raise KeyError
 
@@ -112,7 +128,7 @@ def navigate(self, vector, event=None):
     _, _, numb, nref = numbeval(ref)
     srch = ref.replace(numb, str(nref + vector))
     try:
-        d, count = verse(self, srch)
+        d, count = find(self, srch)
         h = [k for k in d.keys()][0]
         t = [v for v in d.values()][0]
         self.handler.gui_update(self, head=h, text=t,
