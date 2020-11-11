@@ -91,7 +91,6 @@ def regex(self, srch):
     c = any(conc_entries)
     p1 = ':' in srch
     p2 = '-' in srch
->>>>>>> txt-revamp
     count = 0
     if u:
         print('0:: %s' % (srch))
