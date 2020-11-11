@@ -476,7 +476,10 @@ def get_input(self, event=None):
     calls list_update() to handle displaying the results.
     '''
     self.frame.var.set(1)
-    self.use_re = self.use_re.get()
+    try:
+        self.use_re = self.use_re.get()
+    except AttributeError:
+        pass
     srch = self.frame.SearchBar.get()
     try:
         d, count = self.parser.find(self, srch)
@@ -486,10 +489,12 @@ def get_input(self, event=None):
                          'please be more specific.'])
         messagebox.showwarning('Overloaded Search',
                                msg.format(self.frame.entry))
+        count = 0
     except KeyError:
         messagebox.showerror('Error',
                              '\"{}\" not found.'.format(self.frame.entry))
         d = {}
+        count = 0
 
     list_destroy(self)
     if count == 1:
