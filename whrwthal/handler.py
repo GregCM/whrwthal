@@ -489,122 +489,42 @@ def select(self, event=None):
 
 def get_input(self, event=None):
     '''
-    Takes input from tk.Entry(). Executes the following logic and
-    returns a list and calls list_update to handle displaying results.
-
-    If all entry contents reference a book, but none reference words/phrases:
-
-        0:: "Genesis" Returns the entire book of Genesis
-
-    or If entry contents reference a book, and chapter or verse:
-
-        0:: "Rom 12:1" Returns Romans Chapter 12 verse 1.
-
-    Else If certain entry contents reference a book and a word in text:
-
-        1:: "romans" Returns the book of Romans and "...we being romans..."
-
-    Else If some entry contents reference a book, and some text:
-
-        2:: "we being romans" Returns the verse "...we being romans..."
-
-    Else If entry contents only reference a number combination:
-
-        3:: "23" Returns the 23rd chapter of every book (if it exists)
-            "1:3" Returns any 3rd verse from any 1st chapter (if it exists)
-
-    Else:
-        4:: "word" Returns every verse containing "word"
+    Takes input from tk.Entry() and returns a list with matches,
+    calls list_update() to handle displaying the results.
     '''
     self.frame.var.set(1)
-    self.frame.entry = self.frame.SearchBar.get()
-
-    # Table of contents entry check, any full or abbreviated reference
-    ToC = self.bkAbbrv + self.bkNames
-    # TODO: (1) Replace UPPER results with colorized text (tk attributes)?
-    self.concordance = [w.upper() for w in self.concordance]
-
-    if self.frame.entry is not None:
-        upper = self.frame.entry.upper()
-        # There exists an entry "e" referencing the ToC if its uppercase
-        # form appears as either an abbreviation or word: e = "ROM/ROMAN"
-        usplit = upper.split()
-        ToC_entries = [e for e in usplit if e in ToC]
-        ToC_count = len(ToC_entries)
-
-        conc_entries = [W for W in self.concordance if W in usplit]
-        # SEE: "dispensation of"
-        con_count = len(conc_entries)
-
-        numeric_entries = [e for e in self.frame.entry if e.isnumeric()]
-    else:
-        ToC_entries = []
-        ToC_count = len(ToC_entries)
-
-        conc_entries = []
-        con_count = len(conc_entries)
-
-        numeric_entries = []
-    u = self.use_re.get()
-    a = any(ToC_entries)
-    b = any(conc_entries)
-    c = any(numeric_entries)
-    vcount = pcount = 0
     try:
-        if u:
-            print('get_input:: 0')
-            # User specified regular expression search (phrases only)
-            d, pcount = self.parser.phrase(self, self.frame.entry,
-                                           self.use_re.get())
-        elif (a and not(b)) or (a and c):
-            print('get_input:: 1')
-            d, vcount = self.parser.verse(self, self.frame.entry)
-
-        elif (a and b):
-            print('get_input:: 2')
-            d, vcount = self.parser.verse(self, self.frame.entry)
-            pd, pcount = self.parser.phrase(self, self.frame.entry,
-                                            self.use_re.get())
-            # append pout to out as a combined dict
-            for key in pd:
-                d[key] = pd[key]
-
-        elif (c and not(any([a, b]))):
-            print('get_input:: 3')
-            d, vcount = self.parser.verse(self, self.frame.entry)
-
-        elif ((a and b) and (con_count > ToC_count)) or (not(a) and b):
-            print('get_input:: 4')
-            d, pcount = self.parser.phrase(self, self.frame.entry,
-                                           self.use_re.get())
-        if not(any([u, a, b, c])):
-            raise KeyError
-
-        count = vcount + pcount
-        list_destroy(self)
-        if count == 1:
-            h = [k for k in d.keys()][0]
-            t = [v for v in d.values()][0]
-            gui_update(self, status='{} RESULT MATCHING \"{}\"'.format(
-                           count, self.frame.entry), head=h, text=t)
-        elif count > 1:
-            h = 'Awaiting selection...'
-            gui_update(self, status='{} RESULTS MATCHING \"{}\"'.format(
-                           count, self.frame.entry), head=h)
-            # FIXME this frame sucks
-            list_update(self, d)
+        self.use_re = self.use_re.get()
+    except AttributeError:
+        pass
+    srch = self.frame.SearchBar.get()
+    try:
+        d, count = self.parser.find(self, srch)
     # Handling errors
     except MemoryError:
-        print('get_input ERROR:: 5')
         msg = '\n'.join(['There are too many results for "{}",',
                          'please be more specific.'])
         messagebox.showwarning('Overloaded Search',
                                msg.format(self.frame.entry))
+        count = 0
     except KeyError:
-        print('get_input ERROR:: 6')
         messagebox.showerror('Error',
                              '\"{}\" not found.'.format(self.frame.entry))
         d = {}
+        count = 0
+
+    list_destroy(self)
+    if count == 1:
+        h = [k for k in d.keys()][0]
+        t = [v for v in d.values()][0]
+        gui_update(self, status='{} RESULT MATCHING \"{}\"'.format(
+                       count, self.frame.entry), head=h, text=t)
+    elif count > 1:
+        h = 'Awaiting selection...'
+        gui_update(self, status='{} RESULTS MATCHING \"{}\"'.format(
+                       count, self.frame.entry), head=h)
+        # FIXME this list frame sucks
+        list_update(self, d)
     self.frame.go_b.wait_variable(self.frame.var)
 
 

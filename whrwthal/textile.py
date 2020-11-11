@@ -24,7 +24,7 @@ def preamble():
                       r'        |     |  |        ',
                       r'        |_____|  |        ',
                       r'        \      \ |        ',
-                      r'         \______\|  v2.3.4',
+                      r'         \______\|  v2.4.0',
                        ' _____ _   _ _____   ____ ___ ____  _     _____ ',
                        '|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
                        '  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
@@ -70,9 +70,9 @@ def keybinds(self):
 
 def about(label):
     if label == 'Whrwthal':
-        version = 'v2.3.4'
-        uilines = '693 GUI Lines of Code'
-        totallines = '1427 Total Lines of Code'
+        version = 'v2.4.0'
+        uilines = '596 GUI Lines of Code'
+        totallines = '1292 Total Lines of Code'
         return '\n'.join(['whrwthal version %s' % (version), uilines, totallines])
     if label == 'License':
         with open('LICENSE') as f:
