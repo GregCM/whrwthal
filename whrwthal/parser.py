@@ -38,19 +38,26 @@ def find(self, srch):
 
 
 def regex(self, srch):
-    '''
+    r'''
     Takes input and executes the following logic to determine a regular
     expression to assign. Returns a string which is used for both phrase
     and verse srches.
 
+    The user may specifiy a regular expression:
+
+        0:: "/^Peradventure\b.*" matches all verses starting "Peradventure",
+            "Genesis/^Peradventure\b.*" matches all in Genesis.
+
     If entry contents reference a book, and chapter or verse:
 
-        1:: "ROM 16:1-3" Returns a regex matching Romans chapter 12 verses
-            "Rom 12:1" Returns a regex matching Romans chapter 12 verse 1.
-                1 through 3.
-            "romans 1" Returns a regex matching Romans chapter 1.
+        1.00:: "rom" Returns a regex matching Romans chapter 1.
 
-        1.5:: "rom" Returns a regex matching Romans chapter 1.
+        1.25:: "romans 1" Returns a regex matching Romans chapter 1.
+
+        1.50:: "Rom 12:1" Returns a regex matching Romans chapter 12 verse 1.
+
+        1.75:: "ROM 16:1-3" Returns a regex matching Romans
+                            chapter 12 verses 1 through 3.
 
     Else If entry contents only reference a number combination:
 
@@ -82,44 +89,59 @@ def regex(self, srch):
     a = any(ToC_entries)
     b = any(numeric_entries)
     c = any(conc_entries)
+    p1 = ':' in srch
+    p2 = '-' in srch
     count = 0
     if u:
-        print('0::')
-        # User specified regular expression
-        alph = r'^([A-Z]+)$'
-        return alph, srch
-    # TODO: It looks like unique cases may be needed for Chapters & for Verses
-    # CHAPTER
-    elif a and b:
-        print('1:: %s' % (srch))
+        print('0:: %s' % (srch))
+        alph, srch = srch.split('/')
+        if alph:
+            return alph, srch
+        else:
+            return r'^([A-Z]+)', srch
+    # ========================================================================
+    # Searches on chapters / verses
+    elif a and not b:
+        print('1.00:: %s' % (srch))
+        alph = r''.join([char.upper() for char in srch if char.isalpha()])
+        return('^(%s)' % (alph),
+               r'^((1):1 .*?)(?=2:1 ).*(?=^[A-Z]+$).*(?=\Z)'.format(upper),
+               re.DOTALL | re.MULTILINE)
+
+    elif a and b and not p1:
+        print('1.25:: %s' % (srch))
         alph = ''.join([char.upper() for char in srch if char.isalpha()])
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
-        return('(%s)' % (alph),
+        return('^(%s)' % (alph),
                r'^(({}):1 .*?)(?={}:1 ).*(?=^[A-Z]+$).*(?=\Z)'.format(numb, str(int(numb)+1)),
                re.DOTALL | re.MULTILINE)
-    # VERSE
-    # elif...:
-        # print('1.X:: %s' % (srch))
-    elif (a and not b):
-        print('1.5:: %s' % (srch))
-        alph = r''.join([char.upper() for char in srch if char.isalpha()])
-        return alph, r'({})\n(1:\d+) (.*?)(?=2:1 )'.format(upper)
-    elif b:
+
+    elif a and b and p1:
+        print('1.50:: %s' % (srch))
+        alph = ''.join([char.upper() for char in srch if char.isalpha()])
+        numb = ''.join([char for char in srch if (not(char.isalpha())
+                        and not(char.isspace()))])
+        c, v = numb.split(':')
+        return('^(%s)' % (alph),
+               r'^(({}) .*?)(?=^{}:{} |\Z)'.format(numb, c, int(v) + 1),
+               re.DOTALL | re.MULTILINE)
+    # ========================================================================
+    elif b and p1 and not a:
         print('2:: %s' % (srch))
-        alph = r'^([A-Z]+)$'
+        alph = r'^([A-Z]+)'
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
         return(alph,
-               r'^(({}).*)$'.format(numb),
+               r'^(({}).*)'.format(numb),
                None)
-    elif (c and not(any([a, b]))):
+    elif c and not any([a, b]):
         print('3:: %s' % (srch))
-        alph = r'^([A-Z]+)$'
+        alph = r'^([A-Z]+)'
         return(alph,
                r'^((\d+:\d+).*\b{}\b.*?)$'.format(srch),
                re.IGNORECASE | re.MULTILINE)
-    if not(any([u, a, b, c])):
+    if not any([u, a, b, c]):
         raise KeyError
 
 
