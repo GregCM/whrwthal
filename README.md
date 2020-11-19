@@ -1,5 +1,5 @@
 # whrwhtal #
-Offline bible referencing for bible minded folk! Including UI display, verse and phrase lookup, and regular expressions to help accelerate bible learning past that of top scholars. Why is **whrwhtal** better than other systems (honorable mentions: [BLB](https://www.BlueLetterBible.org/), [bontibon's kjv](https://github.com/bontibon/kjv), [crosswire](https://crosswire.org/), [Xiphos](https://Xiphos.org/))? Read on!
+Offline bible referencing for bible minded folk! Including UI display, verse and phrase lookup, and regular expressions to help accelerate bible learning past that of top scholars. Why is **whrwhtal** better than other systems (honorable mentions: [BLB](https://www.BlueLetterBible.org/), [bontibon's kjv](https://github.com/bontibon/kjv), [crosswire](https://crosswire.org/), [Xiphos](https://Xiphos.org/))? Read on! *Note: whrwthal is still in early development, and not yet fit for regular use*
 
 ## What is it? ##
 whrwhtal (adverb), as in:
