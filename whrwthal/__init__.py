@@ -25,11 +25,12 @@ def __init__(self):
         os.remove(f for f in ['*/*sh', 'Makefile'])
         self.homeDirectory = '~/'
         self.pathPart = '/'
-    self.config_obj = ConfigParser()
     try:
+        self.config_obj = ConfigParser()
         self.config_obj.read('config.ini')
+        _ = self.config_obj['PATH']['main']
     except KeyError:
-        fd = os.getwd()
+        fd = os.getcwd()
         # Defaults:
         self.config_obj['PATH'] = {'main': fd, 'save': ''}
         self.fileLocation = self.config_obj['PATH']['main']
@@ -49,8 +50,9 @@ def __init__(self):
                                    'select_search': '<Control-l>',
                                    'pageup': '<Control-k>',
                                    'pagedown': '<Control-j>'}
-        for key in self.colors.keys():
-            self.colors[key] = self.colors[key].split(',')
+        self.colors = {}
+        for key in self.config_obj['COLORS'].keys():
+            self.colors[key] = self.config_obj['COLORS'][key].split(',')
 
         # Change to Defaults available in Settings menubar
         with open('config.ini', 'w') as cfg:
