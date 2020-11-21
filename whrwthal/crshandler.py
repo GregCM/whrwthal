@@ -26,9 +26,7 @@ def mainmenu(window, menu):
 
 
 def howto(window, menu):
-        
     press = 'Press enter to continue: '
-
     for page in pages: 
         key = 0
         while key != 10:
@@ -36,15 +34,11 @@ def howto(window, menu):
             window.update()
             window.wrap(page, width=90, left=5, top=5)
             window.wrap(press, left=5, bottom=5)
-
             key = window.getch()
-    
     return 0
 
 
 blurses = Blurses()
 blurses.bind('', mainmenu)
 blurses.bind('How-To', howto)
-blurses.bind('Pause and Resume', pause)
 blurses.run()
-
