@@ -276,7 +276,7 @@ def _on_mousewheel(self, event):
 
 
 def shutdown(self, event=None):
-    # Exit protocol prior to the process kill at handler.kill()
+    # Exit protocol prior to the process kill at tktkhandler.kill()
     # TODO: include protocol other than LFM query?
     co = self.config_obj['LOWFOOTPRINT']
     if (co['switch']) and (co['transient']):

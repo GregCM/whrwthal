@@ -153,7 +153,7 @@ def navigate(self, vector, event=None):
         d, count = find(self, srch)
         h = [k for k in d.keys()][0]
         t = [v for v in d.values()][0]
-        self.handler.gui_update(self, head=h, text=t,
+        self.tkhandler.gui_update(self, head=h, text=t,
                                 status='{} RESULT MATCHING \"{}\"'.format(
                                     count, srch))
     except IndexError:

@@ -23,14 +23,14 @@ import tkinter as tk
 import sys
 
 import whrwthal
-from whrwthal import handler
+from whrwthal import tkhandler
 
 # Interpreter refresh every 10 milisec.
 sys.setswitchinterval(0.01)
 # base
 whrwthal.__init__(whrwthal)
 # ui
-handler.Reader.__init__(whrwthal)
+tkhandler.Reader.__init__(whrwthal)
 gsize = whrwthal.frame.grid_size()
 for row in range(gsize[0]):
     tk.Grid.rowconfigure(whrwthal.frame, row, weight=1)

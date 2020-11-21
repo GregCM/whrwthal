@@ -69,7 +69,7 @@ def __init__(self):
 
     # LOW FOOTPRINT MODE
     if self.LFM:
-        thread = Thread(target=self.handler.start, args=(self,))
+        thread = Thread(target=self.tkhandler.start, args=(self,))
         thread.start()
         # Decode bible string
         with open('bytes', 'rb') as f:
