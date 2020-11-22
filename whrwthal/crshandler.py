@@ -9,10 +9,10 @@ from blurses import Blurses
 
 def mainmenu(window, menu):
     title = ['whrwthal -- Offline Bible Referencing']
-    description = ''.join(['whrwhtal (adverb), as in:SKIP',
-                           'Wherewithal shall a young man ',
-                           'cleanse his way? by taking heed ',
-                           'thereto according to thy word. - Psalm 119:9SKIP',
+    description = ' '.join(['whrwhtal (adverb), as in: SKIP',
+                           'Wherewithal shall a young man',
+                           'cleanse his way? by taking heed',
+                           'thereto according to thy word. - Psalm 119:9 SKIP SKIP',
                            'Navigate using < ⇠ ⇡ ⇣ ⇢ > or < h j k l >'])
     mode = 0
     while mode == 0:
@@ -26,7 +26,7 @@ def mainmenu(window, menu):
 
 
 def howto(window, menu):
-    press = 'Press enter to continue: '
+    press = 'Press enter to continue:'
     for page in pages: 
         key = 0
         while key != 10:
