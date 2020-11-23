@@ -19,7 +19,7 @@ Using **whrwhtal** requires no internet connection, and therefore presents littl
 
     git clone https://github.com/GregCM/whrwhtal directory/
 
-where ``directory/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, click your way through to "Download ZIP" under "Code" at the top of the page and extract it to ``directory/``.
+where ``directory/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, [download](https://github.com/gregcm/whrwthal/archive/master.zip) and extract to ``directory/``.
 
 **whrwhtal** is pure python, and runs on Windows, MacOS, and Linux. If you are running on Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
@@ -62,7 +62,7 @@ Desktop enviornment Linux users can create a desktop application referencing **w
 
 Name the file ``whrwthal.desktop`` and populate it accordingly. An icon will now appear in your applications menu to easily access **whrwhtal**!
 
-You can change the default settings stored during your first setup at any time through the Options menu; this includes Language, Colors, Directories, and more. Alternatively, directly alter "config.ini".
+You can change the default settings stored during your first setup at any time through the Options menu; this includes Language, Colors, Directories, and more. Alternatively, directly alter ``config.ini``.
 
 ## Resources ##
 
