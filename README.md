@@ -19,7 +19,7 @@ Using **whrwhtal** requires no internet connection, and therefore presents littl
 
     git clone https://github.com/GregCM/whrwhtal directory/
 
-where ``directory/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, [download](https://github.com/gregcm/whrwthal/archive/master.zip) and extract to ``directory/``.
+where ``directory/`` is the folder where you want **whrwhtal**, and all its config and source files. For my Widnows/Mac friends without git, [download](https://github.com/gregcm/whrwthal/archive/master.zip) and extract to ``directory/``. There are no ``make`` or ``pkgbuild`` dependencies; **whrwthal** is plug-and-play, so that once you have it in ``directory/``, you can easily copy it to any other machine as is, and use out of the box.
 
 **whrwhtal** is pure python, and runs on Windows, MacOS, and Linux. If you are running on Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
@@ -54,15 +54,21 @@ If you do decide to download embedded Python, place it in your folder of choice 
 ## First-Use ##
 On any OS, execute ``cd directory/`` to enter your install directory where whrwthal now resides. Now, you can run ``python -m whrwthal``.
 
-**whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut (associated with command ``python -m whrwthal``). This is trivial in Windows; just make sure it's set to run in the correct directory, and include the icon file if you like. MacOS shortcuts are a foreign and veiled mystery to me.
+**whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut (associated with command ``python -m whrwthal``). This is trivial in Windows; just make sure it's set to run in the correct directory. MacOS shortcuts are a foreign and veiled mystery to me.
 
-Desktop enviornment Linux users can create a desktop application referencing **whrwhtal** by writing to a desktop file (others, I recommend dmenu). Most likely, the best place for this is in
+Desktop enviornment Linux users can create a desktop application referencing **whrwhtal** by writing to a desktop file (others, I recommend dmenu). Most likely, the best place for this is
 
 ``~/.local/share/applications/``
 
-Name the file ``whrwthal.desktop`` and populate it accordingly. An icon will now appear in your applications menu to easily access **whrwhtal**!
+Name the file ``whrwthal.desktop`` and populate it accordingly. **whrwthal** will now appear in your applications menu.
 
 You can change the default settings stored during your first setup at any time through the Options menu; this includes Language, Colors, Directories, and more. Alternatively, directly alter ``config.ini``.
+
+## Bible Texts ##
+
+Biblical translations in a variety of tongues are utilized to provide for **whrwthal**; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to directly use these simple text files instead of **whrwhtal**, you may find them [here](https://github.com/GregCM/whrwhtal/tree/texts).
+
+You may download any or all of them, and please distribute them liberally. As mentioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase their visibility. Thank you!
 
 ## Resources ##
 
@@ -70,14 +76,8 @@ For study tools to use in Christ-averse regions, see the following for print in 
 
 - [Arabic](https://www.thegrace.com/)
 
-- [Chinese](*pending*)
+- [Chinese](https://example.com) pending...
 
-- [Korean](*pending*)
+- [Korean](https://example.com) pending...
 
-- [Others](*pending*)
-
-## Bible Texts ##
-
-Biblical translations in a variety of tongues are utilized to provide this graphical bible referencing to you for convenience; they are all in the public domain and reliable in their source and lineage, akin to the KJV (confirmed to the best of my ability). If you find it better to use these simple Text files instead of **whrwhtal**, you may find them [here](https://github.com/GregCM/whrwhtal/tree/texts).
-
-You may download any or all of them, and please distribute them liberally. As mentioned, finding simple Text files like these online is very cumbersome, if at all possible, and one of the cheif motivations for this project has been to increase the visibility of such resources. Thank you!
+- [Others](https://example.com) pending...
