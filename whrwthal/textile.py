@@ -65,14 +65,15 @@ def keybinds(self):
                       "%s %s" % ('quit', self.key['quit']),
                       "%s %s" % ('select_search', self.key['select_search']),
                       "%s %s" % ('page-up', self.key['pageup']),
-                      "%s %s" % ('page-down', self.key['pagedown'])])
+                      "%s %s" % ('page-down', self.key['pagedown'])
+                      "Navigate using < ⇠ ⇡ ⇣ ⇢ > or < h j k l >"])
 
 
 def about(label):
     if label == 'Whrwthal':
         version = 'v2.4.0'
-        uilines = '596 GUI Lines of Code'
-        totallines = '1292 Total Lines of Code'
+        uilines = '613 tkGUI Lines of Code'
+        totallines = '1367 Total Lines of Code'
         return '\n'.join(['whrwthal version %s' % (version), uilines, totallines])
     if label == 'License':
         with open('LICENSE') as f:
