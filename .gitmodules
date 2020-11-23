@@ -1,6 +1,0 @@
-[submodule "dahuffman"]
-	path = dahuffman
-	url = https://github.com/soxofaan/dahuffman.git
-[submodule "Blurses"]
-	path = blurses
-	url = https://github.com/bajaco/Blurses.git
