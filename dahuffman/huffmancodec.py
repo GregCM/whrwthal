@@ -1,3 +1,13 @@
+'''
+dahuffman is a python module for huffman encoding and decoding,
+commonly used for lossless data compression.
+The original module may be found at
+
+https://github.com/soxofaan/dahuffman
+
+Copyright (c) 2017 Stefaan Lippens
+'''
+
 import collections
 import itertools
 import sys
