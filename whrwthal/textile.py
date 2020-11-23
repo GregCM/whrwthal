@@ -65,7 +65,7 @@ def keybinds(self):
                       "%s %s" % ('quit', self.key['quit']),
                       "%s %s" % ('select_search', self.key['select_search']),
                       "%s %s" % ('page-up', self.key['pageup']),
-                      "%s %s" % ('page-down', self.key['pagedown'])
+                      "%s %s" % ('page-down', self.key['pagedown']),
                       "Navigate using < ⇠ ⇡ ⇣ ⇢ > or < h j k l >"])
 
 
