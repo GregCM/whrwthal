@@ -66,8 +66,7 @@ def keybinds(self):
 def about(label):
     if label == 'Whrwthal':
         version = 'v2.4.0'
-        uilines = '613 tkGUI Lines of Code'
-        totallines = '1367 Total Lines of Code'
+        totallines = '1190 Total Lines of Code'
         return '\n'.join(['whrwthal version %s' % (version), uilines, totallines])
     if label == 'License':
         with open('LICENSE') as f:

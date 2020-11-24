@@ -11,6 +11,7 @@ from threading import Thread
 from dahuffman.huffmancodec import HuffmanCodec
 from whrwthal import parser
 from config import settings
+import handler
 
 
 def __init__(self):
@@ -31,7 +32,7 @@ def __init__(self):
 
     # LOW FOOTPRINT MODE
     if self.lfm:
-        thread = Thread(target=self.tkhandler.start, args=(self,))
+        thread = Thread(target=handler.start, args=(self,))
         thread.start()
         # Decode bible string
         with open('bytes', 'rb') as f:
