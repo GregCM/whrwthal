@@ -8,6 +8,7 @@ Copyright (c) 2020 bajaco
 '''
 
 import curses
+import re
 
 
 class Window:
@@ -73,6 +74,7 @@ class Window:
         lh = len(flines)
 
         for key, value in kwargs.items():
+            # TODO: Text justification
             if key == 'vcenter' and value:
                 y = int(round(self.height / 2))
                 y = int(round(y - (len(flines)/2)))
@@ -97,7 +99,8 @@ class Window:
         if isinstance(text, tuple):
             mode = text[1]
         max_width = int(round(width / 100 * self.width))
-        words = text.split()
+        text = text.replace('\n', ' SKIP ')
+        words = re.split(r'\b', text)
         lines = []
         line = ''
         for word in words:
@@ -108,11 +111,11 @@ class Window:
                 if line == '':
                     line = word
                 else:
-                    line += ' ' + word
+                    line += word
                     if len(line) > max_width - 1:
                         line = line[:- len(word) - 1]
                         lines.append((line,mode))
-                        line = word
+                        line = f' {word}'
         lines.append((line, mode))
         self.draw(lines, **kwargs)
 
@@ -144,8 +147,10 @@ class Menu:
         elif (key == curses.KEY_DOWN) or (key == ord('j')):
             if self.active < len(self.options) - 1:
                 self.active += 1
-        elif key == curses.KEY_ENTER or key == 10: 
+        elif (key == 10) or (key == 261) or (key == ord('l')):
             return self.active
+        elif key == ord('/'):
+            pass
         elif key == ord('q'):
             # Quit
             return len(self.options) - 1
