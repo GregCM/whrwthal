@@ -36,9 +36,7 @@ If internet is unreliable and you want the ability to use **whrwhtal** on severa
 - [detailed instructions](https://docs.python.org/3/using/windows.html) and embeddable
 
 ### Tkinter ###
-Check that you have "tkinter" included in your Python install as follows:
-
-    python -m tkinter
+Check that you have "tkinter" included in your Python with ``python -m tkinter``
 
 If this returns a sample tkinter window, you're set (again). If it's missing, see below:
 - https://tkdocs.com/tutorial/install.html
@@ -52,7 +50,9 @@ If you do decide to download embedded Python, place it in your folder of choice 
 - You're afraid of commitment, and embedding python will make deleting it altogether much easier
 
 ## First-Use ##
-On any OS, execute ``cd directory/`` to enter your install directory where whrwthal now resides. Now, you can run ``python -m whrwthal``.
+On any OS, execute ``cd directory/`` to enter your install directory where whrwthal now resides. Now, you can run
+
+    python -m whrwthal
 
 **whrwhtal** will need to run a one-time setup, which should only take a few seconds. If you decide to enable low-footprint mode, this setup will happen every time you use **whrwthal**. You can start the same way through the command prompt every time, or more simply create a shortcut (associated with command ``python -m whrwthal``). This is trivial in Windows; just make sure it's set to run in the correct directory. MacOS shortcuts are a foreign and veiled mystery to me.
 
