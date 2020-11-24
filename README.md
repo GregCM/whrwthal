@@ -23,7 +23,7 @@ where ``directory/`` is the folder where you want **whrwhtal**, and all its conf
 
 **whrwhtal** is pure python, and runs on Windows, MacOS, and Linux. If you are running on Windows, you will likely need to install Python. You can check in your commmand prompt if you have Python3 already
 
-``python --version``
+``python --version`` or ``python3 --version``
 
 If this returns at least ``Python 3.5.X`` then skip ahead to [First-Use](README.md#First-Use).
 ``Python 2.X`` users will need to upgrade; ``Python 3.4.X`` users will also need to upgrade, with the extra caveat that your default Python3 environment will need to be changed from 3.X.Y to 3.5.X as follows in folder sequence:
