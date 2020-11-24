@@ -18,11 +18,11 @@ def __init__(self):
         self.homeDirectory = '~/'
         self.pathPart = '/'
     elif sys.platform.startswith('win'):
-        os.remove(f for f in ['*/*sh', 'Makefile'])
+        os.remove('*/*sh')
         self.homeDirectory = '%userprofile%'
         self.pathPart = '\\'
     elif sys.platform.startswith('darwin'):
-        os.remove(f for f in ['*/*sh', 'Makefile'])
+        os.remove('*/*sh')
         self.homeDirectory = '~/'
         self.pathPart = '/'
 
