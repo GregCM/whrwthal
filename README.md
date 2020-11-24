@@ -25,8 +25,8 @@ where ``directory/`` is the folder where you want **whrwhtal**, and all its conf
 
 ``python --version`` or ``python3 --version``
 
-If this returns at least ``Python 3.5.X`` then skip ahead to [First-Use](README.md#First-Use).
-``Python 2.X`` users will need to upgrade; ``Python 3.4.X`` users will also need to upgrade, with the extra caveat that your default Python3 environment will need to be changed from 3.X.Y to 3.5.X as follows in folder sequence:
+If this returns at least ``Python 3.6`` then skip ahead to [First-Use](README.md#First-Use).
+``Python 2.X`` users will need to upgrade; ``Python 3.4`` users will also need to upgrade, with the extra caveat that your default Python3 environment will need to be changed from ``3.X`` to ``3.6`` as follows in folder sequence:
 
 > Control Panel > All Control Panel Items > System > Advanced System Settings > Environment Variables
 
