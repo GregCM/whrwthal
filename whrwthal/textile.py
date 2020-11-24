@@ -6,25 +6,25 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 
 
 def preamble():
-    return '\n'.join([r'         _____            ',
-                      r'        |     |\          ',
-                      r'        |     | \         ',
-                      r'        |     |  |        ',
-                      r' _______|     |__|____    ',
-                      r'|                     |\  ',
-                      r'|                     | \ ',
-                      r'|_______       _______|  |',
-                      r' \      |     |\       \ |',
-                      r'  \_____|     | \_______\|',
-                      r'        |     |  |        ',
-                      r'        |     |  |        ',
-                      r'        |     |  |        ',
-                      r'        |     |  |        ',
-                      r'        |     |  |        ',
-                      r'        |     |  |        ',
-                      r'        |_____|  |        ',
-                      r'        \      \ |        ',
-                      r'         \______\|  v2.4.0',
+    return '\n'.join([r'          _____              ',
+                      r'        |     |\            ',
+                      r'        |     | \           ',
+                      r'        |     |  |          ',
+                      r' _______|     |__|____      ',
+                      r'|                     |\    ',
+                      r'|                     | \   ',
+                      r'|_______       _______|  |  ',
+                      r' \      |     |\       \ |  ',
+                      r'  \_____|     | \_______\|  ',
+                      r'        |     |  |          ',
+                      r'        |     |  |          ',
+                      r'        |     |  |          ',
+                      r'        |     |  |          ',
+                      r'        |     |  |          ',
+                      r'        |     |  |          ',
+                      r'        |_____|  |          ',
+                      r'        \      \ |  whrwthal',
+                      r'         \______\|    v2.4.0',
                        ' _____ _   _ _____   ____ ___ ____  _     _____ ',
                        '|_   _| | | | ____| | __ )_ _| __ )| |   | ____|',
                        '  | | | |_| |  _|   |  _ \| ||  _ \| |   |  _|  ',
@@ -33,12 +33,7 @@ def preamble():
                        ' ________________________________________________ ',
                        '|                                                |',
                        '|  Please rightly divide and handle with prayer  |',
-                       '|________________________________________________|',
-                       '\nA good search looks like...',
-                       '-----------------------------',
-                      'Romans 5:8-10     John 3:16',
-                      'Psalm 119         Philemon',
-                      'word              phrase'])
+                       '|________________________________________________|\n'])
 
 
 def update(self, text, just='left'):
@@ -59,11 +54,13 @@ def clear(self):
 
 
 def keybinds(self):
-    return "\n".join(["KEYBINDINGS:",
-                      "save: <Control-s>",
-                      "saveas: <Control-Shift-S>",
-                      "quit: q",
-                      "navigate: < ⇠ ⇡ ⇣ ⇢ > or < h j k l >"])
+    return "\n".join([" KEYBINDINGS",
+                      "-----------",
+                      "quit:        < q >",
+                      "save:        < Control-s >",
+                      "saveas:      < Control-Shift-S >",
+                      "search:      < / >",
+                      "navigate:    < ⇠ ⇡ ⇣ ⇢ > or < h j k l >"])
 
 
 def about(label):
