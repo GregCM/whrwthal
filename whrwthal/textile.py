@@ -67,7 +67,7 @@ def about(label):
     if label == 'Whrwthal':
         version = 'v2.4.0'
         totallines = '1190 Total Lines of Code'
-        return '\n'.join(['whrwthal version %s' % (version), uilines, totallines])
+        return '\n'.join(['whrwthal version %s' % (version), totallines])
     if label == 'License':
         with open('LICENSE') as f:
             return f.read()
