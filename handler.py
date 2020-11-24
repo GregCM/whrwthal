@@ -7,10 +7,11 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 import curses
 
 from blurses import Blurses
+import whrwthal
 from whrwthal import textile
 
 
-def mainmenu(window, menu, state):
+def mainmenu(window, menu):
     title = ['whrwthal -- Offline Bible Referencing']
     preamble = ' '.join(['whrwhtal (adverb), as in: SKIP',
                          'Wherewithal shall a young man',
@@ -25,15 +26,13 @@ def mainmenu(window, menu, state):
         window.wrap(preamble, width=80, left=10,
                     vcenter=True, hcenter=True)
         window.draw(menu(), bottom=5, left=5)
-        if state:
-            window.wrap(state, bottom=0, hcenter=True)
         mode = menu.input(window.getch())
     return mode
 
 
-def howto(window, menu, state):
+def howto(window, menu):
     press = 'Next page -->'
-    pages = [textile.preamble(), textile.keybinds()]
+    pages = [textile.preamble(), textile.keybinds(whrwthal)]
     for page in pages: 
         key = 0
         while (key != 10) and (key != ord('l')) and (key != curses.KEY_RIGHT):
@@ -47,7 +46,6 @@ def howto(window, menu, state):
 
 # SUBMENU'S
 # def aboutmenu(window, menu):
-
 
 blurses = Blurses()
 blurses.bind('', mainmenu)

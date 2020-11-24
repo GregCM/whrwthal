@@ -148,7 +148,7 @@ class Menu:
             return self.active
         elif key == ord('q'):
             # Quit
-            return 3
+            return len(self.options) - 1
         return 0
             
 class Blurses:
@@ -156,7 +156,6 @@ class Blurses:
         self.menu = Menu()
         self.functions = []
         self.mode = 0
-        self.state = None
     
     def bind(self, name, func):
         self.menu.add(name)
@@ -169,7 +168,4 @@ class Blurses:
     def main(self, stdscr):
         func = self.functions[self.mode]
         window = Window(stdscr)
-        res = func(window, self.menu, self.state)
-        self.mode = res[0]
-        self.state = res[1]
-        
+        self.mode = func(window, self.menu)
