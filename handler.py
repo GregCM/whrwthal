@@ -7,11 +7,16 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
 import curses
+import time
 
 from blurses import Blurses
 import whrwthal
 from whrwthal import textile
 
+
+def start(self, t=5.0):
+    # A simple timed progress bar ~5.0 seconds
+    time.sleep(t)
 
 def mainmenu(window, menu):
     title = ['whrwthal -- Offline Bible Referencing']

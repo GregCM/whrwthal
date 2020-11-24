@@ -33,7 +33,6 @@ def __init__(self):
         fd = os.getcwd()
         # Defaults:
         self.config_obj['PATH'] = {'main': fd, 'save': ''}
-        self.fileLocation = self.config_obj['PATH']['main']
         self.config_obj['FONT'] = {'font': 'roman',
                                    'text': '12',
                                    'title': '25'}
