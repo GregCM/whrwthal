@@ -57,8 +57,8 @@ def keybinds(self):
     return "\n".join([" KEYBINDINGS",
                       "-----------",
                       "quit:        < q >",
-                      "save:        < Control-s >",
-                      "saveas:      < Control-Shift-S >",
+                      "save:        < w >",
+                      "saveas:      < W >",
                       "search:      < / >",
                       "navigate:    < ⇠ ⇡ ⇣ ⇢ > or < h j k l >"])
 
