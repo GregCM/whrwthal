@@ -19,21 +19,10 @@ You should have received a copy of the GNU General Public License
 along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
-import tkinter as tk
 import sys
 
 import whrwthal
-from whrwthal import tkhandler
 
 # Interpreter refresh every 10 milisec.
 sys.setswitchinterval(0.01)
-# base
 whrwthal.__init__(whrwthal)
-# ui
-tkhandler.Reader.__init__(whrwthal)
-gsize = whrwthal.frame.grid_size()
-for row in range(gsize[0]):
-    tk.Grid.rowconfigure(whrwthal.frame, row, weight=1)
-    for col in range(gsize[1]):
-        tk.Grid.columnconfigure(whrwthal.frame, col, weight=1)
-main = tk.mainloop()

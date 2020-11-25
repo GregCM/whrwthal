@@ -63,7 +63,7 @@ def regex(self, srch):
 
         2:: "1:3" Returns any 3rd verse from any 1st chapter (if it exists)
             "23" Returns the 23rd chapter of every book (if it exists)
-            
+
 
     Else:
         3:: "phrase of words" Returns a regex matching "phrase of words"
@@ -78,11 +78,7 @@ def regex(self, srch):
     # form appears as either an abbreviation or word: e = "ROM/ROMAN"
     usplit = upper.split()
     ToC_entries = [e for e in usplit if e in ToC]
-    ToC_count = len(ToC_entries)
-
     conc_entries = [W for W in uconcord if W in usplit]
-    conc_count = len(conc_entries)
-
     numeric_entries = [e for e in srch if e.isnumeric()]
 
     u = self.use_re
@@ -91,7 +87,6 @@ def regex(self, srch):
     c = any(conc_entries)
     p1 = ':' in srch
     p2 = '-' in srch
-    count = 0
     if u:
         print('0:: %s' % (srch))
         alph, srch = srch.split('/')
@@ -105,18 +100,18 @@ def regex(self, srch):
         print('1.00:: %s' % (srch))
         alph = r''.join([char.upper() for char in srch if char.isalpha()])
         return('^(%s)' % (alph),
-               r'^((1):1 .*?)(?=2:1 ).*(?=^[A-Z]+$).*(?=\Z)'.format(upper),
-               re.DOTALL | re.MULTILINE)
-
+               r'^((1):1 .*?)(?=2:1 ).*(?=^[A-Z]+$).*(?=\Z)',
+               re.DOTALL | re.MULTILINE
+               )
     elif a and b and not p1:
         print('1.25:: %s' % (srch))
         alph = ''.join([char.upper() for char in srch if char.isalpha()])
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
         return('^(%s)' % (alph),
-               r'^(({}):1 .*?)(?={}:1 ).*(?=^[A-Z]+$).*(?=\Z)'.format(numb, str(int(numb)+1)),
-               re.DOTALL | re.MULTILINE)
-
+               rf'^(({numb}):1 .*?)(?={int(numb) + 1}:1 ).*(?=^[A-Z]+$).*(?=\Z)',
+               re.DOTALL | re.MULTILINE
+               )
     elif a and b and p1:
         print('1.50:: %s' % (srch))
         alph = ''.join([char.upper() for char in srch if char.isalpha()])
@@ -124,8 +119,9 @@ def regex(self, srch):
                         and not(char.isspace()))])
         c, v = numb.split(':')
         return('^(%s)' % (alph),
-               r'^(({}) .*?)(?=^{}:{} |\Z)'.format(numb, c, int(v) + 1),
-               re.DOTALL | re.MULTILINE)
+               rf'^(({numb}) .*?)(?=^{c}:{int(v) + 1} |\Z)',
+               re.DOTALL | re.MULTILINE
+               )
     # ========================================================================
     elif b and p1 and not a:
         print('2:: %s' % (srch))
@@ -133,14 +129,16 @@ def regex(self, srch):
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
         return(alph,
-               r'^(({}).*)'.format(numb),
-               None)
+               rf'^(({numb}).*)',
+               None
+               )
     elif c and not any([a, b]):
         print('3:: %s' % (srch))
         alph = r'^([A-Z]+)'
         return(alph,
-               r'^((\d+:\d+).*\b{}\b.*?)$'.format(srch),
-               re.IGNORECASE | re.MULTILINE)
+               rf'^((\d+:\d+).*\b{srch}\b.*?)$',
+               re.IGNORECASE | re.MULTILINE
+               )
     if not any([u, a, b, c]):
         raise KeyError
 
@@ -154,17 +152,16 @@ def navigate(self, vector, event=None):
         h = [k for k in d.keys()][0]
         t = [v for v in d.values()][0]
         self.tkhandler.gui_update(self, head=h, text=t,
-                                status='{} RESULT MATCHING \"{}\"'.format(
-                                    count, srch))
+                                  status=f'{count} RESULT MATCHING "{srch}"')
     except IndexError:
         # FIXME: See "Romans 17"
         _, book = alpheval(srch)
         idx = self.bkNames.index(book)
         if numb == 1:
-            # <Ctl-k> on "romans 1" should return "Acts 28"
+            # < k > on "romans 1" should return "Acts 28"
             book = self.bkNames[idx - 1]
         else:
-            # <Ctl-j> on "romans 16" should return "i corinthians 1"
+            # < j > on "romans 16" should return "i corinthians 1"
             book = self.bkNames[idx + 1]
 
 

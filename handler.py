@@ -6,7 +6,6 @@ whrwthal is an offline bible referencing module.
 Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 '''
 
-import curses
 import time
 
 from blurses import Blurses
@@ -53,9 +52,29 @@ def howto(window, menu):
         window.draw(pagedown, right=5, bottom=5)
         window.draw(pageup, top=5, left=5)
         key = window.getch()
-        if (key == 10) or (key == ord('l')) or (key == curses.KEY_RIGHT):
+        if (key == 10) or (key == ord('l')) or (key == 261):
             i += 1
-        elif (key == ord('h')) or (key == curses.KEY_LEFT):
+        elif (key == ord('h')) or (key == 260):
+            i -= 1
+    return 0
+
+
+def reader(window, menu, text):
+    # reader should act like a menu for verses and page turner for chapters
+    pageup = ['<-']
+    pagedown = ['->']
+    pages = text.split(r'\d+:1 ')
+    i = 0
+    while 0 <= i < len(pages):
+        window.clear()
+        window.update()
+        window.wrap(pages[i], width=90, vcenter=True, hcenter=True)
+        window.draw(pagedown, right=5, bottom=5)
+        window.draw(pageup, top=5, left=5)
+        key = window.getch()
+        if (key == 10) or (key == ord('l')) or (key == 261):
+            i += 1
+        elif (key == ord('h')) or (key == 260):
             i -= 1
     return 0
 

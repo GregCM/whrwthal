@@ -7,7 +7,6 @@ Copyright (C) 2020 Gregory Caceres-Munsell <gregcaceres@gmail.com>
 from configparser import ConfigParser
 import datetime as dt
 import os
-from tkinter import filedialog
 
 from dahuffman.huffmancodec import HuffmanCodec
 
