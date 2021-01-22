@@ -22,7 +22,9 @@ along with whrwthal.  If not, see <https://www.gnu.org/licenses/>.
 import sys
 
 import whrwthal
+import handler
 
 # Interpreter refresh every 10 milisec.
 sys.setswitchinterval(0.01)
 whrwthal.__init__(whrwthal)
+handler.mainloop()

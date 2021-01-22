@@ -34,7 +34,7 @@ def find(self, srch):
         for m in match:
             ref = ' '.join([b, m.group(2)])
             d[ref] = m.group(1)
-    return d, len(d)
+    return d
 
 
 def regex(self, srch):
@@ -88,7 +88,7 @@ def regex(self, srch):
     p1 = ':' in srch
     p2 = '-' in srch
     if u:
-        print('0:: %s' % (srch))
+        #print('0:: %s' % (srch))
         alph, srch = srch.split('/')
         if alph:
             return alph, srch
@@ -97,14 +97,14 @@ def regex(self, srch):
     # ========================================================================
     # Searches on chapters / verses
     elif a and not b:
-        print('1.00:: %s' % (srch))
+        #print('1.00:: %s' % (srch))
         alph = r''.join([char.upper() for char in srch if char.isalpha()])
         return('^(%s)' % (alph),
                r'^((1):1 .*?)(?=2:1 ).*(?=^[A-Z]+$).*(?=\Z)',
                re.DOTALL | re.MULTILINE
                )
     elif a and b and not p1:
-        print('1.25:: %s' % (srch))
+        #print('1.25:: %s' % (srch))
         alph = ''.join([char.upper() for char in srch if char.isalpha()])
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
@@ -113,7 +113,7 @@ def regex(self, srch):
                re.DOTALL | re.MULTILINE
                )
     elif a and b and p1:
-        print('1.50:: %s' % (srch))
+        #print('1.50:: %s' % (srch))
         alph = ''.join([char.upper() for char in srch if char.isalpha()])
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
@@ -124,7 +124,7 @@ def regex(self, srch):
                )
     # ========================================================================
     elif b and p1 and not a:
-        print('2:: %s' % (srch))
+        #print('2:: %s' % (srch))
         alph = r'^([A-Z]+)'
         numb = ''.join([char for char in srch if (not(char.isalpha())
                         and not(char.isspace()))])
@@ -133,7 +133,7 @@ def regex(self, srch):
                None
                )
     elif c and not any([a, b]):
-        print('3:: %s' % (srch))
+        #print('3:: %s' % (srch))
         alph = r'^([A-Z]+)'
         return(alph,
                rf'^((\d+:\d+).*\b{srch}\b.*?)$',

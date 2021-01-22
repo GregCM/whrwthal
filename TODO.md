@@ -13,15 +13,11 @@ In future releases, expect to see:
 
 - [ ] A title / header == the verse displayed by user's search selection from list
 
-- [ ] Searched word highlighting to replace the current capitalization
+- [ ] Searched word highlighting
 
-- [ ] In-Text-Box buttons under each word, for quick searching, as well as custom cross references
+- [ ] In-TextBox buttons under each word, for quick searching, as well as custom cross references
 
 - [ ] Bug-fix for search result buttons that incorrectly display the verse preview (ie "... word of GOD..." when it should be "... word of GOD.", etc.)
-
-- [ ] Calendar synced "Daily Readings" to serve as a structured study tool (retrieved from BLB sites)
-
-- [ ] Better tkinter / python embedding (possible compression methods) to make install non-hellish for Windows users
 
 - [ ] PGP cryptographic protections
 
@@ -41,5 +37,4 @@ In future releases, expect to see:
     
     - [ ] Chinese (CKJV)
 
-See further candidates for use in this app [here](http://textus-receptus.com/wiki/List_of_languages)
-
+See further candidates for use in this app [here](http://textus-receptus.com/wiki/List_of_languages).

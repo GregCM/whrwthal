@@ -53,14 +53,14 @@ def clear(self):
     self.text_widget.configure(state='disabled')
 
 
-def keybinds(self):
-    return "\n".join([" KEYBINDINGS",
-                      "-----------",
-                      "quit:        < q >",
-                      "save:        < w >",
-                      "saveas:      < W >",
-                      "search:      < / >",
-                      "navigate:    < ⇠ ⇡ ⇣ ⇢ > or < h j k l >"])
+def keybinds():
+    return '\n'.join([' KEYBINDINGS',
+                      '-----------',
+                      'quit:        < q >',
+                      'save:        < w >',
+                      'saveas:      < W >',
+                      'search:      < / >',
+                      'navigate:    < ⇠ ⇡ ⇣ ⇢ > or < h j k l >'])
 
 
 def about(label):
